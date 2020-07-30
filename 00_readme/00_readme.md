@@ -11,7 +11,31 @@ This file gives an overview of this coding project and how it is organized.
 
 ## Purpose
 
-The purpose of the program is to...
+The purpose of the program is to help decide which apartment to buy.
+
+| Consideration | Risk                                      | Reward                                |
+| ------------- | ----------------------------------------- | ------------------------------------- |
+| 1.            | cost to purchase                          | savings left over                     |
+| 2.            | depreciation during time I live there     | appreciation during time I live there |
+| 3.            | inability to get paying roommate          | ability to get paying roommate        |
+| 4.            | inability to find work if unemployed      | ability to find work if unemployed    |
+| 5.            | distant from friends                      | close to friends                      |
+| 6.            | distant from social and networking events | close to social and networking events |
+| 7.            | distant from forest and water             | close to forest and water             |
+| 8.            | distant from central train station        | close to central train station        |
+| 9.            | will want to move again                   | will want to stay                     |
+
+Considerations 1. and 2. will likely be modelled with some kind of multiple linear regression model.
+
+Consideration 3. will have to do with first if the apartment is at least 2.5 rooms and the location. Will have to find a way to model: occupancy rate of rentors in the market * rate I can charge a rentor for the market.
+
+Consideration 4. will have to do with unemployment rates in the two markets. I may be able to buffer myself from this if I can negotiate 100% remote work.
+
+Considerations 5.&ndash;7. all intuitively favor Stockholm over Uppsala, but I haven't considered how to model them yet.
+
+Consideration 8. mitigates some of the other potential negatives if this is positive.
+
+Consideration 9. makes me realize that I do not want to go through this process over and over... Since I know I cannot currently afford to get what I want, I do not need to stress about solving this problem right now. Instead, I can keep renting and saving until I know a bit more about what I want (perhaps I will get a partner in the meantime who will want to help pay, then it becomes a co-decision and the budget also changes?). I also have not been considering all of the other costs involved in buying a property (capital gains tax if sell, maintenance, real-estate agent fees, potential property taxes). If I'm not able to afford something I really love (i.e., it falls into the reward category for basically all of the considerations above), then it's not really worth all of the headache involved and I'd rather risk wasting some money on renting while continuing to live a more hassle-free lifestyle.
 
 ## Structure
 
