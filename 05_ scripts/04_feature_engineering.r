@@ -180,30 +180,37 @@ temp_df_source <- working_data
 #The big loop to engineer all of the columns into multiple different dataframes - one dataframe per categorical predictor variable.
 for (i in 1 : nrow(categories_df)) {
 
-  print(paste0("Engineering features for category ", i, " of ", nrow(categories_df)))  
+  cat(
+    paste0(
+      "Engineering features for category ",
+      i,
+      " of ",
+      nrow(categories_df)
+      ),
+    "\n\n")
 
-  cat <-
+  category <-
     categories_df[["category"]][i] %>%
     as.character
   
-  print(paste0("Category is: ", cat))
+  cat(paste0("Category is: ", category), "\n\n")
   
   
   cat_df <- data.frame(
-    category = unique(temp_df_source[[cat]]))
+    category = unique(temp_df_source[[category]]))
   
   #Aggregate the data using the sql query pre-written earlier
   temp_df <-
     sqldf(
       paste0(
         "select ",
-        ifelse(cat == "",
+        ifelse(category == "",
                " date_sold",
-               paste0(cat, ", date_sold")),
+               paste0(category, ", date_sold")),
         final_cols_in_sql_query,
         "from temp_df_source
       group by ",
-        ifelse(cat == "",
+        ifelse(category == "",
                "1",
                "1, 2")))
   
@@ -217,7 +224,7 @@ for (i in 1 : nrow(categories_df)) {
   temp_df %<>%
     merge(x = .,
       y = joining_table,
-      by.x = c(as.character(cat),
+      by.x = c(as.character(category),
         "date_sold"),
       by.y = c("category", "day"),
       all.y = T)
@@ -228,7 +235,7 @@ for (i in 1 : nrow(categories_df)) {
   
   tries <- 1
   while (tries > 0 & tries < 10) {
-    print(paste0("Try: ", tries))
+    cat(paste0("Try: ", tries), "\n\n")
     
     for (co in 3 : ncol(temp_df)) {
       temp_df[which(temp_df[co] < 0), co] <-
@@ -255,18 +262,18 @@ for (i in 1 : nrow(categories_df)) {
     sqldf(
       paste0("select *
              from temp_df
-             order by ", cat, ", date_sold asc"))
+             order by ", category, ", date_sold asc"))
   
   for (d in lag_and_rolling_fxn_days){
   
     for (clmn in ((2 + 1) : pre_lag_n_cols)) {
   
       new_clmn_name <-
-        paste0(colnames(temp_df)[clmn], "_", d, "_days_ago_this_", cat)
+        paste0(colnames(temp_df)[clmn], "_", d, "_days_ago_this_", category)
       
       temp_array <-
         tapply(X = temp_df[ , clmn],
-               INDEX = temp_df[ , cat],
+               INDEX = temp_df[ , category],
                FUN = lag, d)
       
       array_names <- names(temp_array) %>% sort
@@ -290,7 +297,7 @@ for (i in 1 : nrow(categories_df)) {
   
   tries <- 1
   while (tries > 0 & tries < 10) {
-    print(paste0("Try: ", tries))
+    cat(paste0("Try: ", tries), "\n\n")
     
     for (co in 3 : ncol(temp_df)) {
       temp_df[which(temp_df[co] < 0), co] <-
@@ -316,14 +323,14 @@ for (i in 1 : nrow(categories_df)) {
     sqldf(
       paste0("select *
              from temp_df
-             order by ", cat, ", date_sold asc"))
+             order by ", category, ", date_sold asc"))
   
   for (d in lag_and_rolling_fxn_days) {
   
     for (clmn in ((2 + 1) : pre_lag_n_cols)) {
   
       new_clmn_name <-
-        paste0("rolling_", colnames(temp_df)[clmn], "_previous_", d, "_days_this_", cat)
+        paste0("rolling_", colnames(temp_df)[clmn], "_previous_", d, "_days_this_", category)
       
       fxn_to_use <-
         ifelse(grepl("avg", colnames(temp_df)[clmn]),
@@ -336,7 +343,7 @@ for (i in 1 : nrow(categories_df)) {
       
       temp_array <-
         tapply(X = temp_df[ , clmn],
-               INDEX = temp_df[ , cat],
+               INDEX = temp_df[ , category],
                FUN = function(x) {
                  c(rep(NA, d), fxn_to_use(x, d)) %>%
                    .[1 : length(.) - 1]
@@ -363,7 +370,7 @@ for (i in 1 : nrow(categories_df)) {
   
   tries <- 1
   while (tries > 0 & tries < 10) {
-    print(paste0("Try: ", tries))
+    cat(paste0("Try: ", tries), "\n\n")
     
     for (co in 3 : ncol(temp_df)) {
       temp_df[which(temp_df[co] < 0), co] <-

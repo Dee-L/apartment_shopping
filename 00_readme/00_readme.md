@@ -6,6 +6,8 @@ This file gives an overview of this coding project and how it is organized.
 
 - [README](#readme)
   - [Purpose](#purpose)
+  - [Models to build](#models-to-build)
+  - [Variables to consider bringing in](#variables-to-consider-bringing-in)
   - [Structure](#structure)
   - [File Organization](#file-organization)
 
@@ -37,6 +39,17 @@ Consideration 8. mitigates some of the other potential negatives if this is posi
 
 Consideration 9. makes me realize that I do not want to go through this process over and over... Since I know I cannot currently afford to get what I want, I do not need to stress about solving this problem right now. Instead, I can keep renting and saving until I know a bit more about what I want (perhaps I will get a partner in the meantime who will want to help pay, then it becomes a co-decision and the budget also changes?). I also have not been considering all of the other costs involved in buying a property (capital gains tax if sell, maintenance, real-estate agent fees, potential property taxes). If I'm not able to afford something I really love (i.e., it falls into the reward category for basically all of the considerations above), then it's not really worth all of the headache involved and I'd rather risk wasting some money on renting while continuing to live a more hassle-free lifestyle.
 
+## Models to build
+
+1. Regression to predict the final sales price. This determines how much I should be willing to bid at a maximum.
+   1. Inputs: all data I can find on sold apartments in the last 10 years with a final price of 5 800 000 SEK or less.
+2. Regression to predict appreciation.
+   1. Inputs: all data I can find on apartments that were bought and sold more than once in the last 10 years where the first price was 5 800 000 SEK or less.
+
+## Variables to consider bringing in
+
+1. Lat/Long of addresses
+
 ## Structure
 
 The program is written predominantly in R. Not all files are published publicly.
@@ -54,7 +67,7 @@ The program is written predominantly in R. Not all files are published publicly.
 - `03_batch_program.r`
   - Running this program will run all other scripts, process the data, and output it to the target files.  
 - `04_my_fxns_this_project.r`
-  - Contains functions written specific for this project (not public).  
+  - Define functions and parameters for this project (not public).  
 - `05_scripts/`
   - Contains the scripts run by `01_batch_program.r`.
     - `<>.r`

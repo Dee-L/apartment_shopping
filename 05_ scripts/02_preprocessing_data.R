@@ -16,7 +16,7 @@ working_data <- scraped_data
 
 my_summary(working_data, "price")
 
-print("The scraping was meant to exclude all under 1m SEK.")
+cat("The scraping was meant to exclude all under 1m SEK.\n\n")
 
 #Find the cases
 extreme_prices <-
@@ -28,7 +28,7 @@ extreme_prices <-
 working_data %>%
   .[.[["price"]] %in% extreme_prices, ]
 
-print("I will replace these values with NA in case the other data is correct.")
+cat("I will replace these values with NA in case the other data is correct.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -49,7 +49,7 @@ my_summary(working_data, "price")
 
 my_summary(working_data, "asking_price")
 
-print("I think some of the very low asking prices were probably keyed in wrong by the agent.")
+cat("I think some of the very low asking prices were probably keyed in wrong by the agent.\n\n")
 
 #Find the cases
 extreme_asking_prices <-
@@ -61,7 +61,7 @@ extreme_asking_prices <-
 working_data %>%
   .[.[["asking_price"]] %in% extreme_asking_prices, ]
 
-print("I will replace these values with NA in case the other data is correct.")
+cat("I will replace these values with NA in case the other data is correct.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -82,7 +82,7 @@ my_summary(working_data, "asking_price")
 
 my_summary(working_data, "avgift")
 
-print("There are some low and NA avgifts to examine.")
+cat("There are some low and NA avgifts to examine.\n\n")
 
 #Find the cases
 low_avgift <-
@@ -94,7 +94,7 @@ low_avgift <-
 working_data %>%
   .[.[["avgift"]] %in% low_avgift, ]
 
-print("I will replace these values with NA in case the other data is correct.")
+cat("I will replace these values with NA in case the other data is correct.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -115,7 +115,7 @@ my_summary(working_data, "avgift")
 
 my_summary(working_data, "running_costs")
 
-print("There are some low and high running_costs to examine.")
+cat("There are some low and high running_costs to examine.\n\n")
 
 #Find the cases
 extreme_running_costs <-
@@ -127,7 +127,7 @@ extreme_running_costs <-
 working_data %>%
   .[.[["running_costs"]] %in% extreme_running_costs, ]
 
-print("I will replace these values with NA in case the other data is correct.")
+cat("I will replace these values with NA in case the other data is correct.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -148,7 +148,7 @@ my_summary(working_data, "running_costs")
 
 my_summary(working_data, "city")
 
-print("I have over 1000 datapoints from each city.")
+cat("I have over 1000 datapoints from each city.\n\n")
 
 
 ##year_sold
@@ -156,7 +156,7 @@ print("I have over 1000 datapoints from each city.")
 
 my_summary(working_data, "year_sold")
 
-print("I have over 200 datapoints from each year_sold.")
+cat("I have over 200 datapoints from each year_sold.\n\n")
 
 
 ##month_sold_swedish
@@ -164,7 +164,7 @@ print("I have over 200 datapoints from each year_sold.")
 
 my_summary(working_data, "month_sold_swedish")
 
-print("I have over 400 datapoints from each month_sold_swedish.")
+cat("I have over 400 datapoints from each month_sold_swedish.\n\n")
 
 
 ##day_of_month_sold
@@ -172,14 +172,14 @@ print("I have over 400 datapoints from each month_sold_swedish.")
 
 my_summary(working_data, "day_of_month_sold")
 
-print("I have over 100 datapoints from each day_of_month_sold.")
+cat("I have over 100 datapoints from each day_of_month_sold.\n\n")
 
 
 ##year_built
 
 my_summary(working_data, "year_built", 10)
 
-print("Some samples have incorrect 'year_built' info. Some probably entered as 0 by the agent. Others may be scraping problems or simply incorrect info (how likely is it that an apartment was built in 1400?)")
+cat("Some samples have incorrect 'year_built' info. Some probably entered as 0 by the agent. Others may be scraping problems or simply incorrect info (how likely is it that an apartment was built in 1400?)\n\n")
 
 #Find the cases
 year_built_extreme <-
@@ -191,7 +191,7 @@ year_built_extreme <-
 working_data %>%
   .[.[["year_built"]] %in% year_built_extreme, ]
 
-print("Assuming the other data is correct, I will replace these values with NA.")
+cat("Assuming the other data is correct, I will replace these values with NA.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -213,7 +213,7 @@ my_summary(working_data, "year_built")
 
 my_summary(working_data, "type")
 
-print("The scraping pulled out more than just apartments.")
+cat("The scraping pulled out more than just apartments.\n\n")
 
 
 #Find the cases
@@ -223,7 +223,7 @@ type_to_keep <- "LägenhetLägenhet"
 working_data %>%
   .[.[["type"]] %not_in% type_to_keep, ]
 
-print("Assuming the other data are correct, I will replace these with 'apartment'.")
+cat("Assuming the other data are correct, I will replace these with 'apartment'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -248,7 +248,7 @@ my_summary(working_data, "type")
 
 my_summary(working_data, "floor")
 
-print("Considering no residence in Stockholm is higher than the 40th floor, there are some extreme values.")
+cat("Considering no residence in Stockholm is higher than the 40th floor, there are some extreme values.\n\n")
 
 #Find the cases
 floor_too_high <-
@@ -260,7 +260,7 @@ floor_too_high <-
 working_data %>%
   .[.[["floor"]] %in% floor_too_high, ]
 
-print("Since these numbers must not be correct, I'll presume the agent hit too many keys while entering the data and I'll simply take the median of the digits.")
+cat("Since these numbers must not be correct, I'll presume the agent hit too many keys while entering the data and I'll simply take the median of the digits.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -284,14 +284,14 @@ my_summary(working_data, "floor")
 
 my_summary(working_data, "rooms")
 
-print("There is a single data point with more than 4 rooms.")
+cat("There is a single data point with more than 4 rooms.\n\n")
 
 
 ##kvm
 
 my_summary(working_data, "kvm")
 
-print("There are a few apartments with very low or very high kvm.")
+cat("There are a few apartments with very low or very high kvm.\n\n")
 
 
 ##area
@@ -299,7 +299,7 @@ print("There are a few apartments with very low or very high kvm.")
 
 my_summary(working_data, "area")
 
-print("Most of the areas show up in my data set less than 20 times.")
+cat("Most of the areas show up in my data set less than 20 times.\n\n")
 
 #Find the cases
 working_data[["area"]] %<>%
@@ -321,7 +321,7 @@ areas_with_low_representation <-
 working_data %>%
   .[.[["area"]] %in% areas_with_low_representation, ]
 
-print("These data are probably okay, but since I do not have at least 20 samples in any of these areas points, I will convert them to a larger geographical region based on a mapping in an excel file I made. This will help prevent my model from overfitting.")
+cat("These data are probably okay, but since I do not have at least 20 samples in any of these areas points, I will convert them to a larger geographical region based on a mapping in an excel file I made. This will help prevent my model from overfitting.\n\n")
 
 write_clip(areas_with_low_representation)
 
@@ -342,7 +342,7 @@ summary(working_data_restore_point[["area"]])
 
 my_summary(working_data, "area")
 
-print("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.")
+cat("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.\n\n")
 
 #Find the cases
 areas_with_low_representation <-
@@ -357,7 +357,7 @@ areas_with_low_representation <-
 working_data %>%
   .[.[["area"]] %in% areas_with_low_representation, ]
 
-print("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'area' with 'city' for the current cases that have counts lower than the top 50 unique 'areas'.")
+cat("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'area' with 'city' for the current cases that have counts lower than the top 50 unique 'areas'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -382,7 +382,7 @@ my_summary(working_data, "area")
 
 my_summary(working_data, "hoa")
 
-print("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.")
+cat("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.\n\n")
 
 #Find the cases
 working_data[["hoa"]] %<>%
@@ -404,7 +404,7 @@ hoas_with_low_representation <-
 working_data %>%
   .[.[["hoa"]] %in% hoas_with_low_representation, ]
 
-print("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'hoa' with 'other' for the current cases that have counts lower than the top 50 unique 'hoas'.")
+cat("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'hoa' with 'other' for the current cases that have counts lower than the top 50 unique 'hoas'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -429,7 +429,7 @@ my_summary(working_data, "hoa")
 
 my_summary(working_data, "agent_name")
 
-print("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.")
+cat("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.\n\n")
 
 #Find the cases
 working_data[["agent_name"]] %<>%
@@ -453,7 +453,7 @@ agent_names_with_low_representation <-
 working_data %>%
   .[.[["agent_name"]] %in% agent_names_with_low_representation, ]
 
-print("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'agent_name' with 'other' for the current cases that have counts lower than the top 50 unique 'agent_names'.")
+cat("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'agent_name' with 'other' for the current cases that have counts lower than the top 50 unique 'agent_names'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -478,7 +478,7 @@ my_summary(working_data, "agent_name")
 
 my_summary(working_data, "agency")
 
-print("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.")
+cat("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.\n\n")
 
 #Find the cases
 working_data[["agency"]] %<>%
@@ -499,7 +499,7 @@ agencys_with_low_representation <-
 working_data %>%
   .[.[["agency"]] %in% agencys_with_low_representation, ]
 
-print("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'agency' with 'other' for the current cases that have counts lower than the top 50 unique 'agencys'.")
+cat("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'agency' with 'other' for the current cases that have counts lower than the top 50 unique 'agencys'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -524,7 +524,7 @@ my_summary(working_data, "agency")
 
 my_summary(working_data, "street")
 
-print("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.")
+cat("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.\n\n")
 
 #Find the cases
 working_data[["street"]] %<>%
@@ -546,7 +546,7 @@ streets_with_low_representation <-
 working_data %>%
   .[.[["street"]] %in% streets_with_low_representation, ]
 
-print("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'street' with 'other' for the current cases that have counts lower than the top 50 unique 'streets'.")
+cat("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'street' with 'other' for the current cases that have counts lower than the top 50 unique 'streets'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
@@ -571,7 +571,7 @@ my_summary(working_data, "street")
 
 my_summary(working_data, "address")
 
-print("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.")
+cat("For imputation later, I need 50 or fewer unique levels (not counting NA's, which can later be imputed), but I currently have more.\n\n")
 
 #Find the cases
 working_data[["address"]] %<>%
@@ -593,7 +593,7 @@ addresss_with_low_representation <-
 working_data %>%
   .[.[["address"]] %in% addresss_with_low_representation, ]
 
-print("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'address' with 'other' for the current cases that have counts lower than the top 50 unique 'addresss'.")
+cat("These data are probably okay, but since I need to have 50 or fewer unique levels for imputation later, I will replace 'address' with 'other' for the current cases that have counts lower than the top 50 unique 'addresss'.\n\n")
 
 #Fix the cases
 create_object_restore(working_data)
