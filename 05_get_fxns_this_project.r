@@ -8,7 +8,16 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Getting data from Hemnet url ####
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c(
+        "rvest"
+        , "xml2"
+    )
+
+install_my_pkgs(pkgs)
+
+# 02 Getting data from Hemnet url ####
 
 get_address <- function(url) {
     url %>%
@@ -23,34 +32,35 @@ get_address <- function(url) {
         gsub("  Slutpris  ", "", .)
 }
 
-get_street_number <- function(address = address) {
-    regmatches(address, gregexpr("[[:digit:]]+", address)) %>%
+get_street_number <- function(a = address) {
+    regmatches(a, gregexpr("[[:digit:]]+", a)) %>%
         .[[1]] %>%
         .[1] %>%
         as.numeric
 }
 
-get_street <- function(address = address, street_number = street_number) {
+get_street <- function(a = address, s_n = street_number) {
     substr(
-        address,
+        a,
         1,
         gregexpr(
-          as.character(street_number),
-          address)[[1]][1] - 2
+          as.character(s_n),
+          a)[[1]][1] - 2
       ) %>%
         tolower %>%
         gsub(" ", "", .)
 }
 
-get_floor_in_building <- function(
-    address = address
-    , street = street
-    , street_number = street_number) {
-    floor_info <- substr(address,
-        nchar(street) +
-          nchar(street_number) +
-          3,
-        nchar(address)) %>% tolower
+get_floor_in_building <-
+    function(
+        a = address
+        , s = street
+        , s_n = street_number) {
+        floor_info <- substr(address,
+            nchar(s) +
+            nchar(s_n) +
+            3,
+            nchar(a)) %>% tolower
 
     if (grepl("av", floor_info)) {
       floor_info %<>%
@@ -60,7 +70,8 @@ get_floor_in_building <- function(
           gregexpr(
             "av",
             .)[[1]][1] - 1)
-    
+    }
+
     if (
         any(
             (grepl("vå", floor_info)),
@@ -89,7 +100,7 @@ get_type_area_date <- function(url) {
         rvest::html_nodes(".sold-property__metadata") %>%
         rvest::html_text() %>%
         gsub("\\s+", " ", .) %>%
-        # strsplit on '-' may not work, see: 
+        # strsplit on '-' may not work, see:
         # https://www.hemnet.se/salda/lagenhet-1rum-vasastan-birkastan-stockholms-kommun-rorstrandsgatan-23,-3tr-1250012
         # split evertyhing before first "-" as type
         # split everything from såld onwards as d
@@ -105,35 +116,36 @@ get_type_area_date <- function(url) {
         paste0()
 }
 
-get_type <- function(type_area_date = type_area_date) {
-    type_area_date[[1]]
+get_type <- function(t_a_d = type_area_date) {
+    t_a_d[[1]]
 }
 
-get_area <- function(type_area_date = type_area_date) {
-    type_area_date[[2]]
+get_area <- function(t_a_d = type_area_date) {
+    t_a_d[[2]]
 }
 
-get_city <- function(type_area_date = type_area_date) {
-    type_area_date[[3]] %>%
+get_city <- function(t_a_d = type_area_date) {
+    t_a_d[[3]] %>%
         gsub(" ", "", .) %>%
         gsub("kommun", "", .)
 }
 
-get_date_sold <- function(type_area_date = type_area_date) {
-    type_area_date[[4]] %>%
+get_date_sold <- function(t_a_d = type_area_date) {
+    t_a_d[[4]] %>%
             strsplit(., " ") %>%
-            .[[1]])
-
-get_day_of_month_sold <- function(date_sold = date_sold) {
-    date_sold[3] %>% as.numeric
+            .[[1]]
 }
 
-get_month_sold_swedish <- function(date_sold = date_sold) {
-    date_sold[4] %>% tolower
+get_day_of_month_sold <- function(d_s = date_sold) {
+    d_s[3] %>% as.numeric()
 }
 
-get_year_sold <- function(date_sold) {
-    date_sold[5] %>% as.numeric
+get_month_sold_swedish <- function(d_s = date_sold) {
+    d_s[4] %>% tolower()
+}
+
+get_year_sold <- function(d_s) {
+    d_s[5] %>% as.numeric()
 }
 
 get_final_price <- function(url) {
@@ -163,7 +175,7 @@ get_asking_price <- function(url) {
             gsub("\\s+", " ", .) %>%
             strsplit(., " ") %>%
             .[[1]]
-    
+
     pricestats_vector %>%
         .[which(. == "pris") + 1] %>%
         as.numeric()
@@ -180,67 +192,72 @@ get_property_attributes <- function(url) {
         .[[1]]
 }
 
-get_rooms <- function(property_attributes = property_attributes) {
+get_rooms <- function(p_a = property_attributes) {
 
-    property_attributes %>% .[which(. == "Antal rum") + 1] %>%
-            gsub(" rum", "", .) %>%
-            as.numeric()
+    p_a %>%
+        .[which(. == "Antal rum") + 1] %>%
+        gsub(" rum", "", .) %>%
+        as.numeric()
 }
 
-get_kvm <- function(property_attributes = property_attributes) {
-    property_attributes %>% .[which(. == "Boarea") + 1] %>%
-            gsub(" m²", "", .) %>%
-            as.numeric()
+get_kvm <- function(p_a = property_attributes) {
+    p_a %>%
+        .[which(. == "Boarea") + 1] %>%
+        gsub(" m²", "", .) %>%
+        as.numeric()
 }
 
-get_avgift <- function(property_attributes = property_attributes) {
-    property_attributes %>% .[which(. == "Avgift/månad") + 1] %>%
-            gsub(" kr/mån", "", .) %>%
-            gsub("\\s", "", .) %>%
-            as.numeric()
+get_avgift <- function(p_a = property_attributes) {
+    p_a %>%
+        .[which(. == "Avgift/månad") + 1] %>%
+        gsub(" kr/mån", "", .) %>%
+        gsub("\\s", "", .) %>%
+        as.numeric()
 }
 
-get_running_costs <- function(property_attributes = property_attributes) {
-    property_attributes %>% .[which(. == "Driftskostnad") + 1] %>%
-            gsub(" kr/år", "", .) %>%
-            gsub("\\s", "", .) %>%
-            as.numeric()
+get_running_costs <- function(p_a = property_attributes) {
+    p_a %>%
+        .[which(. == "Driftskostnad") + 1] %>%
+        gsub(" kr/år", "", .) %>%
+        gsub("\\s", "", .) %>%
+        as.numeric()
 }
 
-get_year_built <- function(property_attributes = property_attributes) {
-    property_attributes %>% .[which(. == "Byggår") + 1] %>%
-            as.numeric()
+get_year_built <- function(p_a = property_attributes) {
+    p_a %>%
+        .[which(. == "Byggår") + 1] %>%
+        as.numeric()
 }
 
 get_agent_info <- function(url) {
     url %>%
         rvest::html_session() %>%
         xml2::read_html() %>%
-            rvest::html_nodes(
-              "strong") %>%
-            rvest::html_text() %>%
-            gsub("[^[:alnum:] ]| -|,", "", .) %>%
-            gsub("\\s+", " ", .) %>%
-            tolower %>%
-            gsub(" ", "", .)
+        rvest::html_nodes(
+            "strong") %>%
+        rvest::html_text() %>%
+        gsub("[^[:alnum:] ]| -|,", "", .) %>%
+        gsub("\\s+", " ", .) %>%
+        tolower %>%
+        gsub(" ", "", .)
 }
 
 get_agency <- function(url) {
     url %>%
         rvest::html_session() %>%
         xml2::read_html() %>%
-            rvest::html_nodes(
-              ".qa-broker-name+ .broker-card__text") %>%
-            rvest::html_text() %>%
-            gsub("[^[:alnum:] ]| -|,", "", .) %>%
-            gsub("\\s+", " ", .) %>%
-            tolower %>%
-            gsub(" ", "", .)
+        rvest::html_nodes(
+            ".qa-broker-name+ .broker-card__text") %>%
+        rvest::html_text() %>%
+        gsub("[^[:alnum:] ]| -|,", "", .) %>%
+        gsub("\\s+", " ", .) %>%
+        tolower %>%
+        gsub(" ", "", .)
 }
 
-# 02 Get all required scraped data ####
+# 03 Get all required scraped data ####
 
-get_all_variables() <- function(url) {
+get_all_variables <- function(url) {
 
     assign(
         "address"
@@ -258,7 +275,7 @@ get_all_variables() <- function(url) {
         "floor_in_building"
         , get_floor_in_building()
         , envir = .GlobalEnv)
-    
+
     assign(
         "type_area_date"
         , get_type_area_date(url)
@@ -270,7 +287,7 @@ get_all_variables() <- function(url) {
     assign(
         "area"
         , get_area()
-        , envir = .GlobalEnv)    
+        , envir = .GlobalEnv)
     assign(
         "city"
         , get_city()
@@ -296,12 +313,12 @@ get_all_variables() <- function(url) {
         "final_price"
         , get_final_price(url)
         , envir = .GlobalEnv)
-    
+
     assign(
         "asking_price"
         , get_asking_price(url)
         , envir = .GlobalEnv)
-    
+
     assign(
         "property_attributes"
         , get_property_attributes(url)

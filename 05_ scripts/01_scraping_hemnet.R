@@ -172,94 +172,40 @@ for (page in seq_len(total_pages)) {
 
     url_to_scrape <- pages_to_scrape[page_to_scrape]
 
-    # 06 tryCatch for scraping data ####
+    # 07 Scrape and test all data from the url. If fail, capture fails. ####
 
-    # tryCatch( {
+    tryCatch(
+      expr = {
+        get_all_variables(url_to_scrape)
+        test_all()
+        gather_and_save()
+      }
+      , error = function(error_message) {
+        message("Error! Saving to failed_pages df.")
+        error_message %<>% as.character()
 
-    # 07 Scrape all data from the url ####
-    get_all_variables()
-
-    # 08 Testing all scraped data ####
-    test_all()
-
-    # 09 Creating the df object for saving ####
-
-    sold_object <- data.frame(
-      price = price,
-      asking_price = asking_price,
-      rooms = rooms,
-      kvm = kvm,
-      floor_in_building = floor_in_building,
-      avgift = avgift,
-      running_costs = running_costs,
-      city = city,
-      area = area,
-      street = street,
-      day_of_month_sold = day_of_month_sold,
-      month_sold_swedish = month_sold_swedish,
-      year_sold = year_sold,
-      year_built = year_built,
-      agent_name = agent_name,
-      agency = agency,
-      url = url_to_scrape
-    )
-
-    # Saving the object
-
-    object_name <-
-      paste0(
-        "o",
-        stringr::str_pad(counter, 6, pad = "0"),
-        "_",
-        year_sold,
-        "_",
-        city,
-        "_",
-        street,
-        "_",
-        street_number)
-
-    assign(object_name, sold_object)
-    save(
-      list = object_name,
-      file = paste0(output_folder_scraped, object_name))
-  },
-
-  # 14 Condition if error ####
-
-  error = function(error_message) {
-    message("There was an error. It was: ")
-    message(error_message)
-    # message("Custom error message was: ")
-    # message(custom_error_message)
-    
-    if (exists("failed_pages")) {
-      failed_page <- 
-        data.frame(
-          counter = counter
-          , url = session$url
-          , error_message = error_message
-          # , custom_error_message = custom_error_message
-        )
-      failed_pages %<>% rbind(., failed_page)
-    } else {
-      assign(
-        "failed_pages"
-        , data.frame(
-          counter = counter
-          , url = session$url
-          , error_message = error_message
-          # , custom_error_message = custom_error_message
-        )
-        , envir = .GlobalEnv)
-    
-      failed_pages_file_name <- 
-        paste0(output_folder_scraped, "failed_pages")
-      save(
-        failed_pages
-        , file = failed_pages_file_name)
+        if (exists("failed_pages")) {
+          failed_page <-
+            data.frame(
+              counter = counter
+              , url = url_to_scrape
+              , error_message = error_message
+              )
+          failed_pages %<>% rbind(., failed_page)
+          save_as_r_object_with_its_name(failed_pages, output_folder_scraped)
+        } else {
+          assign(
+            "failed_pages"
+            , data.frame(
+              counter = counter
+              , url = url_to_scrape
+              , error_message = error_message
+            )
+            , envir = .GlobalEnv
+            )
+          save_as_r_object_with_its_name(failed_pages, output_folder_scraped)
+        }
+      }
     )
   }
-  )
   }
-}
