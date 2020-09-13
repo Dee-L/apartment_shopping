@@ -1,1 +1,12 @@
-load("D:\Coding\Projects\apartment_shopping\07_outputs\01_scraped_new\failed_pages")
+tryCatch(
+    expr = {
+    1 + 1
+    stop("custom error")
+    }
+    , error = function(e) {
+        message("You got this error: ")
+        message(e)
+        john <<- 2 + 2
+        4 + 4
+    }
+)

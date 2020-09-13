@@ -98,79 +98,7 @@ total_pages <-
     prod(., 1 / 50) %>%
     ceiling(.)
 
-# 04 My fxns this program only ####
-
-# Scraper function for hemnet variables
-
-scrape_or_skip <-
-    function(
-      name_of_target,
-      scrape_and_test_expression,
-      my_session = session) {
-
-        if (!exists("custom_error_message")) {
-          assign(
-            "custom_error_message",
-            "No custom error message made.",
-            envir = parent.frame())
-        }
-
-        results <- try(expr = scrape_and_test_expression, silent = TRUE)
-        if (inherits(results, "try-error")) {
-            message("Exception with ",
-                    paste0(deparse(substitute(name_of_target))),
-                    " on page:\n\n",
-                    paste0(my_session$url),
-                    "\n\nCustom error message was:\n\n",
-                    custom_error_message,
-                    "\n\nSkipping to next page.\n\n")
-
-
-# Only ever recording the first failed page
-            if (exists("failed_pages")) {
-              failed_page <-
-                data.frame(
-                  counter = counter,
-                  url = session$url,
-                  custom_error_message = custom_error_message)
-              failed_pages %<>% rbind(., failed_page)
-            } else {
-              assign(
-                "failed_pages"
-                , data.frame(
-                  counter = counter,
-                  url = session$url,
-                  custom_error_message = custom_error_message)
-                , envir = parent.frame())
-            }
-
-            failed_pages_file_name <- 
-                paste0(output_folder_scraped, "failed_pages")
-            save(
-              failed_pages
-              , file = failed_pages_file_name)
-
-            # This next argument isn't working... the loop just stops when it hits a bump.
-            # next
-        } else {
-            assign(
-              deparse(substitute(name_of_target)),
-              scrape_and_test_expression,
-              envir = parent.frame())
-        }
-    }
-
-# Custom error message and stop processing
-
-stop_and_notify <- function(custom_error_message) {
-  assign(
-    "custom_error_message",
-    custom_error_message,
-    envir = parent.frame())
-  stop(custom_error_message)
-}
-
-# 05 Loop to scrape the pages ####
+# 04 Loop to scrape the pages ####
 
 for (page in seq_len(total_pages)) {
 
@@ -220,7 +148,7 @@ for (page in seq_len(total_pages)) {
     "\n\n"
   )
 
-# 06 Inner loop ####
+# 05 Inner loop ####
 
   for (page_to_scrape in seq_along(pages_to_scrape)) {
 
@@ -229,7 +157,7 @@ for (page in seq_len(total_pages)) {
     if (exists("counter")) {
       counter <- counter + 1
     } else {
-      assign("counter", 1, envir = parent.frame())
+      assign("counter", 1, envir = .GlobalEnv)
     }
 
     cat(
@@ -240,523 +168,40 @@ for (page in seq_len(total_pages)) {
         " pages on this base page."),
       "\n\n")
 
-    try_skip({
+    # update url
 
-    # update session
+    url_to_scrape <- pages_to_scrape[page_to_scrape]
 
-    session <-
-      pages_to_scrape[page_to_scrape] %>%
-      rvest::html_session()
+    # 06 tryCatch for scraping data ####
 
-    # Scraping data
+    # tryCatch( {
 
-    # Address data from the header
-    scrape_or_skip(
-      name_of_target = address,
-      scrape_and_test_expression = {
-        a <-
-          session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(
-              ".sold-property__address"
-            ) %>%
-            rvest::html_text() %>%
-            gsub("/", " av ", .) %>%
-            gsub("[^[:alnum:] ]", "", .) %>%
-            gsub("  Slutpris  ", "", .)
+    # 07 Scrape all data from the url ####
+    get_all_variables()
 
-        if (
-          any(
-            (length(a) == 0)
-            , (!is.character(a))
-            , (!(length(a) > 0))
-            )
-          ) {
-            stop_and_notify("Impossible address data from top of screen")
-          }
+    # 08 Testing all scraped data ####
+    test_all()
 
-        assign(
-          "street_number",
-          (regmatches(a, gregexpr("[[:digit:]]+", a)) %>%
-            .[[1]] %>%
-            .[1] %>%
-            as.numeric()),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(street_number) == 0)
-            , !(street_number > 0)
-            )
-          ) {
-            stop_and_notify("Impossible street number")
-          }
-
-        assign(
-          "street",
-          (substr(
-            a,
-            1,
-            gregexpr(
-              as.character(street_number),
-              a)[[1]][1] - 2
-          )) %>%
-            tolower %>%
-            gsub(" ", "", .),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(street) == 0)
-            , (!is.character(street))
-            , (!(length(street) > 0))
-            )
-          ) {
-            stop_and_notify("Impossible street")
-          }
-
-        floor_info <-
-          substr(a,
-            nchar(street) +
-              nchar(street_number) +
-              3,
-            nchar(a)) %>% tolower
-
-        if (grepl("av", floor_info)) {
-          floor_info %<>%
-            substr(
-              .,
-              1,
-              gregexpr(
-                "av",
-                .)[[1]][1] - 1)
-          }
-
-        assign(
-          "floor_in_building", {
-            if (
-                any(
-                  (grepl("vå", floor_info)),
-                  (grepl("tr", floor_info))
-                )) {
-                regmatches(
-                  floor_info,
-                  gregexpr("[[:digit:]]+",
-                  floor_info)) %>%
-                    .[[1]] %>%
-                    .[length(.)] %>%
-                    as.numeric()
-              } else if (
-                grepl("bv", floor_info)
-              ) {
-                as.numeric(0)
-              } else {
-                as.numeric(NA)
-              }
-            },
-          envir = parent.frame()
-        )
-
-        if (!is.na(floor_in_building)) {
-          if (
-            any(
-              (length(floor_in_building) == 0)
-              , (floor_in_building < 1)
-              , (floor_in_building > 40)
-              )
-            ) {
-              stop_and_notify("Impossible floor_in_building")
-            }
-          }
-        a
-      }
-      )
-
-    # Cleaning memory since harvested street and street_number
-
-    rm(address)
-
-    # Metadata from the top of the web page
-
-    scrape_or_skip(
-      name_of_target = metadata_vector,
-      scrape_and_test_expression = {
-        m <-
-          session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(".sold-property__metadata") %>%
-            rvest::html_text() %>%
-            gsub("\\s+", " ", .) %>%
-            # strsplit on '-' may not work, see: 
-            # https://www.hemnet.se/salda/lagenhet-1rum-vasastan-birkastan-stockholms-kommun-rorstrandsgatan-23,-3tr-1250012
-            # split evertyhing before first "-" as type
-            # split everything from såld onwards as d
-            # split the rest as area/city to be split later
-            strsplit(., "-") %>%
-            .[[1]] %>%
-            sapply(
-              .,
-              function(x) strsplit(as.character(x), ",")[[1]]) %>%
-            unlist() %>%
-            trimws() %>%
-            tolower() %>%
-            paste0()
-
-        if (
-          any(
-            (length(m) == 0)
-            , !is.character(m)
-            )
-          ) {
-            stop_and_notify("Impossible metadata on top of page.")
-          }
-
-        type <- m[[1]]
-
-        if (
-          any(
-            (length(type) == 0)
-            , (grep("lägenhet", type) < 1)
-            )
-          ) {
-          stop_and_notify("Not a lägenhet")
-          }
-
-        assign(
-          "area",
-          m[[2]],
-          envir = parent.frame())
-
-        assign(
-          "city",
-          m[[3]] %>%
-          gsub(" ", "", .) %>%
-          gsub("kommun", "", .),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(city) == 0)
-            , (grep(
-                paste(
-                  c("stockholm", "solna", "uppsala"),
-                  collapse = "|"),
-                city) < 1)
-            )
-          ) {
-          stop_and_notify("Not in Stockholm, Solna, or Uppsala")
-        }
-
-        d <-
-          m[[4]] %>%
-            strsplit(., " ") %>%
-            .[[1]]
-
-        assign(
-          "day_of_month_sold",
-          d[3] %>% as.numeric,
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(day_of_month_sold) == 0)
-            , (day_of_month_sold <= 0)
-            , (day_of_month_sold > 31)
-            )
-          ) {
-          stop_and_notify("Impossible day of month sold")
-          }
-
-        assign(
-          "month_sold_swedish",
-          d[4] %>% tolower,
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(month_sold_swedish) == 0)
-            , (
-                grep(
-                  paste(
-                    c(
-                      "jan", "feb", "mar",
-                      "apr", "maj", "jun",
-                      "jul", "aug", "sep",
-                      "okt", "nov", "dec"
-                      ),
-                    collapse = "|"),
-                  month_sold_swedish) < 1)
-              )
-              ) {
-          stop_and_notify("Impossible month sold")
-        }
-
-        assign(
-          "year_sold",
-          d[5] %>% as.numeric,
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(year_sold) == 0)
-            ,  (year_sold < 2010)
-            , (day_of_month_sold > 20)
-          )) {
-          stop_and_notify("Impossible year sold")
-          }
-          m
-          }
-    )
-
-    # Cleaning memory since harvested area, city, day_of_month_sold,
-    # month_sold_swedish, year_sold
-
-    rm(metadata_vector)
-
-    # Sales price from middle of the page
-
-    scrape_or_skip(
-      name_of_target = price,
-      scrape_and_test_expression = {
-        p <-
-          session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(
-              ".sold-property__price-value"
-            ) %>%
-            rvest::html_text() %>%
-            gsub("[^[:alnum:] ]| -|,", "", .) %>%
-            gsub("\\s+", " ", .) %>%
-            strsplit(., " ") %>%
-            .[[1]] %>%
-            .[1] %>%
-            as.numeric()
-
-        if (
-          any(
-            (length(p) == 0)
-            , (p < 1000000)
-            , (p > 10000000)
-            )
-          ) {
-            stop_and_notify("Impossible price")
-      }
-      p
-      }
-      )
-
-    # Asking price from the middle of the page
-
-    scrape_or_skip(
-      name_of_target = asking_price,
-      scrape_and_test_expression = {
-        pricestats_vector <-
-          session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(".sold-property__price-stats") %>%
-            rvest::html_text() %>%
-            gsub("[^[:alnum:] ]| -|,", "", .) %>%
-            gsub("\\s+", " ", .) %>%
-            strsplit(., " ") %>%
-            .[[1]]
-
-        ap <-
-          pricestats_vector[which(pricestats_vector == "pris") + 1] %>%
-            as.numeric()
-
-        if (
-          any(
-            (length(ap) == 0)
-            , (ap < 0)
-            , (ap > 12000000)
-            )
-          ) {
-            stop_and_notify("Impossible asking_price")
-        }
-        ap
-        }
-        )
-
-    # Property attributes from the middle of the page
-
-    scrape_or_skip(
-      name_of_target = attributes_vector,
-      scrape_and_test_expression = {
-        a <-
-          session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(".sold-property__attributes") %>%
-            rvest::html_text() %>%
-            gsub(",", ".", .) %>%
-            strsplit(., "\\s+\\s+") %>%
-            .[[1]]
-
-        assign(
-          "rooms",
-          a[which(a == "Antal rum") + 1] %>%
-            gsub(" rum", "", .) %>%
-            as.numeric(),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(rooms) == 0)
-            , (rooms < 1)
-            , (rooms > 10)
-            )
-          ) {
-          stop_and_notify("Impossible number of rooms")
-          }
-
-        assign(
-          "kvm",
-          a[which(a == "Boarea") + 1] %>%
-            gsub(" m²", "", .) %>%
-            as.numeric(),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(kvm) == 0)
-            , (kvm < 10)
-            , (kvm > 200)
-            , (kvm <= rooms)
-            )
-          ) {
-          stop_and_notify("Impossible kvm")
-          }
-
-        assign(
-          "avgift",
-          a[which(a == "Avgift/månad") + 1] %>%
-            gsub(" kr/mån", "", .) %>%
-            gsub("\\s", "", .) %>%
-            as.numeric(),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(avgift) == 0)
-            , (avgift < 500)
-            , (avgift > 20000)
-            )
-          ) {
-          stop_and_notify("Impossible avgift")
-          }
-
-        assign(
-          "running_costs",
-          a[which(a == "Driftskostnad") + 1] %>%
-            gsub(" kr/år", "", .) %>%
-            gsub("\\s", "", .) %>%
-            as.numeric(),
-          envir = parent.frame())
-
-        if (length(running_costs) == 0) {
-          assign("running_costs",
-          as.numeric(NA),
-          envir = parent.frame())
-        }
-
-        if (!is.na(running_costs)) {
-          if (
-            any(
-              (length(running_costs) == 0)
-              , (running_costs < 500)
-              , (running_costs > 20000)
-              )
-            ) {
-            stop_and_notify("Impossible running costs")
-          }
-        }
-
-        assign(
-          "year_built",
-          a[which(a == "Byggår") + 1] %>%
-            as.numeric(),
-          envir = parent.frame())
-
-        if (
-          any(
-            (length(year_built) == 0)
-            , (year_built < 1250)
-            , (year_built > 2020)
-            , (year_built > year_sold)
-            )
-          ) {
-          stop_and_notify("Impossible year built")
-          }
-        a
-      }
-      )
-
-    # Cleaning memory since harvested rooms, kvm, avgift,
-    # running_costs, year_built
-
-    rm(attributes_vector)
-
-    # Broker contact from the bottom of the page
-
-    scrape_or_skip(
-      name_of_target = agent_name,
-      scrape_and_test_expression = {
-        an <- session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(
-              "strong") %>%
-            rvest::html_text() %>%
-            gsub("[^[:alnum:] ]| -|,", "", .) %>%
-            gsub("\\s+", " ", .) %>%
-            tolower %>%
-            gsub(" ", "", .)
-
-        if (length(an) == 0) {
-          an <- as.character(NA)
-        }
-        an
-        }
-        )
-
-    scrape_or_skip(
-      name_of_target = agency,
-      scrape_and_test_expression = {
-        ac <- session %>%
-            xml2::read_html() %>%
-            rvest::html_nodes(
-              ".qa-broker-name+ .broker-card__text") %>%
-            rvest::html_text() %>%
-            gsub("[^[:alnum:] ]| -|,", "", .) %>%
-            gsub("\\s+", " ", .) %>%
-            tolower %>%
-            gsub(" ", "", .)
-
-        if (length(ac) == 0) {
-          ac <- as.character(NA)
-        }
-        ac
-        }
-        )
-
-    # Creating the df object for saving
+    # 09 Creating the df object for saving ####
 
     sold_object <- data.frame(
-      price = na_if_empty(price),
-      asking_price = na_if_empty(asking_price),
-      rooms = na_if_empty(rooms),
-      kvm = na_if_empty(kvm),
-      floor_in_building = na_if_empty(floor_in_building),
-      avgift = na_if_empty(avgift),
-      running_costs = na_if_empty(running_costs),
-      city = na_if_empty(city),
-      area = na_if_empty(area),
-      street = na_if_empty(street),
-      day_of_month_sold = na_if_empty(day_of_month_sold),
-      month_sold_swedish = na_if_empty(month_sold_swedish),
-      year_sold = na_if_empty(year_sold),
-      year_built = na_if_empty(year_built),
-      agent_name = na_if_empty(agent_name),
-      agency = na_if_empty(agency),
-      url = session$url
+      price = price,
+      asking_price = asking_price,
+      rooms = rooms,
+      kvm = kvm,
+      floor_in_building = floor_in_building,
+      avgift = avgift,
+      running_costs = running_costs,
+      city = city,
+      area = area,
+      street = street,
+      day_of_month_sold = day_of_month_sold,
+      month_sold_swedish = month_sold_swedish,
+      year_sold = year_sold,
+      year_built = year_built,
+      agent_name = agent_name,
+      agency = agency,
+      url = url_to_scrape
     )
 
     # Saving the object
@@ -764,7 +209,7 @@ for (page in seq_len(total_pages)) {
     object_name <-
       paste0(
         "o",
-        stringr::str_pad(counter, 5, pad = "0"),
+        stringr::str_pad(counter, 6, pad = "0"),
         "_",
         year_sold,
         "_",
@@ -778,8 +223,43 @@ for (page in seq_len(total_pages)) {
     save(
       list = object_name,
       file = paste0(output_folder_scraped, object_name))
+  },
 
-    })
+  # 14 Condition if error ####
+
+  error = function(error_message) {
+    message("There was an error. It was: ")
+    message(error_message)
+    # message("Custom error message was: ")
+    # message(custom_error_message)
+    
+    if (exists("failed_pages")) {
+      failed_page <- 
+        data.frame(
+          counter = counter
+          , url = session$url
+          , error_message = error_message
+          # , custom_error_message = custom_error_message
+        )
+      failed_pages %<>% rbind(., failed_page)
+    } else {
+      assign(
+        "failed_pages"
+        , data.frame(
+          counter = counter
+          , url = session$url
+          , error_message = error_message
+          # , custom_error_message = custom_error_message
+        )
+        , envir = .GlobalEnv)
+    
+      failed_pages_file_name <- 
+        paste0(output_folder_scraped, "failed_pages")
+      save(
+        failed_pages
+        , file = failed_pages_file_name)
+    )
   }
-
+  )
+  }
 }
