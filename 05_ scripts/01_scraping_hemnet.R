@@ -177,7 +177,7 @@ for (page in seq_len(total_pages)) {
     tryCatch(
       expr = {
         get_all_variables(url_to_scrape)
-        test_all()
+        # test_all()
         gather_and_save()
       }
       , error = function(error_message) {
@@ -185,14 +185,22 @@ for (page in seq_len(total_pages)) {
         error_message %<>% as.character()
 
         if (exists("failed_pages")) {
-          failed_page <-
-            data.frame(
-              counter = counter
-              , url = url_to_scrape
-              , error_message = error_message
+
+          assign(
+            "failed_pages"
+            , rbind(
+              failed_pages
+              , data.frame(
+                counter = counter
+                , url = url_to_scrape
+                , error_message = error_message
               )
-          failed_pages %<>% rbind(., failed_page)
+              )
+              , envir = .GlobalEnv
+            )
+
           save_as_r_object_with_its_name(failed_pages, output_folder_scraped)
+
         } else {
           assign(
             "failed_pages"

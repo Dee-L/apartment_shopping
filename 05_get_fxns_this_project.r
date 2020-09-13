@@ -24,7 +24,7 @@ get_address <- function(url) {
         rvest::html_session() %>%
         xml2::read_html() %>%
         rvest::html_nodes(
-          ".sold-property__address"
+            ".sold-property__address"
         ) %>%
         rvest::html_text() %>%
         gsub("/", " av ", .) %>%
@@ -88,8 +88,6 @@ get_floor_in_building <-
             grepl("bv", floor_info)
           ) {
             as.numeric(0)
-          } else {
-            as.numeric(NA)
           }
 }
 
@@ -144,7 +142,7 @@ get_month_sold_swedish <- function(d_s = date_sold) {
     d_s[4] %>% tolower()
 }
 
-get_year_sold <- function(d_s) {
+get_year_sold <- function(d_s = date_sold) {
     d_s[5] %>% as.numeric()
 }
 
@@ -176,7 +174,7 @@ get_asking_price <- function(url) {
             strsplit(., " ") %>%
             .[[1]]
 
-    pricestats_vector %>%
+    price_stats_vector %>%
         .[which(. == "pris") + 1] %>%
         as.numeric()
 }
@@ -193,7 +191,6 @@ get_property_attributes <- function(url) {
 }
 
 get_rooms <- function(p_a = property_attributes) {
-
     p_a %>%
         .[which(. == "Antal rum") + 1] %>%
         gsub(" rum", "", .) %>%
@@ -229,7 +226,7 @@ get_year_built <- function(p_a = property_attributes) {
         as.numeric()
 }
 
-get_agent_info <- function(url) {
+get_agent_name <- function(url) {
     url %>%
         rvest::html_session() %>%
         xml2::read_html() %>%
@@ -345,8 +342,8 @@ get_all_variables <- function(url) {
         , envir = .GlobalEnv)
 
     assign(
-        "agent_info"
-        , get_agent_info(url)
+        "agent_name"
+        , get_agent_name(url)
         , envir = .GlobalEnv)
 
     assign(
