@@ -9,15 +9,13 @@
 # Revised Version:
 
 # 01 Source all my functions ####
-source("04_my_fxns_this_project.r")
+source("04_my_fxns_this_project/01_settings_and_load_functions.r")
 
 # 02 Ensure all pkgs in this script are installed ####
-# pkgs <-
-#     c(
-#         "openxlsx"
-#     )
+pkgs <-
+    c()
 
-# install_my_pkgs(pkgs)
+install_my_pkgs(pkgs)
 
 # 03 Scrape Hemnet ####
 source_script_from_folder("s01_scraping_hemnet.r")
