@@ -45,3 +45,31 @@ rm(iterator)
 
 
 get_day_of_month_sold("https://www.hemnet.se/salda/lagenhet-4rum-kungsangen-uppsala-kommun-muningatan-4-1250838")
+
+
+
+# loads an RData file, and returns it, allowing you to reassign it to a new name
+reassign_rda <- function(file_name) {
+            load(file_name)
+            get(ls()[ls() != "file_name"])
+}
+
+
+
+
+for (file in
+    list.files("07_outputs//01_scraped_new/price_1000000_to_2187000/")) {
+
+        temp_df <<- reassign_rda(
+            paste0(
+                "07_outputs//01_scraped_new/price_1000000_to_2187000/"
+                , file
+                )
+            )
+
+        if (!exists("results_df")) {
+           results_df <<- temp_df
+        } else {
+            results_df <<- rbind(results_df, temp_df)
+        }
+    }
