@@ -9,23 +9,24 @@
 # Revised Version:
 
 
-# This code works for a single output folder, but will need to
-# be modified to loop through all output files
-# May be able to just add recursive argument to list.files
+for (file in list.files("07_outputs//01_scraped/", recursive = T)) {
 
-for (file in
-    list.files("07_outputs//01_scraped_new/price_1000000_to_2187000/")) {
+    # create path for file
+    this_path <-
+        paste0("07_outputs//01_scraped/", file)
 
-        temp_df <<- reassign_rda(
-            paste0(
-                "07_outputs//01_scraped_new/price_1000000_to_2187000/"
-                , file
-                )
-            )
+    # ignore the failed_pages file
+    if (!(grepl("failed_pages.rds", this_path))) {
 
+        # save into a temp_df the file
+        temp_df <<- reassign_rda(this_path)
+
+        # create or append to results_df
         if (!exists("results_df")) {
-           results_df <<- temp_df
+            results_df <<- temp_df
         } else {
             results_df <<- rbind(results_df, temp_df)
         }
+
     }
+}

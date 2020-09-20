@@ -8,7 +8,7 @@
 #
 # #Initialize variables for scraping
 # core_address <- "https://www.booli.se/slutpriser/"
-# max_price <- 2500000
+# current_max_price <- 2500000
 # minSoldDate <- "2010-01-01"
 # objectType <- "L%C3%A4genhet%2CVilla%2CParhus%2CRadhus%2CKedjehus"
 # page <- 1
@@ -19,7 +19,7 @@
 #          Booli_area, "/",
 #          Booli_area_number, "/?maxRent=",
 #          max_avgift, "&maxSoldPrice=",
-#          max_price, "&minSoldDate=",
+#          current_max_price, "&minSoldDate=",
 #          minSoldDate, "&objectType=",
 #          objectType, "&page=",
 #          page, "&sort=",

@@ -58,11 +58,11 @@ reassign_rda <- function(file_name) {
 
 
 for (file in
-    list.files("07_outputs//01_scraped_new/price_1000000_to_2187000/")) {
+    list.files("07_outputs//01_scraped/price_1000000_to_2187000/")) {
 
         temp_df <<- reassign_rda(
             paste0(
-                "07_outputs//01_scraped_new/price_1000000_to_2187000/"
+                "07_outputs//01_scraped/price_1000000_to_2187000/"
                 , file
                 )
             )

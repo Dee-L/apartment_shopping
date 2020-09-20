@@ -7,6 +7,9 @@ This file gives an overview of this coding project and how it is organized.
 - [README](#readme)
   - [Purpose](#purpose)
   - [Models to build](#models-to-build)
+    - [Kinds of models](#kinds-of-models)
+    - [Splitting the data for tuning and grading the models](#splitting-the-data-for-tuning-and-grading-the-models)
+    - [Scoring/grading the models](#scoringgrading-the-models)
   - [Variables to consider bringing in](#variables-to-consider-bringing-in)
   - [Structure](#structure)
   - [File Organization](#file-organization)
@@ -45,6 +48,30 @@ Consideration 9. makes me realize that I do not want to go through this process 
    1. Inputs: all data I can find on sold apartments in the last 10 years with a final price of 5 800 000 SEK or less.
 2. Regression to predict appreciation.
    1. Inputs: all data I can find on apartments that were bought and sold more than once in the last 10 years where the first price was 5 800 000 SEK or less.
+
+### Kinds of models
+
+1. Linear regression
+2. Random forest regression
+3. Neural network regression
+4. Ensemble method to bring them together?
+
+### Splitting the data for tuning and grading the models
+
+1. Split into train and test
+2. Split the train set further inte train and validate for optimizing hyper-parameters of model
+   1. Use k-fold cross-validation for tuning
+
+### Scoring/grading the models
+
+1. Accuracy
+2. Precision
+3. Recall
+4. Sensitivity
+5. Specificity
+6. ROC curve
+7. FA score
+8. Youden's J
 
 ## Variables to consider bringing in
 

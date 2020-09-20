@@ -9,7 +9,7 @@
 # Revised Version:
 
 # 01 Source all my functions ####
-source("04_my_fxns_this_project/01_settings_and_load_functions.r")
+source("04_fxns_this_project/f01_settings_and_load_functions.r")
 
 # 02 Ensure all pkgs in this script are installed ####
 pkgs <-
