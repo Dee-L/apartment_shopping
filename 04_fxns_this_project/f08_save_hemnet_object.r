@@ -8,7 +8,13 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Gather results ####
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c()
+
+install_my_pkgs(pkgs)
+
+# 02 Gather results ####
 
 save_hemnet_object <- function() {
     sold_object <- data.frame(
@@ -31,12 +37,11 @@ save_hemnet_object <- function() {
         , url = na_if_empty(url_to_scrape)
     )
 
-    # 02 Create an object name ####
+    # 03 Create an object name ####
 
     object_name <-
         paste0(
-            format(Sys.time(), "%H_%M_%OS2")
-            , "o"
+            "o"
             , year_sold
             , "_"
             , city
@@ -49,7 +54,7 @@ save_hemnet_object <- function() {
 
     assign(object_name, sold_object)
 
-    # 03 Save the object ####
+    # 04 Save the object ####
 
     save(
         list = object_name

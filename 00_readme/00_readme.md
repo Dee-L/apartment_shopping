@@ -6,6 +6,7 @@ This file gives an overview of this coding project and how it is organized.
 
 - [README](#readme)
   - [Purpose](#purpose)
+  - [Scraping and pre processing](#scraping-and-pre-processing)
   - [Models to build](#models-to-build)
     - [Kinds of models](#kinds-of-models)
     - [Splitting the data for tuning and grading the models](#splitting-the-data-for-tuning-and-grading-the-models)
@@ -41,6 +42,16 @@ Considerations 5.&ndash;7. all intuitively favor Stockholm over Uppsala, but I h
 Consideration 8. mitigates some of the other potential negatives if this is positive.
 
 Consideration 9. makes me realize that I do not want to go through this process over and over... Since I know I cannot currently afford to get what I want, I do not need to stress about solving this problem right now. Instead, I can keep renting and saving until I know a bit more about what I want (perhaps I will get a partner in the meantime who will want to help pay, then it becomes a co-decision and the budget also changes?). I also have not been considering all of the other costs involved in buying a property (capital gains tax if sell, maintenance, real-estate agent fees, potential property taxes). If I'm not able to afford something I really love (i.e., it falls into the reward category for basically all of the considerations above), then it's not really worth all of the headache involved and I'd rather risk wasting some money on renting while continuing to live a more hassle-free lifestyle.
+
+## Scraping and pre processing
+
+- Clean file names- put in folder with date scraped
+- Script that checks latest date scraped, runs scraper program for new hits since last scraped date so as to not re-scrape everything
+- Distribution plots for QA
+- Feature engineer dates, etc
+- Subset to only include 5.5 msek selling price or less
+
+Start building models
 
 ## Models to build
 

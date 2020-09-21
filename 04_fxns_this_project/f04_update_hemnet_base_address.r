@@ -8,6 +8,12 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c()
+
+install_my_pkgs(pkgs)
+
 update_hemnet_base_address <- function() {
     hemnet_base_address <<-
         paste0(
@@ -25,8 +31,8 @@ update_hemnet_base_address <- function() {
             "&selling_price_max=",
             current_max_price,
             "&sold_age=",
-            years_to_look_back,
-            "y",
+            days_to_look_back,
+            "d",
             "&by=",
             sorting_feature,
             "&order=",

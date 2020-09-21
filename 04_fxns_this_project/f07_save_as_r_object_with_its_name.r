@@ -8,6 +8,12 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c()
+
+install_my_pkgs(pkgs)
+
 # 01 Save as r object with its name ####
 
 save_as_r_object_with_its_name <- function(object, folder_to_save_in) {

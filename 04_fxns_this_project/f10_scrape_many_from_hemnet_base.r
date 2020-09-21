@@ -8,30 +8,37 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Start function definition ####
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c(
+        "rvest"
+    )
+
+install_my_pkgs(pkgs)
+
+# 02 Start function definition ####
 
 scrape_many_from_hemnet_base <- function() {
 
-    # 02 Set the range for how many pages the base page should point to ####
+    # 03 Set the range for how many pages the base page should point to ####
 
     limit_hemnet_base_address_hits(min_n_pages = 1, max_n_pages = 50)
 
-    # 03 Set where data will be saved ####
+    # 04 Set where data will be saved ####
 
     output_folder_scraped <<-
-    paste0(
-        output_folder,
-        "01_scraped/",
-        "price_",
-        current_min_price,
-        "_to_",
-        current_max_price,
-        "/"
-    )
+        paste0(
+            output_folder_scraped_parent
+            , "price_"
+            , current_min_price
+            , "_to_"
+            , current_max_price
+            , "/"
+        )
 
     dir.create(output_folder_scraped)
 
-    # 04 Loop to scrape the pages ####
+    # 05 Loop to scrape the pages ####
 
     for (page in seq_len(total_pages)) {
 
@@ -62,7 +69,7 @@ scrape_many_from_hemnet_base <- function() {
 
         cat(length(pages_to_scrape), "pages to scrape from this base page.")
 
-        # 05 Inner loop ####
+        # 06 Inner loop ####
 
         for (page_to_scrape in seq_along(pages_to_scrape)) {
 
@@ -82,7 +89,7 @@ scrape_many_from_hemnet_base <- function() {
 
             html_to_read <<- try_wait_retry(get_html(url_to_scrape))
 
-            # 06 Scrape and test all data from the url. Capture fails. ####
+            # 07 Scrape and test all data from the url. Capture fails. ####
 
             try_scrape_save_hemnet_html()
         }

@@ -73,3 +73,43 @@ for (file in
             results_df <<- rbind(results_df, temp_df)
         }
     }
+
+
+
+my_rename <- function(old_file) {
+    file.rename(
+        old_file
+        , right(old_file, nchar(old_file) - 11)
+        )
+}
+
+for (folder in list.dirs()) {
+
+    if (folder == ".") next
+
+    message("Moving to: ", folder, "\n\n")
+    setwd(folder)
+
+    for (file in list.files()) {
+
+        if (file != "failed_pages.rds") {
+
+            if (exists("n_renamed")) {
+                n_renamed <<- n_renamed + 1
+            } else {
+                n_renamed <<- 1
+            }
+
+            cat("Renaming: ", file, "\n\n")
+            my_rename(file)
+
+        }
+
+    }
+
+    message("Moving to parent folder.\n\n")
+    setwd("../")
+
+    cat(n_renamed, " renamed files.\n\n")
+
+}

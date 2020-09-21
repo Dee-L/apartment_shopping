@@ -8,10 +8,15 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c()
+
+install_my_pkgs(pkgs)
 
 try_scrape_save_hemnet_html <- function() {
 
-    # 01 Tries the expression. If fails, runs the error block. ####
+    # 02 Tries the expression. If fails, runs the error block. ####
 
     tryCatch(
         expr = {
@@ -20,13 +25,13 @@ try_scrape_save_hemnet_html <- function() {
             save_hemnet_object()
         },
 
-        # 02 The error block that runs if errors crop up in the expression ####
+        # 03 The error block that runs if errors crop up in the expression ####
 
         error = function(error_message) {
             message("Error! Saving to failed_pages df.")
             error_message %<>% as.character()
 
-            # 03 Creates "failed pages" df to capture error message ####
+            # 04 Creates "failed pages" df to capture error message ####
 
             if (exists("failed_pages")) {
                 assign(
@@ -52,7 +57,7 @@ try_scrape_save_hemnet_html <- function() {
 
             }
 
-            # 04 Saves the "failed pages" df as an rda object ####
+            # 05 Saves the "failed pages" df as an rda object ####
 
             save_as_r_object_with_its_name(
                 failed_pages,

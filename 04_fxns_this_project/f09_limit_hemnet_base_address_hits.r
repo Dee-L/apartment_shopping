@@ -8,18 +8,28 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c(
+        "rvest"
+    )
+
+install_my_pkgs(pkgs)
+
+# 02 Define the function ####
+
 limit_hemnet_base_address_hits <- function(min_n_pages = 1, max_n_pages = 50) {
 
     repeat {
         update_hemnet_base_address()
 
-        # Create html session for navigating and scraping
+        # 03 Create html session for navigating and scraping ####
 
         html_to_read <<-
             hemnet_base_address %>%
             get_html()
 
-        # Calculate the number of pages from the page landed on
+        # 04 Calculate the number of pages from the page landed on ####
 
         total_pages <<-
             html_to_read %>%
@@ -31,6 +41,8 @@ limit_hemnet_base_address_hits <- function(min_n_pages = 1, max_n_pages = 50) {
             prod(., 1 / 50) %>%
             ceiling(.)
 
+        # 05 Reset total pages to 1 if only 1 page in range ####
+
         if (is.na(total_pages)) {
             total_pages <<- 1
         }
@@ -40,6 +52,8 @@ limit_hemnet_base_address_hits <- function(min_n_pages = 1, max_n_pages = 50) {
             total_pages,
             "\n\n"
         )
+
+        # 06 Adjust price ranges so that have fewer than max_n_pages ####
 
         if (total_pages < min_n_pages) {
             cat(
