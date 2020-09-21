@@ -138,8 +138,8 @@ test_final_price <- function(f_p = final_price) {
     if (
           any(
             (length(f_p) == 0)
-            , (f_p < 1000000)
-            , (f_p > 10000000)
+            , (f_p < first_min_price)
+            , (f_p > final_max_price)
             )
           ) {
             stop("Impossible final price")

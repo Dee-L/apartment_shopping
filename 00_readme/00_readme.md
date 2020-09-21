@@ -72,6 +72,7 @@ Consideration 9. makes me realize that I do not want to go through this process 
 6. ROC curve
 7. FA score
 8. Youden's J
+9. F1 score
 
 ## Variables to consider bringing in
 

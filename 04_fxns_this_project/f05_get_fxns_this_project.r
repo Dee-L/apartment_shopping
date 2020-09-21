@@ -289,8 +289,8 @@ get_final_price <- function(html) {
 
     if (
         any(
-            final_price < 1000000
-            , final_price > 10000000
+            final_price < first_min_price
+            , final_price > final_max_price
             )
      ) {
         final_price <- NA
