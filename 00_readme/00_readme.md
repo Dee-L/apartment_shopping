@@ -45,8 +45,6 @@ Consideration 9. makes me realize that I do not want to go through this process 
 
 ## Scraping and pre processing
 
-- Clean file names- put in folder with date scraped
-- Script that checks latest date scraped, runs scraper program for new hits since last scraped date so as to not re-scrape everything
 - Distribution plots for QA
 - Feature engineer dates, etc
 - Subset to only include 5.5 msek selling price or less
