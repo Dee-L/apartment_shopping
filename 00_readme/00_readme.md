@@ -45,8 +45,9 @@ Consideration 9. makes me realize that I do not want to go through this process 
 
 ## Scraping and pre processing
 
-- Distribution plots for QA
+- Preprocess data
 - Feature engineer dates, etc
+- Distribution plots for QA
 - Subset to only include 5.5 msek selling price or less
 
 Start building models

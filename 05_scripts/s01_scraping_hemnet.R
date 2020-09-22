@@ -16,7 +16,7 @@ pkgs <-
 
 install_my_pkgs(pkgs)
 
-# 02 create directory for scraping data today ####
+# 02 create directory for catching all scraped data ####
 output_folder_scraped_gparent <<-
   paste0(
     output_folder,
@@ -25,18 +25,6 @@ output_folder_scraped_gparent <<-
 
 if (!dir.exists(output_folder_scraped_gparent)) {
   dir.create(output_folder_scraped_gparent)
-}
-
-output_folder_scraped_parent <<-
-  paste0(
-    output_folder_scraped_gparent,
-    "date_",
-    gsub("-", "", Sys.Date()),
-    "/"
-  )
-
-if (!dir.exists(output_folder_scraped_parent)) {
-  dir.create(output_folder_scraped_parent)
 }
 
 # 03 Choose days to look back based on previous scrapes ####
@@ -54,13 +42,24 @@ today <-
 
 max_days_back_to_look <- (today - last_day_scraped)
 
-# Only execute the rest of the script if there is at least a week of new data
+# 04 Only execute the rest if there is at least a week of new data ####
 
 if (max_days_back_to_look >= 7) {
 
-  # 03 Pull in data for area names and numbers for creating URLs to scrape ####
+  # 05 create directory for scraping data today ####
+  output_folder_scraped_parent <<-
+    paste0(
+      output_folder_scraped_gparent,
+      "date_",
+      today_8digit()),
+      "/"
+    )
 
-  # pull in key:value data from Hemnet manually gathered in an excel
+  if (!dir.exists(output_folder_scraped_parent)) {
+    dir.create(output_folder_scraped_parent)
+  }
+
+  # 06 pull in key:value data from Hemnet manually gathered in an excel ####
 
   area_mappings <-
     openxlsx::read.xlsx(
@@ -68,14 +67,14 @@ if (max_days_back_to_look >= 7) {
       sheet = "used_mappings"
     )
 
-  # create string for location search on Hemnet
+  # 07 create string for location search on Hemnet ####
 
   hemnet_area_number <-
     paste(area_mappings[["Hemnet_number"]],
       collapse = "&location_ids%5B%5D="
     )
 
-  # 04 Initialize parameters for first hemnet "base" page ####
+  # 08 Initialize parameters for first hemnet "base" page ####
 
   housing_type <- "bostadsratt"
   min_rooms <- 1
@@ -91,19 +90,16 @@ if (max_days_back_to_look >= 7) {
 
   repeat {
 
-    # 05 Scrape all pages from a given hemnet "base" page ####
-
-    # This is working on the first round, but then only finding 1 page when
-    # trying to update
+    # 09 Scrape all pages from a given hemnet "base" page ####
 
     scrape_many_from_hemnet_base()
 
-    # 06 After scraping, stop scraping if max price is too high ####
+    # 10 After scraping, stop scraping if max price is too high ####
 
     if (current_max_price >= final_max_price) {
       break
 
-    # 06 If max price not too high, re-establish prices for new "base" page ####
+    # 11 If max price not too high, re-establish prices for new "base" page ####
     } else {
       current_min_price <<- current_max_price + 1
       current_max_price <<- final_max_price

@@ -11,6 +11,9 @@
 # 01 This presents customized summary data from a column of a df ####
 
 my_summary <- function(df, column_to_summarize, limit = 3) {
+
+    writeLines(paste0("\n\nCOLUMN SUMMARIZED:\n\n", column_to_summarize, "\n\n"))
+
     temp_df <- df[, column_to_summarize] %>% as.data.frame()
     colnames(temp_df)[1] <- "value"
 
@@ -26,7 +29,7 @@ my_summary <- function(df, column_to_summarize, limit = 3) {
     cat("
 Sorted by value ascending:
 ")
-    print(sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count 
                      from temp_df
                      group by value
                      order by value asc
@@ -35,7 +38,7 @@ Sorted by value ascending:
     cat("
 Sorted by value descending:
 ")
-    print(sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count 
                      from temp_df
                      group by value
                      order by value desc
@@ -44,7 +47,7 @@ Sorted by value descending:
     cat("
 Sorted by count ascending:
 ")
-    print(sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count 
                      from temp_df
                      group by value
                      order by count asc
@@ -53,7 +56,7 @@ Sorted by count ascending:
     cat("
 Sorted by count descending:
 ")
-    print(sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count 
                      from temp_df
                      group by value
                      order by count desc

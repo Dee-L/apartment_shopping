@@ -71,6 +71,15 @@ get_street <- function(html) {
         na_if_empty
 }
 
+# This function is not working for the following examples:
+# 35 floor, 34 floor, 25 floor, 23 floor, 15 floor, 12 floor, 5 floor (instead of 0.5)?
+# https://www.hemnet.se/salda/lagenhet-3,5rum-kungsholmen-fredhall-stockholms-kommun-adlerbethsgatan-17,-3-4-tr-72289
+# https://www.hemnet.se/salda/lagenhet-3,5rum-vasastan-stockholms-kommun-vegagatan-6,-3-4tr-974312
+# https://www.hemnet.se/salda/lagenhet-4rum-kungsholmen-stockholms-kommun-scheelegatan-26,-3,5tr-891071
+# https://www.hemnet.se/salda/lagenhet-5,5rum-odenplan-stockholms-kommun-vastmannagatan-48,-1tr-lght-17-471617
+# https://www.hemnet.se/salda/lagenhet-3rum-vasastan-stockholms-kommun-upplandsgatan-72,-1,5-tr-1199784
+# After fixing, should make a list of URLS that previously scraped wrong, then re-scrape them
+
 get_floor_in_building <- function(html) {
     address <- get_address(html)
     street_number <- get_street_number(html)

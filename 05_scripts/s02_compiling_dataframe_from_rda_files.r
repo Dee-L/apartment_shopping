@@ -15,69 +15,79 @@ pkgs <-
 
 install_my_pkgs(pkgs)
 
-# 02 Check if need to compile new data ####
-
-    # look at date of latest results and if greater than date of latest scraped
-    # no need to compile new
-
 # 02 create directory for scraping data today ####
-
-    # Want to change naming so that the files get the date name,
-    # since only one file per date no need to nest in a folder with the date
-output_folder_compiled_parent <<-
-  paste0(
+output_folder_compiled <<-
+paste0(
     output_folder,
     "02_compiled/"
-  )
-
-if (!dir.exists(output_folder_compiled_parent)) {
-  dir.create(output_folder_compiled_parent)
-}
-
-
-
-output_folder_compiled <<-
-  paste0(
-    output_folder_compiled_parent,
-    "date_",
-    gsub("-", "", Sys.Date()),
-    "/"
-  )
+)
 
 if (!dir.exists(output_folder_compiled)) {
-  dir.create(output_folder_compiled)
+dir.create(output_folder_compiled)
 }
 
-# 03 compile the data ####
+# 03 Check if need to compile new data ####
 
-# Want to update this so it doesn't compile everything each time,
-# but just takes the latest compiled results, and then adds to those from whatever
-# has been scraped since
+latest_scraped_results <-
+    output_folder_scraped_gparent %>%
+    list.dirs(recursive = F) %>%
+    .[length(.)] %>%
+    right(8) %>%
+    as.numeric
+    
+latest_compiled_results <-
+    output_folder_compiled %>%
+    list.files %>%
+    .[length(.)] %>%
+    gsub(".rds", "", .) %>%
+    right(8) %>%
+    as.numeric
 
-for (file in list.files("07_outputs/01_scraped/", recursive = T)) {
+# 04 Only proceed if compiled results are older than scraped results ####
+if (latest_compiled_results < latest_scraped_results) {
 
-    # create path for file
-    this_path <-
-        paste0("07_outputs/01_scraped/", file)
+    # 05 Subset the scraped folders to those that contain new data ####
+    scraped_folders <-
+        list.dirs(output_folder_scraped_gparent, recursive = F)
+        
+    dates_of_scraped_folders <-
+        scraped_folders %>%
+            right(8) %>%
+            as.numeric
 
-    # ignore the failed_pages files
-    if (!(grepl("failed_pages.rds", this_path))) {
+    relevant_scraped_folders <-
+        scraped_folders[dates_of_scraped_folders > latest_compiled_results]
 
-        cat("Adding: ", file, "\n\n")
+    # 06 compile the data ####
+    for (file in list.files(relevant_scraped_folders, recursive = T)) {
 
-        # save into a temp_df the file
-        temp_df <<- reassign_rda(this_path)
+        # 07 create path for file ####
+        this_path <-
+            paste0(output_folder_scraped_gparent, file)
 
-        # create or append to results_df
-        if (!exists("results_df")) {
-            results_df <<- temp_df
-        } else {
-            results_df <<- rbind(results_df, temp_df)
+        # 08 ignore the failed_pages files ####
+        if (!(grepl("failed_pages.rds", this_path))) {
+
+            cat("Adding: ", file, "\n\n")
+
+            # 09 save into a temp_df the file ####
+            temp_df <<- reassign_rda(this_path)
+
+            # 10 create or append to results_df ####
+            if (!exists("results_df")) {
+                results_df <<- temp_df
+            } else {
+                results_df <<- rbind(results_df, temp_df)
+            }
         }
-
     }
+
+    # 11 save the object ####
+    name_of_results_df <-
+        paste0(
+            "date_"
+            , today_8digit())
+        )
+
+    saveRDS(results_df, paste0(output_folder_compiled, eval(name_of_results_df)))
 }
-
-# 04 save the object ####
-save_as_r_object_with_its_name(results_df, output_folder_compiled)
-
