@@ -43,6 +43,8 @@ save_hemnet_object <- function() {
         paste0(
             "o"
             , year_sold
+            , left(month_sold_swedish, 3)
+            , day_of_month_sold
             , "_"
             , city
             , "_"

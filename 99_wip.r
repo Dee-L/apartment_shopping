@@ -113,3 +113,25 @@ for (folder in list.dirs()) {
     cat(n_renamed, " renamed files.\n\n")
 
 }
+
+
+install.packages("mice")
+library('mice')
+
+df <- data.frame(
+    x = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    , y = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) * 2
+)
+
+test_string <- "\n  Slutpris\n  Adlerbethsgatan 17, 3-4 tr\n"
+
+# drops commas and dashes
+test_string %>% gsub("[^[:alnum:] ]", "", .)
+
+# drops dashes
+test_string %>% gsub("[^[:alnum:], ]", "", .)
+
+# keeps all three
+test_string %>% gsub("[^-[:alnum:], ]", "", .)
+
+test_string %>% gsub("[^[:alnum:],- ]", "", .)

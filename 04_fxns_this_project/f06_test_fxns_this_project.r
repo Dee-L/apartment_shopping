@@ -18,15 +18,18 @@ install_my_pkgs(pkgs)
 # 02 Testing data that was scraped and throwing error if problem ####
 
 test_street_number <- function(s_n = street_number) {
-  if (
-    any(
-      (length(s_n) == 0)
-      , (!(length(s_n) > 0))
-      , !(s_n > 0)
-      )
-    ) {
-      stop("Impossible street number")
-    }
+  if (!is.na(s_n)) {
+    if (
+      any(
+        (length(s_n) == 0)
+        , (!(length(s_n) > 0))
+        , !(s_n > 0)
+        , !(is.numeric(s_n))
+        )
+      ) {
+        stop("Impossible street number")
+      }
+  }
 }
 
 test_street <- function(s = street) {
@@ -151,8 +154,7 @@ test_asking_price <- function(a_p = asking_price) {
     if (
           any(
             (length(a_p) == 0)
-            , (a_p < 500000)
-            , (a_p > 12000000)
+            , (a_p < 0)
             )
           ) {
             stop("Impossible asking_price")
@@ -165,8 +167,6 @@ test_rooms <- function(r = rooms) {
     if (
           any(
             (length(r) == 0)
-            , (r < 1)
-            , (r > 10)
             )
           ) {
           stop("Impossible number of rooms")
@@ -179,8 +179,6 @@ test_kvm <- function(k = kvm) {
     if (
           any(
             (length(k) == 0)
-            , (k < 10)
-            , (k > 200)
             , (k <= rooms)
             )
           ) {
@@ -194,8 +192,6 @@ test_avgift <- function(a = avgift) {
     if (
           any(
             (length(a) == 0)
-            , (a < 500)
-            , (a > 20000)
             )
           ) {
           stop("Impossible avgift")
@@ -214,8 +210,6 @@ test_running_costs <- function(r_c = running_costs) {
           if (
             any(
               (length(r_c) == 0)
-              , (r_c < 500)
-              , (r_c > 20000)
               )
             ) {
             stop("Impossible running costs")
@@ -229,8 +223,6 @@ test_year_built <-
         if (
           any(
             (length(y_b) == 0)
-            , (y_b < 1250)
-            , (y_b > 2020)
             , (y_b > y_s)
             )
           ) {

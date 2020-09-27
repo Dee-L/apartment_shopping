@@ -27,15 +27,11 @@ get_html <- function(url) {
 
 # 03 Getting data from Hemnet html ####
 
-#### These will all run faster if they run from a session instead
-# of a html and I will hit Hemnet less frequently
-
 get_address <- function(html) {
     html %>%
         rvest::html_nodes(".sold-property__address") %>%
         rvest::html_text() %>%
-        gsub("/", " av ", .) %>%
-        gsub("[^[:alnum:] ]", "", .) %>%
+        gsub("[^-[:alnum:]\\+/, ]", "", .) %>%
         gsub("  Slutpris  ", "", .) %>%
         tolower
 }
@@ -50,7 +46,8 @@ get_street_number <- function(html) {
 
     if (
         any(
-            street_number < 0
+            is.na(street_number)
+            , street_number < 0
             )
      ) {
         street_number <- NA
@@ -71,19 +68,17 @@ get_street <- function(html) {
         na_if_empty
 }
 
-# This function is not working for the following examples:
-# 35 floor, 34 floor, 25 floor, 23 floor, 15 floor, 12 floor, 5 floor (instead of 0.5)?
-# https://www.hemnet.se/salda/lagenhet-3,5rum-kungsholmen-fredhall-stockholms-kommun-adlerbethsgatan-17,-3-4-tr-72289
-# https://www.hemnet.se/salda/lagenhet-3,5rum-vasastan-stockholms-kommun-vegagatan-6,-3-4tr-974312
-# https://www.hemnet.se/salda/lagenhet-4rum-kungsholmen-stockholms-kommun-scheelegatan-26,-3,5tr-891071
-# https://www.hemnet.se/salda/lagenhet-5,5rum-odenplan-stockholms-kommun-vastmannagatan-48,-1tr-lght-17-471617
-# https://www.hemnet.se/salda/lagenhet-3rum-vasastan-stockholms-kommun-upplandsgatan-72,-1,5-tr-1199784
-# After fixing, should make a list of URLS that previously scraped wrong, then re-scrape them
-
 get_floor_in_building <- function(html) {
     address <- get_address(html)
+
     street_number <- get_street_number(html)
-    street <- get_street(html)
+    # Cannot use normal get_street because it removes spaces which
+    # would through off the character count when extracting the floor info
+    street <- substr(
+        address
+        , 1
+        , gregexpr(as.character(street_number), address)[[1]][1] - 2) %>%
+        na_if_empty
 
     floor_info <-
         substr(
@@ -92,41 +87,58 @@ get_floor_in_building <- function(html) {
             , nchar(address)
             )
 
+    # Remove "strand" from floor info if it exits
+    floor_info %<>% gsub("strand", "", .)
+
+    # Replace "och" with dash to get in-between floors
+    floor_info %<>%
+        gsub(" och ", "och", .) %>%
+        gsub("och", "-", .)
+
+    floor_info %<>%
+        gsub("/", "av", .)
+
     if (grepl("av", floor_info)) {
       floor_info %<>%
         substr(., 1, gregexpr("av", .)[[1]][1] - 1)
     }
 
     floor_in_building <-
+        # See if text indicates it's a floor number
         if (
             any(
                 (grepl("v.n", floor_info)),
                 (grepl("tr", floor_info))
                 )
             ) {
-            regmatches(
-                floor_info,
-                gregexpr(
-                    "[[:digit:]]+",
-                    floor_info)
-                    ) %>%
-                .[[1]] %>%
-                .[length(.)] %>%
-                as.numeric
-            } else if (
-                grepl("bv", floor_info)
-            ) {
-                as.numeric(0)
-            }
+                # Make it 0 floor if bv
+                if (grepl("bv", floor_info)) {
+                    as.numeric(0)
+                } else {
+                    # Replace commas with points to get half floors
+                    # Also remove any text after "lg"
+                    floor_info %<>%
+                        gsub(",", ".", .) %>%
+                        gsub("lg.{1,}", "", .)
 
-    if (
-        any(
-            floor_in_building < 0
-            , floor_in_building > 40
-            )
-     ) {
-        floor_in_building <- NA
-    }
+                    # If no dash, plus, nor slash, keep digits
+                    if (!grepl("\\+|-|/", floor_info)) {
+                        floor_info %>% gsub("[^0-9.-]", "", .) %>% as.numeric
+                    # If dash, plus, or slash, convert to half floor
+                    } else {
+                        regmatches(
+                            floor_info,
+                            gregexpr(
+                                "[[:digit:]]+",
+                                floor_info)
+                            ) %>%
+                            .[[1]] %>%
+                            .[length(.) - 1] %>%
+                            as.numeric %>%
+                            sum(0.5)
+                    }
+                }
+            }
 
     floor_in_building %>%
         na_if_empty
@@ -270,15 +282,6 @@ get_year_sold <- function(html) {
             na_if_empty %>%
             as.numeric
 
-    if (
-        any(
-            year_sold < 2010
-            , year_sold > 2020
-            )
-     ) {
-        year_sold <- NA
-    }
-
     year_sold
 
 }
@@ -325,17 +328,6 @@ get_asking_price <- function(html) {
             na_if_empty %>%
             as.numeric
 
-    if (!is.na(asking_price)) {
-        if (
-            any(
-                asking_price < 500000,
-                asking_price > 12000000
-            )
-        ) {
-            asking_price <- NA
-        }
-    }
-
     asking_price
 
 }
@@ -359,17 +351,6 @@ get_rooms <- function(html) {
             na_if_empty %>%
             as.numeric
 
-    if (!is.na(rooms)) {
-        if (
-            any(
-                rooms < 1
-                , rooms > 10
-                )
-        ) {
-            rooms <- NA
-        }
-    }
-
     rooms
 }
 
@@ -382,17 +363,6 @@ get_kvm <- function(html) {
             gsub(" m.", "", .) %>%
             na_if_empty %>%
             as.numeric
-
-    if (!is.na(kvm)) {
-        if (
-            any(
-                kvm < 10,
-                kvm > 200
-            )
-        ) {
-            kvm <- NA
-        }
-    }
 
     kvm
 
@@ -411,17 +381,6 @@ get_avgift <- function(html) {
             na_if_empty %>%
             as.numeric
 
-    if (!is.na(avgift)) {
-        if (
-            any(
-                avgift < 500,
-                avgift > 20000
-            )
-        ) {
-            avgift <- NA
-        }
-    }
-
     avgift
 
 }
@@ -438,17 +397,6 @@ get_running_costs <- function(html) {
             na_if_empty %>%
             as.numeric
 
-    if (!is.na(running_costs)) {
-        if (
-            any(
-                running_costs < 500,
-                running_costs > 20000
-            )
-        ) {
-            running_costs <- NA
-        }
-    }
-
     running_costs
 
 }
@@ -463,16 +411,6 @@ get_year_built <- function(html) {
             na_if_empty %>%
             as.numeric
 
-    if (!is.na(year_built)) {
-        if (
-            any(
-                year_built < 1250,
-                year_built > 2020
-            )
-        ) {
-            year_built <- NA
-        }
-    }
     year_built
 }
 
