@@ -8,80 +8,88 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
+# 01 Ensure all pkgs in this scripts are installed ####
+pkgs <-
+    c(
+        "lubridate"
+    )
+
+install_my_pkgs(pkgs)
+
 ###Swedish holidays and pinch days
 is_newyearsday <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 1 &
-           mday(date_as_yyyy_mm_dd) == 1,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 1 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 1,
          TRUE,
          FALSE)}
 
 is_twelfthnight <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 1 &
-           mday(date_as_yyyy_mm_dd) == 5,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 1 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 5,
          TRUE,
          FALSE)}
 
 is_epiphany <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 1 &
-           mday(date_as_yyyy_mm_dd) == 6,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 1 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 6,
          TRUE,
          FALSE)}
 
 is_walpurgis <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 4 &
-           mday(date_as_yyyy_mm_dd) == 30,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 4 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 30,
          TRUE,
          FALSE)}
 
 is_mayday <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 5 &
-           mday(date_as_yyyy_mm_dd) == 1,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 5 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 1,
          TRUE,
          FALSE)}
 
 is_nationalday <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 6 &
-           mday(date_as_yyyy_mm_dd) == 6,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 6 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 6,
          TRUE,
          FALSE)}
 
 is_halloween <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 10 &
-           mday(date_as_yyyy_mm_dd) == 31,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 10 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 31,
          TRUE,
          FALSE)}
 
 is_christmaseve <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 12 &
-           mday(date_as_yyyy_mm_dd) == 24,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 12 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 24,
          TRUE,
          FALSE)}
 
 is_christmasday <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 12 &
-           mday(date_as_yyyy_mm_dd) == 25,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 12 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 25,
          TRUE,
          FALSE)}
 
 is_seconddayofchristmas <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 12 &
-           mday(date_as_yyyy_mm_dd) == 26,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 12 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 26,
          TRUE,
          FALSE)}
 
 is_newyearseve <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 12 &
-           mday(date_as_yyyy_mm_dd) == 31,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 12 &
+           lubridate::mday(date_as_yyyy_mm_dd) == 31,
          TRUE,
          FALSE)}
 
 is_allsaintsday <- function(date_as_yyyy_mm_dd) {
-  ifelse((month(date_as_yyyy_mm_dd) == 10 &
-            mday(date_as_yyyy_mm_dd) == 31 &
-            wday(date_as_yyyy_mm_dd) == 7) |
-           (month(date_as_yyyy_mm_dd) == 11 &
-              mday(date_as_yyyy_mm_dd) %in% 1:6 &
-              wday(date_as_yyyy_mm_dd) == 7),
+  ifelse((lubridate::month(date_as_yyyy_mm_dd) == 10 &
+            lubridate::mday(date_as_yyyy_mm_dd) == 31 &
+            lubridate::wday(date_as_yyyy_mm_dd) == 7) |
+           (lubridate::month(date_as_yyyy_mm_dd) == 11 &
+              lubridate::mday(date_as_yyyy_mm_dd) %in% 1:6 &
+              lubridate::wday(date_as_yyyy_mm_dd) == 7),
          TRUE,
          FALSE)}
 
@@ -93,9 +101,9 @@ is_allsaintseve <- function(date_as_yyyy_mm_dd) {
 }
 
 is_midsummersday <- function(date_as_yyyy_mm_dd) {
-  ifelse(month(date_as_yyyy_mm_dd) == 6 &
-           mday(date_as_yyyy_mm_dd) %in% 20:26 &
-           wday(date_as_yyyy_mm_dd) == 7,
+  ifelse(lubridate::month(date_as_yyyy_mm_dd) == 6 &
+           lubridate::mday(date_as_yyyy_mm_dd) %in% 20:26 &
+           lubridate::wday(date_as_yyyy_mm_dd) == 7,
          TRUE,
          FALSE)}
 
@@ -108,17 +116,30 @@ is_midsummerseve <- function(date_as_yyyy_mm_dd) {
 
 is_eastersunday <- function(date_as_yyyy_mm_dd) {
   ifelse(date_as_yyyy_mm_dd %in%
-           c("2009-04-12",
-             "2010-04-04",
-             "2011-04-24",
-             "2012-04-08",
-             "2013-03-31",
-             "2014-04-20",
-             "2015-04-05",
-             "2016-03-27",
-             "2017-04-16",
-             "2018-04-01",
-             "2019-04-21"),
+           c(
+             "2009-04-12"
+             , "2010-04-04"
+             , "2011-04-24"
+             , "2012-04-08"
+             , "2013-03-31"
+             , "2014-04-20"
+             , "2015-04-05"
+             , "2016-03-27"
+             , "2017-04-16"
+             , "2018-04-01"
+             , "2019-04-21"
+             , "2020-04-12"
+             , "2021-04-04"
+             , "2022-04-17"
+             , "2023-04-09"
+             , "2024-03-31"
+             , "2025-04-20"
+             , "2026-04-05"
+             , "2027-03-28"
+             , "2028-04-16"
+             , "2029-04-01"
+             , "2030-04-21"
+             ),
          TRUE,
          FALSE)}
 
@@ -203,9 +224,9 @@ is_swedish_pinch_day <- function(date_as_yyyy_mm_dd) {
   next_day <- date_as_yyyy_mm_dd %>% as.Date + 1
   
   ifelse((is_swedish_red_or_pink_day(previous_day) &
-            wday(date_as_yyyy_mm_dd) == 6) | 
+            lubridate::wday(date_as_yyyy_mm_dd) == 6) | 
            (is_swedish_red_or_pink_day(next_day) &
-              wday(date_as_yyyy_mm_dd) == 2),
+              lubridate::wday(date_as_yyyy_mm_dd) == 2),
          TRUE,
          FALSE)
 }
@@ -216,4 +237,43 @@ is_swedish_day_off <- function(date_as_yyyy_mm_dd) {
       (is_swedish_pinch_day(date_as_yyyy_mm_dd)),
     TRUE,
     FALSE)
+}
+
+add_swedish_days_off_data <- function(data_frame, column_with_date_as_ymd) {
+  data_frame[["swedish_red_or_pink_day"]] <- NA
+
+  message("Adding red/pink days")
+
+  for (d in 1 : nrow(data_frame)) {
+    cat("\nRow", d, "of", nrow(data_frame), "\n")
+    data_frame[["swedish_red_or_pink_day"]][d] <-
+      ifelse(
+        is_swedish_red_or_pink_day(data_frame[[column_with_date_as_ymd]][d])
+        , 1
+        , 0
+        )
+  }
+
+  data_frame[["swedish_pinch_day"]] <- NA
+
+  message("Adding pinch days")
+
+  for (d in 1 : nrow(data_frame)) {
+    cat("\nRow", d, "of", nrow(data_frame), "\n")
+    data_frame[["swedish_pinch_day"]][d] <-
+      ifelse(is_swedish_pinch_day(data_frame[[column_with_date_as_ymd]][d]),
+            1,
+            0)
+  }
+
+  message("Adding days off")
+
+  data_frame[["swedish_day_off"]] <-
+    ifelse(
+      (data_frame[["swedish_red_or_pink_day"]] == 1) |
+        (data_frame[["swedish_pinch_day"]] == 1),
+      1,
+      0)
+
+  data_frame
 }

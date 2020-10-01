@@ -31,7 +31,7 @@ get_address <- function(html) {
     html %>%
         rvest::html_nodes(".sold-property__address") %>%
         rvest::html_text() %>%
-        gsub("[^-[:alnum:]\\+/, ]", "", .) %>%
+        gsub("[^-[:alnum:]\\+/&\\., ]", "", .) %>%
         gsub("  Slutpris  ", "", .) %>%
         tolower
 }
@@ -92,6 +92,7 @@ get_floor_in_building <- function(html) {
 
     # Replace "och" with dash to get in-between floors
     floor_info %<>%
+        gsub("&", "och", .) %>%
         gsub(" och ", "och", .) %>%
         gsub("och", "-", .)
 
@@ -115,10 +116,15 @@ get_floor_in_building <- function(html) {
                 if (grepl("bv", floor_info)) {
                     as.numeric(0)
                 } else {
-                    # Replace commas with points to get half floors
+
+                    # If comma before a digit, change to point
+                    if (grepl(",\\d", floor_info)) {
+                        floor_info %<>%
+                            gsub(",", ".", .)
+                    }
+                    
                     # Also remove any text after "lg"
                     floor_info %<>%
-                        gsub(",", ".", .) %>%
                         gsub("lg.{1,}", "", .)
 
                     # If no dash, plus, nor slash, keep digits

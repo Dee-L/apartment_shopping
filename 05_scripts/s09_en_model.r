@@ -1,4 +1,19 @@
-source("D:/Coding/R/Public/pkgs_and_fxns/load_pkgs_and_fxns.R")
+# Choosing a model:
+# Regression enhanced random forest?:
+# https://neptune.ai/blog/random-forest-regression-when-does-it-fail-and-why
+
+# Hyperparameters to tune with RF: # of trees and depth of trees
+
+# ARIMA model for time-series analysis?
+# Long short-term memory neural network for time-series analysis?
+# https://medium.com/analytics-steps/introduction-to-time-series-analysis-time-series-forecasting-machine-learning-methods-models-ecaa76a7b0e3
+
+# More on time-series analysis in R:
+# https://www.analyticsvidhya.com/blog/2015/12/complete-tutorial-time-series-modeling/
+
+# https://www.statworx.com/at/blog/time-series-forecasting-with-random-forest/
+
+# source("D:/Coding/R/Public/pkgs_and_fxns/load_pkgs_and_fxns.R")
 
 #May need to do one-hot encoding for all factors before building model
 
