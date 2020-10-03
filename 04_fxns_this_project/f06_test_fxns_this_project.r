@@ -8,7 +8,7 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Ensure all pkgs in this scripts are installed ####
+# 01 Ensure all pkgs in this script are installed ####
 
 pkgs <-
   c()
@@ -137,7 +137,7 @@ test_year_sold <-
       }
 }
 
-test_final_price <- function(f_p = final_price) {
+test_selling_price <- function(f_p = selling_price) {
     if (
           any(
             (length(f_p) == 0)
@@ -242,7 +242,7 @@ test_all <- function() {
     test_day_of_month_sold()
     test_month_sold_swedish()
     test_year_sold()
-    test_final_price()
+    test_selling_price()
     test_asking_price()
     test_rooms()
     test_kvm()

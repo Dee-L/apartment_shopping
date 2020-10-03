@@ -2,6 +2,9 @@
 # Regression enhanced random forest?:
 # https://neptune.ai/blog/random-forest-regression-when-does-it-fail-and-why
 
+# tidymodels in R?
+# https://www.tidymodels.org/
+
 # Hyperparameters to tune with RF: # of trees and depth of trees
 
 # ARIMA model for time-series analysis?

@@ -295,15 +295,74 @@ mice::mice.impute.pmm(
 # Should do 30 iterations
 # Should then extract at random one of the imputations from the last iteration
 
-imputations <-
-  ceiling(sum(is.na(practice_df[["final_price"]]))/nrow(practice_df) * 100)
+# imputations <-
+#   ceiling(sum(is.na(practice_df[["final_price"]]))/nrow(practice_df) * 100)
 
-imp_multi <- mice::mice(practice_df, m = imputations, max_iter = 30, method = "pmm")  # Impute missing values multiple times
+# imp_multi <- mice::mice(practice_df, m = imputations, max_iter = 30, method = "pmm")  # Impute missing values multiple times
 
-data_imp_multi_all <- mice::complete(imp_multi,       # Store multiply imputed data
-                           "repeated",
-                           include = TRUE)
+# data_imp_multi_all <- mice::complete(imp_multi,       # Store multiply imputed data
+#                            "repeated",
+#                            include = TRUE)
  
-data_imp_multi <- data.frame(                   # Combine imputed Y and X1-X4 (for convenience)
-  data_imp_multi_all[ , 1:6], data[, 2:5])
-head(data_imp_multi) 
+# data_imp_multi <- data.frame(                   # Combine imputed Y and X1-X4 (for convenience)
+#   data_imp_multi_all[ , 1:6], data[, 2:5])
+# head(data_imp_multi) 
+
+#One-hot encoding
+# 
+# customers <- data.frame(
+  # id=c(10, 20, 30, 40, 50),
+  # gender=c('male', 'female', 'female', 'male', 'female'),
+  # mood=c('happy', 'sad', 'happy', 'sad','happy'),
+  # outcome=c(1, 1, 0, 0, 0))
+# customers
+# 
+# 
+# 
+# dummify the data
+# 
+# dmy <- caret::dummyVars(" ~ .", data = customers)
+# dmy
+# caret must actually be loaded for the next step
+# library(caret)
+# trsf <- data.frame(predict(dmy, newdata = customers))
+# 
+# detach caret to avoid future conflicts
+# detach("package:caret", unload = TRUE)
+# 
+# trsf
+
+# Motion/timelapse plot
+
+df <- preprocessed_data
+x <- "avgift"
+y <- "selling_price"
+color <- "running_costs"
+size <- "rooms"
+time_frames <- "year_sold" # date_sold is computationally heavy
+# ids <-
+# group <- "age_when_sold"
+# stroke <- "age_when_sold"
+opaqueness <- "rooms"
+shape <- "city"
+
+
+# motion_plot <-
+ggplotly(
+  ggplot(df) +
+    geom_point(
+      aes(
+        x = df[[x]],
+        y = df[[y]],
+        color = df[[color]],
+        size = df[[size]],
+        frame = df[[time_frames]],
+        # id
+        # group = df[[group]],
+        # stroke = df[[stroke]],
+        alpha = 1 - 1 / df[[opaqueness]],
+        shape = df[[shape]]
+      )
+    ) +
+    scale_color_viridis_c(option = "magma")
+)

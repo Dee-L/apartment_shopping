@@ -8,26 +8,28 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Ensure all pkgs in this scripts are installed ####
+# 01 Ensure all pkgs in this script are installed ####
 pkgs <-
     c(
       "sqldf"
       , "dplyr"
       , "lubridate"
+      , "RcppRoll"
+      , "caret"
       )
 
 install_my_pkgs(pkgs)
 
 # 02 load latest compiled data ####
 
-compiled_data <- 
+compiled_data <-
   paste0(
     output_folder_compiled
     , list.files(output_folder_compiled) %>%
       .[length(.)]) %>%
     readRDS
 
-# 03 Renaming "final_price" column to "selling_price" to avoid confusion ####
+# 03 Renaming "selling_price" column to "selling_price" to avoid confusion ####
 
 if ("final_price" %in% names(compiled_data)) {
   index_for_final_price_column <- which(names(compiled_data) %in% "final_price")
@@ -35,13 +37,13 @@ if ("final_price" %in% names(compiled_data)) {
   names_for_all_others <- names(compiled_data) %>% .[. %not_in% "final_price"]
   compiled_data[["selling_price"]] <- compiled_data[["final_price"]]
 
-  compiled_data <- compiled_data[ , c("selling_price", names_for_all_others)]
+  compiled_data <- compiled_data[, c("selling_price", names_for_all_others)]
 
 }
 
 # 04 Replacing NA with "missing" for categorical variables ####
 
-categorical_variables <- 
+categorical_variables <-
   c(
     "city"
     , "area"
@@ -87,7 +89,7 @@ for (variable in categorical_variables) {
 }
 
 # 08 Initializing column to populate in the loop ####
-compiled_data[["consolidated_area"]] <-
+compiled_data[["area_consolidated"]] <-
   compiled_data[["area_missing_replaced"]]
 
 # 09 Repeat loop to consolidate areas ####
@@ -95,21 +97,21 @@ repeat {
   # 10 Getting the count of unique levels for area ####
 
   n_unique_areas <-
-    compiled_data[["consolidated_area"]] %>%
+    compiled_data[["area_consolidated"]] %>%
     unique %>%
     length
 
   message(
     "\nNumber of unique areas: "
     , n_unique_areas
-    ," Trying to consolidate.\n")
+    , " Trying to consolidate.\n")
 
   # 11 Find the top 50 areas ####
   replacement_areas <-
     sqldf::sqldf(
-      "select consolidated_area, count(*) as count 
+      "select area_consolidated, count(*) as count
       from compiled_data
-      group by consolidated_area
+      group by area_consolidated
       order by count desc
       limit 100")
 
@@ -126,29 +128,29 @@ repeat {
       cat("\nArea ", area, "already consolidated. Skipping.\n")
       next
     } else {
-      n_consolidated_area <- sum(compiled_data[["consolidated_area"]] == area)
+      n_area_consolidated <- sum(compiled_data[["area_consolidated"]] == area)
 
       cat(
         "\nArea is:", area
-        , "\n\tn before consolidation:", n_consolidated_area, "\n"
+        , "\n\tn before consolidation:", n_area_consolidated, "\n"
         )
 
       # 15 Consolidate if text matches, otherwise leave alone ####
-      compiled_data[["consolidated_area"]] <-
+      compiled_data[["area_consolidated"]] <-
         ifelse(
           (
             grepl(area, compiled_data[["area_missing_replaced"]]) &
-            (compiled_data[["consolidated_area"]] ==
+            (compiled_data[["area_consolidated"]] ==
               compiled_data[["area_missing_replaced"]])
           )
           ,
           area,
-          compiled_data[["consolidated_area"]]
+          compiled_data[["area_consolidated"]]
           )
 
-      n_consolidated_area <- sum(compiled_data[["consolidated_area"]] == area)
+      n_area_consolidated <- sum(compiled_data[["area_consolidated"]] == area)
 
-      cat("\n\t n after consolidation:", n_consolidated_area, "\n")
+      cat("\n\t n after consolidation:", n_area_consolidated, "\n")
 
       # 16 add area to areas_consolidated so don't consolidate to it again ####
       areas_consolidated %<>% c(., area)
@@ -168,13 +170,13 @@ repeat {
 # 19 Update categorical variables list ####
 categorical_variables[
   which(categorical_variables %in% "area_missing_replaced")] <-
-  "consolidated_area"
+  "area_consolidated"
 
 # 20 Making generalized columns for some variables ####
 compiled_data <-
   replace_low_freq_with_other(
     compiled_data
-    , "consolidated_area"
+    , "area_consolidated"
     , 50
     )
 
@@ -188,7 +190,7 @@ compiled_data <- replace_low_freq_with_other(compiled_data, "agency", 50)
 categorical_variables <-
   c(
     "city"
-    , "consolidated_area_low_freq_generalized"
+    , "area_consolidated_low_freq_generalized"
     , "street_low_freq_generalized"
     , "agent_name_low_freq_generalized"
     , "agency_low_freq_generalized"
@@ -224,7 +226,7 @@ compiled_data[["running_costs_per_asking_price"]] <-
 # 23 Imputing where have NAs for numerical variables ####
 set.seed(412)
 
-numerical_variables <- 
+numerical_variables <-
   c(
     "asking_price"
     , "rooms"
@@ -244,7 +246,7 @@ numerical_variables <-
 
 # 24 Replace NAs with a random sample from the real values in new variable ####
 for (variable in numerical_variables) {
-  
+
   new_variable_name <-
     paste0(
       variable
@@ -313,12 +315,12 @@ for (variable in categorical_variables) {
 
   # 33 Create a dates_table to join to ####
   min_date <-
-    compiled_data[["date_sold"]] %>% 
+    compiled_data[["date_sold"]] %>%
     as.Date %>%
     min
 
   max_date <-
-    compiled_data[["date_sold"]] %>% 
+    compiled_data[["date_sold"]] %>%
     as.Date %>%
     max
 
@@ -332,9 +334,9 @@ for (variable in categorical_variables) {
 
     # 34 Add column to dates_df based on the level for joining ####
     dates_df[["level"]] <- unique_level
-    
+
     # 35 Create temp_df with aggregate fxns by joining to dates_df ####
-    temp_df <- 
+    temp_df <-
       sqldf::sqldf(
         paste0(
           "select
@@ -370,12 +372,12 @@ for (variable in categorical_variables) {
             , "--", days_back
             , "\n"
             )
-        
+
           # 38 Prepping column names ####
-          column_name_suffix_for_rolling_data <-
+          col_name_suf_for_roll_data <-
             paste0("_selling_price_last_", days_back, "_days")
-          
-          column_name_suffix_for_lag_data <-
+
+          col_name_suf_for_lag_data <-
             paste0("_selling_price_", days_back, "_days_ago")
 
           if (grepl("_median_", agg_column)) {
@@ -387,10 +389,10 @@ for (variable in categorical_variables) {
           }
 
           column_name_for_rolling_data <-
-            paste0(column_prefix, "_", fxn, column_name_suffix_for_rolling_data)
+            paste0(column_prefix, "_", fxn, col_name_suf_for_roll_data)
           column_name_for_lag_data <-
-            paste0(column_prefix, "_", fxn, column_name_suffix_for_lag_data)
-            
+            paste0(column_prefix, "_", fxn, col_name_suf_for_lag_data)
+
           # 39 Rolling aggregation data ####
           fxn_text_for_rolling_data <- paste0("RcppRoll::roll_", fxn, "l")
 
@@ -401,7 +403,8 @@ for (variable in categorical_variables) {
               , fill = NA)
 
           temp_df %<>%
-            interpolate_for_missing_dates(column_name_for_rolling_data, "date_sold")
+            interpolate_for_missing_dates(
+              column_name_for_rolling_data, "date_sold")
 
           # 40 Lag data ####
           temp_df[[column_name_for_lag_data]] <-
@@ -415,10 +418,70 @@ for (variable in categorical_variables) {
               column_name_for_lag_data
               , "date_sold"
               )
-        }   
+
+        # 41 Engineering more features that are lag + rolling ####
+
+        # 42 Lag+rolling features only if done with last timeframe ####
+
+        if (days_back == (timeframes_to_look %>% .[length(.)])) {
+
+        timeframe_permutations <-
+          data.frame(
+            roll_day = c(
+              rep(timeframes_to_look, length(timeframes_to_look)) %>% sort
+              )
+            , lag_day = c(timeframes_to_look)
+            )
+
+        # 43 set the rolling and lag days ####
+        for (row_n in seq_len(nrow(timeframe_permutations))) {
+          roll_day <- timeframe_permutations[row_n, 1]
+          lag_day <- timeframe_permutations[row_n, 2]
+
+          col_name_suf_for_roll_lag_data <-
+                  paste0(
+                    "_selling_price_over_"
+                    , roll_day
+                    , "_days_"
+                    , lag_day
+                    , "_days_ago"
+                    )
+
+          # 44 Name the columns ####
+          col_name_for_roll_lag_data <-
+            paste0(column_prefix, "_"
+              , fxn
+              , col_name_suf_for_roll_lag_data
+              )
+
+          column_name_for_source_data <-
+            paste0(
+              column_prefix
+              , "_"
+              , fxn
+              , "_selling_price_last_"
+              , roll_day
+              , "_days"
+              )
+
+          # 45 Create the columns ####
+          temp_df[[col_name_for_roll_lag_data]] <-
+            dplyr::lead(
+              temp_df[[column_name_for_source_data]]
+              , lag_day
+              )
+
+          temp_df %<>%
+            interpolate_for_missing_dates(
+              col_name_for_roll_lag_data
+              , "date_sold"
+              )
+        }
+      }
+      }
     }
 
-    # 41 Creating the join_df ####
+    # 46 Creating the join_df ####
     if (unique_level == unique_levels[1]) {
       join_df <<- temp_df
     } else {
@@ -426,7 +489,7 @@ for (variable in categorical_variables) {
     }
   }
 
-  # 42 Adding the new columns to the compiled_data ####
+  # 47 Adding the new columns to the compiled_data ####
   compiled_data_columns_for_sql <-
     names(compiled_data) %>% paste0("c.", ., collapse = ", ")
 
@@ -444,77 +507,119 @@ for (variable in categorical_variables) {
                 c.", variable, " = j.", variable
         )
       )
-   
+
   message(
     "Compiled data dimensions: ", dim(compiled_data)[1]
     , " by ", dim(compiled_data)[2])
 
 }
 
-# restore_object(compiled_data)
+# 48 One-hot-encoding for non-interval/ratio features ####
+features_for_ohe <-
+  c(
+    "city"
+    , "area_consolidated_low_freq_generalized"
+    , "street_low_freq_generalized"
+    , "agent_name_low_freq_generalized"
+    , "agency_low_freq_generalized"
+    , "day_of_month_sold"
+    , "month_sold_english"
+    , "quarterofyear_sold"
+    , "monthofyear_sold"
+    , "monthofquarter_sold"
+    , "weekofyear_sold"
+    , "weekofquarter_sold"
+    , "weekofmonth_sold"
+    , "dayofyear_sold"
+    , "dayofquarter_sold"
+    , "dayofmonth_sold"
+    , "dayofweek_sold"
+    )
 
+# 49 Create df for making the ohe features ####
+df_for_ohe <- compiled_data[, features_for_ohe]
 
-# May engineer more features that are lag + rolling:
-# e.g., 7-day median 7 days ago or, probably more useful:
-# 7-day median 365 days ago
+# 50 Convert all to factor so one-hot encoding will work on numeric data ####
+df_for_ohe[] <- lapply(df_for_ohe, as.factor)
 
-# Will try to enter this into the code after #40 and see if it is giving
-# expected behavior
+# 51 Make the ohe columns ####
+library(caret)
+df_for_ohe %<>%
+  caret::dummyVars(" ~ .", data = ., sep = "_") %>%
+    predict(newdata = df_for_ohe) %>%
+    data.frame
 
-# Will need to do a loop over, but only when at final timeframe
+# 52 add prefix for easier sorting later ####
+names(df_for_ohe) %<>% paste0("ohe_", .)
 
-if (days_back == (timeframes_to_look %>% .[length(.)])) {
+# 53 Add columns back to compiled_data ####
+compiled_data %<>%
+  cbind(df_for_ohe)
 
-  timeframe_permutations <-
-    data.frame(
-      roll_day = c(
-        rep(timeframes_to_look, length(timeframes_to_look)) %>% sort
-        )
-      , lag_day = c(timeframes_to_look)
-      )
+# 54 Converting what could be numerical or character into factor data ####
+column_identifiers <- c("dayof", "weekof", "monthof", "quarterof", "ohe_")
 
-  for (row_n in seq_len(nrow(timeframe_permutations))) {
-    roll_day <- timeframe_permutations[row_n, 1]
-    lag_day <- timeframe_permutations[row_n, 2]
-
-    column_name_suffix_for_rolling_lag_data <-
-            paste0(
-              "_selling_price_over_"
-              , roll_day
-              , "_days_"
-              , lag_day
-              , "_days_ago"
-              )
-    
-    # Still haven't figured out the naming - maybe solved???
-    column_name_for_rolling_lag_data <-
-      paste0(column_prefix, "_"
-        , fxn
-        , column_name_suffix_for_rolling_lag_data
-        )
-
-    column_name_for_source_data <-
-      paste0(column_prefix, "_", fxn, "_selling_price_last", roll_day, "_days")
-
-    # Still haven't figured out how to source the data for the assignment - maybe solved?
-    temp_df[[column_name_for_rolling_lag_data]] <-
-      dplyr::lead(
-        temp_df[[column_name_for_source_data]]
-        , lag_day
-        )
-
-    temp_df %<>%
-      interpolate_for_missing_dates(
-        column_name_for_rolling_lag_data
-        , "date_sold"
-        )
+for (id in column_identifiers) {
+  for (clmn in names(compiled_data)) {
+    if ((grepl(id, clmn)) | (class(compiled_data[[clmn]]) == "character")) {
+      compiled_data[[clmn]] %<>% as.factor
+    }
   }
 }
 
+# 55 Reordering some factors for display purposes ####
+compiled_data[["dayofweek_sold"]] %<>%
+  factor(x = ., levels = c("mon", "tue", "wed", "thu", "fri", "sat", "sun"))
 
-        
+compiled_data[["month_sold_swedish"]] %<>%
+  factor(
+    x = .,
+    levels = c(
+      "januari",
+      "februari",
+      "mars",
+      "april",
+      "maj",
+      "juni",
+      "juli",
+      "augusti",
+      "september",
+      "oktober",
+      "november",
+      "december"
+    )
+  )
 
+compiled_data[["month_sold_english"]] %<>%
+  factor(
+    x = .,
+    levels = c(
+      "jan",
+      "feb",
+      "mar",
+      "apr",
+      "may",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "oct",
+      "nov",
+      "dec"
+    )
+  )
 
-# Would be good to change here and in earlier scripts "final_price" to
-# "selling_price" since "final_price" might be confused based on prices
-# per area over time, for example
+# 56 save the object ####
+name_of_results_df <-
+    paste0(
+        "date_"
+        , today_8digit()
+    )
+
+saveRDS(
+  compiled_data
+  , paste0(
+    out_folder_preprocessed_data
+    , eval(name_of_results_df)
+    )
+  )

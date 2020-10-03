@@ -8,7 +8,7 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Ensure all pkgs in this scripts are installed ####
+# 01 Ensure all pkgs in this script are installed ####
 pkgs <-
     c()
 
@@ -18,7 +18,7 @@ install_my_pkgs(pkgs)
 
 save_hemnet_object <- function() {
     sold_object <- data.frame(
-        final_price = na_if_empty(final_price)
+        selling_price = na_if_empty(selling_price)
         , asking_price = na_if_empty(asking_price)
         , rooms = na_if_empty(rooms)
         , kvm = na_if_empty(kvm)

@@ -8,7 +8,7 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Ensure all pkgs in this scripts are installed ####
+# 01 Ensure all pkgs in this script are installed ####
 pkgs <-
     c(
         "rvest"
@@ -292,8 +292,8 @@ get_year_sold <- function(html) {
 
 }
 
-get_final_price <- function(html) {
-    final_price <-
+get_selling_price <- function(html) {
+    selling_price <-
         html %>%
             rvest::html_nodes(".sold-property__price-value") %>%
             rvest::html_text() %>%
@@ -307,14 +307,14 @@ get_final_price <- function(html) {
 
     if (
         any(
-            final_price < first_min_price
-            , final_price > final_max_price
+            selling_price < first_min_price
+            , selling_price > final_max_price
             )
      ) {
-        final_price <- NA
+        selling_price <- NA
     }
 
-    final_price
+    selling_price
 
 }
 
@@ -483,8 +483,8 @@ get_all_variables <- function(html) {
         , get_year_sold(html)
         , envir = .GlobalEnv)
     assign(
-        "final_price"
-        , get_final_price(html)
+        "selling_price"
+        , get_selling_price(html)
         , envir = .GlobalEnv)
     assign(
         "asking_price"

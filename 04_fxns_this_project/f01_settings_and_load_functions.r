@@ -43,8 +43,6 @@ for (r_file in list.files("04_fxns_this_project/")) {
         # Skip self so as to avoid endless recursion
         all(
             r_file != "f01_settings_and_load_functions.r"
-            # Skip my plots for now since have not solved ggplot2 loading error
-            , r_file != "f99_my_plots.r"
             )
         ) {
         source(paste0("04_fxns_this_project/", r_file))
@@ -56,10 +54,44 @@ for (r_file in list.files("04_fxns_this_project/")) {
 # Disable scientific notation
 options(scipen = 999)
 
-# Set paths to key folders
+# 05 Folder paths ####
+
 scripts_folder <- paste0(getwd(), "/05_scripts/")
 input_folder <- paste0(getwd(), "/06_inputs/")
 output_folder <- paste0(getwd(), "/07_outputs/")
+
+# Scraped data
+output_folder_scraped_gparent <-
+    paste0(
+        output_folder,
+        "01_scraped"
+    )
+
+if (!dir.exists(output_folder_scraped_gparent)) {
+    dir.create(output_folder_scraped_gparent)
+}
+
+# Compiled data
+output_folder_compiled <<-
+    paste0(
+        output_folder,
+        "02_compiled/"
+    )
+
+if (!dir.exists(output_folder_compiled)) {
+    dir.create(output_folder_compiled)
+}
+
+# Preprocessed data
+out_folder_preprocessed_data <-
+    paste0(
+        output_folder,
+        "04_data_with_engineered_features/"
+    )
+
+if (!dir.exists(out_folder_preprocessed_data)) {
+    dir.create(out_folder_preprocessed_data)
+}
 
 # 05 Source inputs ####
 

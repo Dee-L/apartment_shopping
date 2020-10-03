@@ -23,28 +23,22 @@ source_script_from_folder("s01_scraping_hemnet.r")
 # 04 Re-scrape failed pages ####
 # source_script_from_folder("s02_rescraping_failed_pages.r")
 
-# 04 Compiling dataframe from rda files ####
+# 05 Compiling dataframe from rda files ####
 source_script_from_folder("s03_compiling_dataframe_from_rda_files.r")
 
-# 05 Getting summaries from the compiled data ####
+# 06 Getting summaries from the compiled data ####
 source_script_from_folder("s04_summaries.r")
 
+# 07 Preprocess data and engineer features ####
+source_script_from_folder("s05_preprocessing_and_feature_engineering.r")
+
+# 08 QA plots ####
+source_script_from_folder("s06_qa_plots.r")
+
 # 15 Put machine to sleep ####
-shell(cmd = "rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
+# shell(cmd = "rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
 
-# 06 Preprocess data ####
-source_script_from_folder("s05_preprocessing_data.r")
-
-# 07 Replacing NAs ####
-source_script_from_folder("s06_replacing_NAs.r")
-
-# 08 Feature Engineering ####
-source_script_from_folder("s07_feature_engineering.r")
-
-# 09 One-hot encoding of non linear variables ###
-
-# 10 QA plots ####
-source_script_from_folder("s08_qa_plots.r")
+# Data splits - selling_price vs increase in price and train/test for both
 
 # 11 Train/test/cross-validation split ####
 

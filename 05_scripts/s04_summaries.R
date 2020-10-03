@@ -8,15 +8,17 @@
 # Date: YYYY-MMM-DD
 # Revised Version:
 
-# 01 Ensure all pkgs in this scripts are installed ####
+# 01 Ensure all pkgs in this script are installed ####
 pkgs <-
-    c("sqldf")
+    c(
+      "sqldf"
+      )
 
 install_my_pkgs(pkgs)
 
 # 02 load latest compiled data ####
 
-compiled_data <- 
+compiled_data <-
   paste0(
     output_folder_compiled
     , list.files(output_folder_compiled) %>%
@@ -48,7 +50,7 @@ latest_summaries <-
     output_folder_summaries %>%
     list.files %>%
     .[length(.)] %>%
-    gsub(".rds", "", .) %>%
+    gsub(".txt", "", .) %>%
     right(8) %>%
     as.numeric
 
@@ -65,7 +67,7 @@ if (latest_summaries < latest_compiled_results) {
       output_folder_summaries
       , "date_"
       , today_8digit()
-      , ".md"
+      , ".txt"
     )
 
   sink(log_name)
@@ -80,4 +82,3 @@ if (latest_summaries < latest_compiled_results) {
   sink()
 
 }
-
