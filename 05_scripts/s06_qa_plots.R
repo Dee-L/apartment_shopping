@@ -27,134 +27,24 @@ preprocessed_data <-
   ) %>%
   readRDS()
 
-# 03 Specifying output folders ####
-out_folder_qa_plots <-
-  paste0(
-    output_folder,
-    today_8digit(),
-    "/05_qa_plots"
-    )
+# 03 Creating subsets of output variables for shiny apps ####
 
-if (!dir.exists(out_folder_qa_plots)) {
-  dir.create(out_folder_qa_plots)
-}
+#### THIS SECTION SHOULD BE CHANGED SINCE I ADDED SUFFIXES "rawdata_"
 
-# 04 Creating paths for plots and objects to call the paths ####
-vars_to_plot <- c(1 : 3)
-feature_types <- c("original", "engineered")
-feature_by_feature_resolution <-
-  c("cat_by_ir", "ir_by_ir")
-for (var in vars_to_plot) {
-  name_of_object <-
-    paste0(
-      "out_folder_"
-      , var
-      , "_var_plots"
-      )
-
-  name_of_folder <-
-    paste0(
-      out_folder_qa_plots,
-      "/0"
-      , var
-      , "_var_plots"
-      )
-
-  # 05 For plots with 1 variable only ####
-  if (var == 1) {
-
-    for (ftr_type in feature_types) {
-      name_of_object <-
-        paste0(
-          "out_folder_"
-          , var
-          , "_var_plots_"
-          , ftr_type
-          , "_features"
-        )
-
-      name_of_folder <-
-        paste0(
-          out_folder_qa_plots
-          , "/0"
-          , var
-          , "_var_plots/"
-          , ftr_type
-          , "_features"
-        )
-    # 06 For plots with 2 variables ####
-      }
-  } else if (var == 2) {
-
-    for (ftr_ftr_res in feature_by_feature_resolution) {
-      name_of_object <-
-        paste0(
-          "out_folder_",
-          var,
-          "_var_plots_",
-          ftr_ftr_res
-        )
-
-      name_of_folder <-
-        paste0(
-          out_folder_qa_plots,
-          "/0",
-          var,
-          "_var_plots/",
-          ftr_ftr_res
-        )
-      # 07 Saving folder and object for each ftr_ftr_res ####
-      assign(eval(name_of_object), name_of_folder)
-
-      if (!dir.exists(name_of_folder)) {
-        dir.create(name_of_folder)
-      }
-    }
-  # 08 For plots with 3 variables ####
-  } else if (var == 3) {
-    name_of_object <-
-      paste0(
-        "out_folder_",
-        var,
-        "_var_plots"
-      )
-
-    name_of_folder <-
-      paste0(
-        out_folder_qa_plots,
-        "/0",
-        var,
-        "_var_plots/"
-      )
-  }
-
-  # 09 Saving folder objects for 1 var and 3 var plots ####
-  assign(eval(name_of_object), name_of_folder)
-
-  if (!dir.exists(name_of_folder)) {
-    dir.create(name_of_folder)
-  }
-}
-
-# 10 Changing wd since otherwise will create unnecessary html files on save ####
-original_wd <- getwd()
-
-# 11 specifying original variable subsets for plotting ####
 original_vars <-
   names(preprocessed_data) %>%
-    .[which(. == "selling_price") : which(. == "url")]
+  .[which(. == "selling_price") : which(. == "url")]
 
 original_numeric_vars <-
   original_vars %>%
-    .[(
-        preprocessed_data[, .] %>%
-        head %>%
-        sapply(is.numeric)
-      )]
+  .[(
+    preprocessed_data[, .] %>%
+      sapply(is.numeric)
+  )]
 
 original_factor_vars <-
   original_vars %>%
-    .[. %not_in% original_numeric_vars]
+  .[. %not_in% original_numeric_vars]
 
 # 12 specifying engineered variable subsets for plotting ####
 engineered_vars <-
@@ -165,7 +55,6 @@ engineered_numeric_vars <-
   engineered_vars %>%
   .[(
     preprocessed_data[, .] %>%
-      head() %>%
       sapply(is.numeric)
   )]
 
@@ -175,129 +64,24 @@ engineered_factor_vars <-
 
 engnrd_fctr_vars_seeded_nmrc <-
   engineered_factor_vars %>%
-    .[which(. == "area_missing_replaced") : which(. == "dayofweek_sold")]
+  .[which(. == "area_missing_replaced") : which(. == "dayofweek_sold")]
 
-# 13 Plots with 1 variable ####
-for (ftr_type in feature_types) {
-  if (ftr_type == "original") {
-    setwd(out_folder_1_var_plots_original_features)
-    vars <- original_numeric_vars
-    } else if (ftr_type == "engineered") {
-      setwd(out_folder_1_var_plots_engineered_features)
-      vars <-
-        engineered_numeric_vars %>%
-        .[!grepl(
-          paste0(c("city", engnrd_fctr_vars_seeded_nmrc), collapse = "|"), .
-          )]
-    }
+grouped_engineered_numeric_vars <-
+  engineered_numeric_vars %>%
+  .[grepl(paste0(c("mean","median","sum"), collapse = "|"), .)]
 
-  for (var in vars) {
-    cat("Building density plot for:", var, "\n\n")
-    temp_plot <-
-      my_basic_density_plot(
-        df = preprocessed_data[!is.na(preprocessed_data[[var]]), ],
-        x = var,
-        title = paste0("Density plot of ", var)
-      )
+engineered_numeric_vars %<>%
+  .[. %not_in% grouped_engineered_numeric_vars]
 
-    htmlwidgets::saveWidget(
-      as_widget(temp_plot),
-      paste0(var, "_density.html")
-    )
-  }
-  setwd(original_wd)
-}
 
-# 14 Plots with 2 variables - categorical and intervalratio ####
-setwd(out_folder_2_var_plots_cat_by_ir)
 
-# 15 Only using engineered features since I trust them after 1 var plots ####
-vars <- c("city", engnrd_fctr_vars_seeded_nmrc)
-plot_types <- c("violin", "conditionaldensity")
+# PAUSED HERE
 
-for (var in vars) {
-  targeted_df <- preprocessed_data[, c("selling_price", var)]
-  top_31_in_var <-
-    sqldf::sqldf(
-      paste0(
-        "select ", eval(var), ", count(*) as count
-        from targeted_df
-        group by ", eval(var), "
-         order by count desc
-        limit 31"
-        )
-      )
-  targeted_df <- sqldf::sqldf(
-    paste0(
-      "select a.selling_price, a.", eval(var),
-      " from targeted_df as a
-      join top_31_in_var as t
-        on a.", eval(var), " = t.", eval(var)
-      )
-    )
-  message("Building plots for selling_price by:", var, "\n\n")
-  for (plt in plot_types) {
+# Can probably delete much of below after moving to the shiny apps
 
-    if (plt == "violin") {
 
-      # 16 Violin plots ####
-      cat("Building", plt, "plot.\n\n")
-      temp_plot <-
-        my_violin_plot(
-          df = targeted_df %>% .[!is.na(.[[var]]), ],
-          x = var,
-          y = "selling_price",
-          title = paste0("Violin plot for selling_price by ", var)
-          )
-    } else if (plt == "conditionaldensity") {
 
-      # 17 Conditional density plots ####
-      cat("Building", plt, "plot.\n\n")
-      temp_plot <-
-        my_conditional_density_plot(
-          df = targeted_df %>% .[!is.na(.[[var]]), ],
-          x = "selling_price",
-          layers = var,
-          title = paste0("Conditional density plot for selling_price by ", var)
-        )
-    }
 
-    # 18 Saving the 2 var plots ####
-    htmlwidgets::saveWidget(
-      as_widget(temp_plot),
-      paste0("selling_price_by_", var, "_", plt, ".html")
-    )
-  }
-}
-
-setwd(original_wd)
-
-# 19 Plots with 2 variables - intervalratio and intervalratio ####
-setwd(out_folder_2_var_plots_ir_by_ir)
-
-# 20 Only using engineered features since I trust them after 1 var plots ####
-vars <- c(engineered_numeric_vars)
-
-for (var in vars) {
-
-  # 21 Scatter plots ####
-  cat("Building scatter plot for selling_price by:", var, "\n\n")
-  temp_plot <-
-    my_scatter_plot(
-      df = preprocessed_data %>% .[!is.na(.[[var]]), ],
-      x = var,
-      y = "selling_price",
-      title = paste0("Scatter plot for selling_price by ", var)
-    )
-
-  # 22 Saving the 2 var plots ####
-  htmlwidgets::saveWidget(
-    as_widget(temp_plot),
-    paste0("selling_price_by_", var, "_scatterplot.html")
-  )
-  }
-
-setwd(original_wd)
 
 
 ### PAUSED HERE

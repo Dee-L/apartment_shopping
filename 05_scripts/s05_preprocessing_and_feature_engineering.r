@@ -29,7 +29,7 @@ compiled_data <-
       .[length(.)]) %>%
     readRDS
 
-# 03 Renaming "selling_price" column to "selling_price" to avoid confusion ####
+# 03 Renaming "final_price" column to "selling_price" to avoid confusion ####
 
 if ("final_price" %in% names(compiled_data)) {
   index_for_final_price_column <- which(names(compiled_data) %in% "final_price")
@@ -41,7 +41,8 @@ if ("final_price" %in% names(compiled_data)) {
 
 }
 
-# 04 Replacing NA with "missing" for categorical variables ####
+# 04 Gathering lists of variables ####
+rawdata_variables <- colnames(compiled_data)
 
 categorical_variables <-
   c(
@@ -291,7 +292,7 @@ compiled_data[["date_sold"]] <-
   paste(
     compiled_data[["year_sold"]]
     , compiled_data[["month_sold_english"]]
-    , compiled_data[["day_of_month_sold"]]
+    , compiled_data[["dayofmonth_sold"]]
     , sep = "-") %>%
     lubridate::ymd()
 
@@ -522,7 +523,7 @@ features_for_ohe <-
     , "street_low_freq_generalized"
     , "agent_name_low_freq_generalized"
     , "agency_low_freq_generalized"
-    , "day_of_month_sold"
+    , "dayofmonth_sold"
     , "month_sold_english"
     , "quarterofyear_sold"
     , "monthofyear_sold"
@@ -609,7 +610,30 @@ compiled_data[["month_sold_english"]] %<>%
     )
   )
 
-# 56 save the object ####
+
+# 56 Identifying processed data variables ####
+psddata_variables <-
+  colnames(compiled_data)[colnames(compiled_data) %not_in% rawdata_variables]
+
+# 56 Adding "rawdata_" suffix to all original variables ####
+rawdata_variable_names <- paste0("rawdata_", rawdata_variables)
+
+old_colnames_to_replace <-
+  match(colnames(compiled_data), rawdata_variables, nomatch = 0)
+
+colnames(compiled_data)[colnames(compiled_data) %in% rawdata_variables] <-
+  rawdata_variable_names[old_colnames_to_replace]
+
+# 57 Adding "psddata_" suffix to all new variables ####
+psddata_variable_names <- paste0("psddata_", psddata_variables)
+
+new_colnames_to_replace <-
+  match(colnames(compiled_data), psddata_variables, nomatch = 0)
+
+colnames(compiled_data)[colnames(compiled_data) %in% psddata_variables] <-
+  psddata_variable_names[new_colnames_to_replace]
+
+# 58 save the object ####
 name_of_results_df <-
     paste0(
         "date_"
