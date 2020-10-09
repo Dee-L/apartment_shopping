@@ -145,7 +145,7 @@ is_eastersunday <- function(date_as_yyyy_mm_dd) {
 
 is_eastersundayeve <- function(date_as_yyyy_mm_dd) {
   next_day <- date_as_yyyy_mm_dd %>% as.Date + 1
-  
+
   ifelse(is_eastersunday(next_day %>% as.character),
          TRUE,
          FALSE)
@@ -153,7 +153,7 @@ is_eastersundayeve <- function(date_as_yyyy_mm_dd) {
 
 is_eastermonday <- function(date_as_yyyy_mm_dd) {
   previous_day <- date_as_yyyy_mm_dd %>% as.Date - 1
-  
+
   ifelse(is_eastersunday(previous_day %>% as.character),
          TRUE,
          FALSE)
@@ -161,7 +161,7 @@ is_eastermonday <- function(date_as_yyyy_mm_dd) {
 
 is_goodfriday <- function(date_as_yyyy_mm_dd) {
   two_days_later <- date_as_yyyy_mm_dd %>% as.Date + 2
-  
+
   ifelse(is_eastersunday(two_days_later %>% as.character),
          TRUE,
          FALSE)
@@ -169,7 +169,7 @@ is_goodfriday <- function(date_as_yyyy_mm_dd) {
 
 is_ascension <- function(date_as_yyyy_mm_dd) {
   thirtynine_days_earlier <- date_as_yyyy_mm_dd %>% as.Date - 39
-  
+
   ifelse(is_eastersunday(thirtynine_days_earlier %>% as.character),
          TRUE,
          FALSE)
@@ -177,7 +177,7 @@ is_ascension <- function(date_as_yyyy_mm_dd) {
 
 is_pentecost <- function(date_as_yyyy_mm_dd) {
   fortynine_days_earlier <- date_as_yyyy_mm_dd %>% as.Date - 49
-  
+
   ifelse(is_eastersunday(fortynine_days_earlier %>% as.character),
          TRUE,
          FALSE)
@@ -185,7 +185,7 @@ is_pentecost <- function(date_as_yyyy_mm_dd) {
 
 is_pentecosteve <- function(date_as_yyyy_mm_dd) {
   next_day <- date_as_yyyy_mm_dd %>% as.Date + 1
-  
+
   ifelse(is_pentecost(next_day %>% as.character),
          TRUE,
          FALSE)
@@ -222,7 +222,7 @@ is_swedish_red_or_pink_day <- function(date_as_yyyy_mm_dd) {
 is_swedish_pinch_day <- function(date_as_yyyy_mm_dd) {
   previous_day <- date_as_yyyy_mm_dd %>% as.Date - 1
   next_day <- date_as_yyyy_mm_dd %>% as.Date + 1
-  
+
   ifelse((is_swedish_red_or_pink_day(previous_day) &
             lubridate::wday(date_as_yyyy_mm_dd) == 6) | 
            (is_swedish_red_or_pink_day(next_day) &
@@ -242,9 +242,9 @@ is_swedish_day_off <- function(date_as_yyyy_mm_dd) {
 add_swedish_days_off_data <- function(data_frame, column_with_date_as_ymd) {
   data_frame[["swedish_red_or_pink_day"]] <- NA
 
-  message("Adding red/pink days")
+  # message("Adding red/pink days")
 
-  for (d in 1 : nrow(data_frame)) {
+  for (d in seq_len(nrow(data_frame))) {
     cat("\nRow", d, "of", nrow(data_frame), "\n")
     data_frame[["swedish_red_or_pink_day"]][d] <-
       ifelse(
@@ -252,28 +252,45 @@ add_swedish_days_off_data <- function(data_frame, column_with_date_as_ymd) {
         , 1
         , 0
         )
-  }
 
-  data_frame[["swedish_pinch_day"]] <- NA
-
-  message("Adding pinch days")
-
-  for (d in 1 : nrow(data_frame)) {
-    cat("\nRow", d, "of", nrow(data_frame), "\n")
     data_frame[["swedish_pinch_day"]][d] <-
-      ifelse(is_swedish_pinch_day(data_frame[[column_with_date_as_ymd]][d]),
-            1,
-            0)
+      ifelse(
+        is_swedish_pinch_day(data_frame[[column_with_date_as_ymd]][d])
+        , 1
+        , 0
+        )
+
+    data_frame[["swedish_day_off"]][d] <-
+      ifelse(
+        (
+          data_frame[["swedish_red_or_pink_day"]][d] == 1) |
+            (data_frame[["swedish_pinch_day"]][d] == 1)
+          , 1
+          , 0
+          )
+
   }
 
-  message("Adding days off")
+  # data_frame[["swedish_pinch_day"]] <- NA
 
-  data_frame[["swedish_day_off"]] <-
-    ifelse(
-      (data_frame[["swedish_red_or_pink_day"]] == 1) |
-        (data_frame[["swedish_pinch_day"]] == 1),
-      1,
-      0)
+  # message("Adding pinch days")
+
+  # for (d in 1 : nrow(data_frame)) {
+  #   cat("\nRow", d, "of", nrow(data_frame), "\n")
+  #   data_frame[["swedish_pinch_day"]][d] <-
+  #     ifelse(is_swedish_pinch_day(data_frame[[column_with_date_as_ymd]][d]),
+  #           1,
+  #           0)
+  # }
+
+  # message("Adding days off")
+
+  # data_frame[["swedish_day_off"]] <-
+  #   ifelse(
+  #     (data_frame[["swedish_red_or_pink_day"]] == 1) |
+  #       (data_frame[["swedish_pinch_day"]] == 1),
+  #     1,
+  #     0)
 
   data_frame
 }

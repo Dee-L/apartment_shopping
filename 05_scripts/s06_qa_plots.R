@@ -28,63 +28,97 @@ preprocessed_data <-
   readRDS()
 
 # 03 Creating subsets of output variables for shiny apps ####
+all_vars <-
+  names(preprocessed_data)
 
-#### THIS SECTION SHOULD BE CHANGED SINCE I ADDED SUFFIXES "rawdata_"
+all_numeric_vars <-
+  preprocessed_data %>%
+    dplyr::select_if(is.numeric) %>%
+    names
+
+all_factor_vars <-
+  preprocessed_data %>%
+    dplyr::select_if(is.factor) %>%
+    names
+
+all_other_vars <-
+  preprocessed_data %>%
+  select(!c(all_numeric_vars, all_factor_vars)) %>%
+  names
+
+if (length(all_other_vars) > 0) message("Some variables are misclassified")
 
 original_vars <-
-  names(preprocessed_data) %>%
-  .[which(. == "selling_price") : which(. == "url")]
+  stringr::str_subset(all_vars, "_rawdata")
 
 original_numeric_vars <-
-  original_vars %>%
-  .[(
-    preprocessed_data[, .] %>%
-      sapply(is.numeric)
-  )]
+  intersect(original_vars, all_numeric_vars)
 
 original_factor_vars <-
-  original_vars %>%
-  .[. %not_in% original_numeric_vars]
+  intersect(original_vars, all_factor_vars)
 
 # 12 specifying engineered variable subsets for plotting ####
 engineered_vars <-
-  names(preprocessed_data) %>%
-  .[. %not_in% original_vars]
+  stringr::str_subset(all_vars, "_psddata")
 
 engineered_numeric_vars <-
-  engineered_vars %>%
-  .[(
-    preprocessed_data[, .] %>%
-      sapply(is.numeric)
-  )]
+  intersect(engineered_vars, all_numeric_vars)
 
 engineered_factor_vars <-
-  engineered_vars %>%
-  .[. %not_in% engineered_numeric_vars]
+  intersect(engineered_vars, all_factor_vars)
 
-engnrd_fctr_vars_seeded_nmrc <-
+engineered_numeric_agg_by_cat <-
+  stringr::str_subset(engineered_numeric_vars, "_mean_|_median_|_sum_")
+
+engineered_numeric_not_agg_by_cat <-
+  setdiff(engineered_numeric_vars, engineered_numeric_agg_by_cat)
+
+numeric_vars_for_density_plots <-
+  sort(c(original_numeric_vars, engineered_numeric_not_agg_by_cat))
+
+cat_vars_for_plots <-
   engineered_factor_vars %>%
-  .[which(. == "area_missing_replaced") : which(. == "dayofweek_sold")]
+  stringr::str_subset("ohe_", negate = T) %>%
+  stringr::str_subset("generalized|sold") %>%
+  c("city_rawdata", .)
+
+cont_vars_for_scatter_plots <-
+  stringr::str_subset(engineered_numeric_not_agg_by_cat, "imputed|date_sold")
+
+
+
+# Paused here
+
+imp_int_numeric_vars <-
+  stringr::str_subset(engineered_numeric_vars, "imputed|interpolated")
+
+group_factors_for_aggs <-
+  cat_vars_for_plots %>%
+    left(., nchar(.) - 8)
+
+cont_vars_for_agg_group_plots <-
+  imp_int_numeric_vars %>%
+    stringr::str_subset("group_factors_for_aggs")
+
+
+
+
+engnrd_fctr_for_tsa <-
+  paste0(categorical_variables_for_tsa, "_psddata")
 
 grouped_engineered_numeric_vars <-
   engineered_numeric_vars %>%
-  .[grepl(paste0(c("mean","median","sum"), collapse = "|"), .)]
+  .[grepl(paste0(c("mean", "median", "sum"), collapse = "|"), .)]
 
 engineered_numeric_vars %<>%
   .[. %not_in% grouped_engineered_numeric_vars]
 
-
-
 # PAUSED HERE
 
-# Can probably delete much of below after moving to the shiny apps
+# Want to do violin, strip, conditional density for grouped_engineered_numeric
 
 
 
-
-
-
-### PAUSED HERE
 
 
 

@@ -14,6 +14,7 @@ pkgs <-
     "ggplot2"
     , "plotly"
     , "htmlwidgets"
+    , "sqldf"
   )
 
 install_my_pkgs(pkgs)
@@ -258,7 +259,7 @@ my_heatmap <- function(df, x, y, z, aggfxn = "median", title = "") {
   df[[y]] %<>% as.factor
 
   df <-
-    sqldf(
+    sqldf::sqldf(
       paste0(
         "select ", x, ", ", y, ", ", aggfxn, "(", z, ")
         from df
@@ -317,7 +318,7 @@ my_calendar_heatmap <-
     df[[year_col]] %<>% as.factor
 
     df <-
-        sqldf(
+        sqldf::sqldf(
         paste0(
             "select "
             , day_col

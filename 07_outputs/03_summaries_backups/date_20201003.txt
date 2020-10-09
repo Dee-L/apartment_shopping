@@ -618,7 +618,7 @@ Sorted by count descending:
 
 COLUMN SUMMARIZED:
 
-day_of_month_sold
+dayofmonth_sold
 
 
 Default summary:

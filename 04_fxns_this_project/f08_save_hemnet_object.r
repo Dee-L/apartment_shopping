@@ -28,7 +28,7 @@ save_hemnet_object <- function() {
         , city = na_if_empty(city)
         , area = na_if_empty(area)
         , street = na_if_empty(street)
-        , day_of_month_sold = na_if_empty(day_of_month_sold)
+        , dayofmonth_sold = na_if_empty(dayofmonth_sold)
         , month_sold_swedish = na_if_empty(month_sold_swedish)
         , year_sold = na_if_empty(year_sold)
         , year_built = na_if_empty(year_built)
@@ -44,7 +44,7 @@ save_hemnet_object <- function() {
             "o"
             , year_sold
             , left(month_sold_swedish, 3)
-            , day_of_month_sold
+            , dayofmonth_sold
             , "_"
             , city
             , "_"

@@ -122,7 +122,7 @@ get_floor_in_building <- function(html) {
                         floor_info %<>%
                             gsub(",", ".", .)
                     }
-                    
+
                     # Also remove any text after "lg"
                     floor_info %<>%
                         gsub("lg.{1,}", "", .)
@@ -235,24 +235,24 @@ get_date_sold <- function(html) {
         tolower
 }
 
-get_day_of_month_sold <- function(html) {
+get_dayofmonth_sold <- function(html) {
     date_sold <- get_date_sold(html)
 
-    day_of_month_sold <-
+    dayofmonth_sold <-
         date_sold[3] %>%
             na_if_empty %>%
             as.numeric
 
     if (
         any(
-            day_of_month_sold < 1
-            , day_of_month_sold > 31
+            dayofmonth_sold < 1
+            , dayofmonth_sold > 31
             )
      ) {
-        day_of_month_sold <- NA
+        dayofmonth_sold <- NA
     }
 
-    day_of_month_sold
+    dayofmonth_sold
 }
 
 get_month_sold_swedish <- function(html) {
@@ -471,8 +471,8 @@ get_all_variables <- function(html) {
         , get_city(html)
         , envir = .GlobalEnv)
     assign(
-        "day_of_month_sold"
-        , get_day_of_month_sold(html)
+        "dayofmonth_sold"
+        , get_dayofmonth_sold(html)
         , envir = .GlobalEnv)
     assign(
         "month_sold_swedish"

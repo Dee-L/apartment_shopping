@@ -1,4 +1,4 @@
-# Purpose: Plots for selling_price by continuous variable plots
+# Purpose: Plots for selling_price_rawdata by continuous variable plots
 # Author: David Gray Lassiter, PhD
 # Date: 2020-oct-04
 # Version:
@@ -22,7 +22,7 @@ install_my_pkgs(pkgs)
 
 if (any(
     !exists("preprocessed_data")
-    , !exists("engnrd_fctr_vars_seeded_nmrc")
+    , !exists("cont_vars_for_scatter_plots")
     )) {
         source("05_scripts/s06_qa_plots.R")
     }
@@ -34,7 +34,7 @@ library(shiny)
 ui <-
     fluidPage(
         titlePanel(
-            "Selling_price by category"
+            "Selling price by continuous variable"
             )
         , sidebarLayout(
             uiOutput("sidebarOutput")
@@ -51,14 +51,13 @@ server <- function(input, output) {
                     inputId = "continuous_variable",
                     label = "Select a continuous variable to plot",
                     h3("Select box"),
-                    choices = engineered_numeric_vars %>%
-                            sort
+                    choices = sort(cont_vars_for_scatter_plots)
                     )
                 )
             })
 
     # 05 Save inputs from user in reactive objects ####
-    cat_var <- reactive({
+    con_var <- reactive({
         input[["continuous_variable"]]
     })
 
@@ -66,13 +65,13 @@ server <- function(input, output) {
     output[["scatter_plot"]] <-
         renderPlotly({
             my_scatter_plot(
-                df = preprocessed_data %>% .[!is.na(.[[cat_var()]]), ],
-                x = cat_var(),
-                y = "selling_price",
-                title = paste0("Scatter plot for selling_price by ", cat_var())
+                df = preprocessed_data %>% .[!is.na(.[[con_var()]]), ],
+                x = con_var(),
+                y = "selling_price_rawdata",
+                title = paste0("Scatter plot for selling_price_rawdata by ",
+                    con_var())
             )
             })
-
 
     # 09 Render plot ####
     output[["scatter_panel"]] <-

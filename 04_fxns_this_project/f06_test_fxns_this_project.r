@@ -85,7 +85,7 @@ test_city <- function(c = city) {
   }
 }
 
-test_day_of_month_sold <- function(d_o_m_s = day_of_month_sold) {
+test_dayofmonth_sold <- function(d_o_m_s = dayofmonth_sold) {
   if (!is.na(d_o_m_s)) {
     if (
           any(
@@ -123,7 +123,7 @@ test_month_sold_swedish <- function(m_s_s = month_sold_swedish) {
 }
 
 test_year_sold <-
-    function(y_s = year_sold, d_o_m_s = day_of_month_sold) {
+    function(y_s = year_sold, d_o_m_s = dayofmonth_sold) {
       if (!is.na(y_s)) {
         if (
           any(
@@ -239,7 +239,7 @@ test_all <- function() {
     test_floor_in_building()
     test_type()
     test_city()
-    test_day_of_month_sold()
+    test_dayofmonth_sold()
     test_month_sold_swedish()
     test_year_sold()
     test_selling_price()

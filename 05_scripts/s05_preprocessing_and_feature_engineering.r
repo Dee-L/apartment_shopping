@@ -20,7 +20,7 @@ pkgs <-
 
 install_my_pkgs(pkgs)
 
-# 02 load latest compiled data ####
+# 02a load latest compiled data ####
 
 compiled_data <-
   paste0(
@@ -29,19 +29,7 @@ compiled_data <-
       .[length(.)]) %>%
     readRDS
 
-# 03 Renaming "final_price" column to "selling_price" to avoid confusion ####
-
-if ("final_price" %in% names(compiled_data)) {
-  index_for_final_price_column <- which(names(compiled_data) %in% "final_price")
-
-  names_for_all_others <- names(compiled_data) %>% .[. %not_in% "final_price"]
-  compiled_data[["selling_price"]] <- compiled_data[["final_price"]]
-
-  compiled_data <- compiled_data[, c("selling_price", names_for_all_others)]
-
-}
-
-# 04 Gathering lists of variables ####
+# 03 Gathering lists of variables ####
 rawdata_variables <- colnames(compiled_data)
 
 categorical_variables <-
@@ -55,7 +43,7 @@ categorical_variables <-
 
 for (variable in categorical_variables) {
 
-  # 05 Specify new variable name and count missing ####
+  # 04 Specify new variable name and count missing ####
   new_var_name <- paste0(variable, "_missing_replaced")
 
   n_missing <-
@@ -63,7 +51,7 @@ for (variable in categorical_variables) {
 
   cat("\nVariable is:", variable, "and n_missing is:", n_missing, "\n")
 
-  # 06 If any missing, replace with "missing" ####
+  # 05 If any missing, replace with "missing" ####
   if (n_missing > 0) {
 
     compiled_data[[new_var_name]] <-
@@ -83,19 +71,19 @@ for (variable in categorical_variables) {
     cat("\n\tNew variable is:", new_var_name
     , "and n_missing is:", n_missing_new_variable, "\n")
 
-    # 07 Update categorical variables list ####
+    # 06 Update categorical variables list ####
     categorical_variables[which(categorical_variables %in% variable)] <-
       new_var_name
   }
 }
 
-# 08 Initializing column to populate in the loop ####
+# 07 Initializing column to populate in the loop ####
 compiled_data[["area_consolidated"]] <-
   compiled_data[["area_missing_replaced"]]
 
-# 09 Repeat loop to consolidate areas ####
+# 08 Repeat loop to consolidate areas ####
 repeat {
-  # 10 Getting the count of unique levels for area ####
+  # 09 Getting the count of unique levels for area ####
 
   n_unique_areas <-
     compiled_data[["area_consolidated"]] %>%
@@ -107,7 +95,7 @@ repeat {
     , n_unique_areas
     , " Trying to consolidate.\n")
 
-  # 11 Find the top 50 areas ####
+  # 10 Find the top 50 areas ####
   replacement_areas <-
     sqldf::sqldf(
       "select area_consolidated, count(*) as count
@@ -116,15 +104,15 @@ repeat {
       order by count desc
       limit 100")
 
-  # 12 Use top hit to try to consolidate lower frequency hits ####
+  # 11 Use top hit to try to consolidate lower frequency hits ####
   for (area in replacement_areas[[1]]) {
 
-    # 13 Create areas_consolidated list ####
+    # 12 Create areas_consolidated list ####
     if (!exists("areas_consolidated")) {
       areas_consolidated <- c()
     }
 
-    # 14 Skip area if you've already consolidated to it ####
+    # 13 Skip area if you've already consolidated to it ####
     if (area %in% areas_consolidated) {
       cat("\nArea ", area, "already consolidated. Skipping.\n")
       next
@@ -136,7 +124,7 @@ repeat {
         , "\n\tn before consolidation:", n_area_consolidated, "\n"
         )
 
-      # 15 Consolidate if text matches, otherwise leave alone ####
+      # 14 Consolidate if text matches, otherwise leave alone ####
       compiled_data[["area_consolidated"]] <-
         ifelse(
           (
@@ -153,27 +141,23 @@ repeat {
 
       cat("\n\t n after consolidation:", n_area_consolidated, "\n")
 
-      # 16 add area to areas_consolidated so don't consolidate to it again ####
+      # 15 add area to areas_consolidated so don't consolidate to it again ####
       areas_consolidated %<>% c(., area)
 
-      # 17 after consolidating an area break to go back to repeat level ####
+      # 16 after consolidating an area break to go back to repeat level ####
       break
     }
 
   }
-  # 18 Break loop if you have reached the end of the list ####
+  # 17 Break loop if you have reached the end of the list ####
   if (area == replacement_areas[[1]][nrow(replacement_areas)]) {
     message("Reached the end of the list. No more areas to consolidate.")
+    areas_consolidated <<- NULL
     break
   }
 }
 
-# 19 Update categorical variables list ####
-categorical_variables[
-  which(categorical_variables %in% "area_missing_replaced")] <-
-  "area_consolidated"
-
-# 20 Making generalized columns for some variables ####
+# 18 Making generalized columns for some variables ####
 compiled_data <-
   replace_low_freq_with_other(
     compiled_data
@@ -187,18 +171,7 @@ compiled_data <- replace_low_freq_with_other(compiled_data, "agent_name", 50)
 
 compiled_data <- replace_low_freq_with_other(compiled_data, "agency", 50)
 
-# 21 Update the list of categorical variables ####
-categorical_variables <-
-  c(
-    "city"
-    , "area_consolidated_low_freq_generalized"
-    , "street_low_freq_generalized"
-    , "agent_name_low_freq_generalized"
-    , "agency_low_freq_generalized"
-    )
-
-
-# 22 Adding features that are calculations of known features ####
+# 20 Adding features that are calculations of known features ####
 
 compiled_data[["age_when_sold"]] <-
   compiled_data[["year_sold"]] - compiled_data[["year_built"]]
@@ -224,7 +197,7 @@ compiled_data[["running_costs_per_room"]] <-
 compiled_data[["running_costs_per_asking_price"]] <-
   compiled_data[["running_costs"]] / compiled_data[["asking_price"]]
 
-# 23 Imputing where have NAs for numerical variables ####
+# 21 Imputing where have NAs for numerical variables ####
 set.seed(412)
 
 numerical_variables <-
@@ -245,7 +218,7 @@ numerical_variables <-
     , "running_costs_per_asking_price"
   )
 
-# 24 Replace NAs with a random sample from the real values in new variable ####
+# 22 Replace NAs with a random sample from the real values in new variable ####
 for (variable in numerical_variables) {
 
   new_variable_name <-
@@ -265,12 +238,12 @@ for (variable in numerical_variables) {
     , compiled_data[[variable]]
   )
 
-  # 25 Update numerical variables list ####
+  # 23 Update numerical variables list ####
   numerical_variables[which(numerical_variables %in% variable)] <-
     new_variable_name
 }
 
-# 26 Setting Swedish months to English ####
+# 24 Setting Swedish months to English ####
 compiled_data[["month_sold_english"]] <-
   dplyr::case_when(
     compiled_data[["month_sold_swedish"]] ==  "januari" ~ "jan",
@@ -287,7 +260,7 @@ compiled_data[["month_sold_english"]] <-
     compiled_data[["month_sold_swedish"]] ==  "december" ~ "dec"
              )
 
-# 27 Concatenating to lubridate format ####
+# 25 Concatenating to lubridate format ####
 compiled_data[["date_sold"]] <-
   paste(
     compiled_data[["year_sold"]]
@@ -296,25 +269,25 @@ compiled_data[["date_sold"]] <-
     , sep = "-") %>%
     lubridate::ymd()
 
-# 28 Adding several levels of date information for time series analysis ####
+# 26 Adding several levels of date information for time series analysis ####
 compiled_data %<>% add_date_data_for_tsa("date_sold")
 
-# 29 Adding Swedish holiday date information ####
+# 27 Adding Swedish holiday date information ####
 compiled_data %<>% add_swedish_days_off_data("date_sold")
 
-# 30 Engineering time-series analysis features ####
+# 28 Engineering time-series analysis features ####
 
-# 31 Aggregating by each categorical variable ####
-for (variable in categorical_variables) {
+# 29 Aggregating by each categorical variable ####
+for (variable in categorical_variables_for_tsa) {
 
-  # 32 Aggregating by unique level within the categorical variables ####
+  # 30 Aggregating by unique level within the categorical variables ####
   unique_levels <- unique(compiled_data[[variable]])
   column_prefix <- variable
   sql_column_names <-
     c("median_selling_price", "mean_selling_price", "sum_selling_price") %>%
       paste0(column_prefix, "_", .)
 
-  # 33 Create a dates_table to join to ####
+  # 31 Create a dates_table to join to ####
   min_date <-
     compiled_data[["date_sold"]] %>%
     as.Date %>%
@@ -327,16 +300,16 @@ for (variable in categorical_variables) {
 
   dates_df <-
     data.frame(
-      date_sold = c(min_date:max_date) %>% as.Date(origin = "1970-01-01")
+      date_sold = c(min_date : max_date) %>% as.Date(origin = "1970-01-01")
       , categorical_variable = variable
       )
 
   for (unique_level in unique_levels) {
 
-    # 34 Add column to dates_df based on the level for joining ####
+    # 32 Add column to dates_df based on the level for joining ####
     dates_df[["level"]] <- unique_level
 
-    # 35 Create temp_df with aggregate fxns by joining to dates_df ####
+    # 33 Create temp_df with aggregate fxns by joining to dates_df ####
     temp_df <-
       sqldf::sqldf(
         paste0(
@@ -355,7 +328,7 @@ for (variable in categorical_variables) {
           )
         )
 
-    # 36 Interpolate prices (linearly) for dates not in the raw data ####
+    # 34 Interpolate prices (linearly) for dates not in the raw data ####
     for (agg_column in sql_column_names) {
 
       temp_df %<>%
@@ -363,7 +336,7 @@ for (variable in categorical_variables) {
 
       column_for_further_aggs <- paste0(agg_column, "_interpolated")
 
-      # 37 Will do rolling and lag fxns at several timeframes ####
+      # 35 Will do rolling and lag fxns at several timeframes ####
       timeframes_to_look <- c(7, 31, 91, 365)
         for (days_back in timeframes_to_look) {
           cat(
@@ -374,7 +347,7 @@ for (variable in categorical_variables) {
             , "\n"
             )
 
-          # 38 Prepping column names ####
+          # 36 Prepping column names ####
           col_name_suf_for_roll_data <-
             paste0("_selling_price_last_", days_back, "_days")
 
@@ -394,7 +367,7 @@ for (variable in categorical_variables) {
           column_name_for_lag_data <-
             paste0(column_prefix, "_", fxn, col_name_suf_for_lag_data)
 
-          # 39 Rolling aggregation data ####
+          # 37 Rolling aggregation data ####
           fxn_text_for_rolling_data <- paste0("RcppRoll::roll_", fxn, "l")
 
           temp_df[[column_name_for_rolling_data]] <-
@@ -407,7 +380,7 @@ for (variable in categorical_variables) {
             interpolate_for_missing_dates(
               column_name_for_rolling_data, "date_sold")
 
-          # 40 Lag data ####
+          # 38 Lag data ####
           temp_df[[column_name_for_lag_data]] <-
             dplyr::lead(
               temp_df[[column_for_further_aggs]]
@@ -420,9 +393,9 @@ for (variable in categorical_variables) {
               , "date_sold"
               )
 
-        # 41 Engineering more features that are lag + rolling ####
+        # 39 Engineering more features that are lag + rolling ####
 
-        # 42 Lag+rolling features only if done with last timeframe ####
+        # 40 Lag+rolling features only if done with last timeframe ####
 
         if (days_back == (timeframes_to_look %>% .[length(.)])) {
 
@@ -434,7 +407,7 @@ for (variable in categorical_variables) {
             , lag_day = c(timeframes_to_look)
             )
 
-        # 43 set the rolling and lag days ####
+        # 41 set the rolling and lag days ####
         for (row_n in seq_len(nrow(timeframe_permutations))) {
           roll_day <- timeframe_permutations[row_n, 1]
           lag_day <- timeframe_permutations[row_n, 2]
@@ -448,7 +421,7 @@ for (variable in categorical_variables) {
                     , "_days_ago"
                     )
 
-          # 44 Name the columns ####
+          # 42 Name the columns ####
           col_name_for_roll_lag_data <-
             paste0(column_prefix, "_"
               , fxn
@@ -465,7 +438,7 @@ for (variable in categorical_variables) {
               , "_days"
               )
 
-          # 45 Create the columns ####
+          # 43 Create the columns ####
           temp_df[[col_name_for_roll_lag_data]] <-
             dplyr::lead(
               temp_df[[column_name_for_source_data]]
@@ -482,7 +455,7 @@ for (variable in categorical_variables) {
       }
     }
 
-    # 46 Creating the join_df ####
+    # 44 Creating the join_df ####
     if (unique_level == unique_levels[1]) {
       join_df <<- temp_df
     } else {
@@ -490,7 +463,7 @@ for (variable in categorical_variables) {
     }
   }
 
-  # 47 Adding the new columns to the compiled_data ####
+  # 45 Adding the new columns to the compiled_data ####
   compiled_data_columns_for_sql <-
     names(compiled_data) %>% paste0("c.", ., collapse = ", ")
 
@@ -515,49 +488,27 @@ for (variable in categorical_variables) {
 
 }
 
-# 48 One-hot-encoding for non-interval/ratio features ####
-features_for_ohe <-
-  c(
-    "city"
-    , "area_consolidated_low_freq_generalized"
-    , "street_low_freq_generalized"
-    , "agent_name_low_freq_generalized"
-    , "agency_low_freq_generalized"
-    , "dayofmonth_sold"
-    , "month_sold_english"
-    , "quarterofyear_sold"
-    , "monthofyear_sold"
-    , "monthofquarter_sold"
-    , "weekofyear_sold"
-    , "weekofquarter_sold"
-    , "weekofmonth_sold"
-    , "dayofyear_sold"
-    , "dayofquarter_sold"
-    , "dayofmonth_sold"
-    , "dayofweek_sold"
-    )
-
-# 49 Create df for making the ohe features ####
+# 46 Create df for making the ohe features ####
 df_for_ohe <- compiled_data[, features_for_ohe]
 
-# 50 Convert all to factor so one-hot encoding will work on numeric data ####
+# 47 Convert all to factor so one-hot encoding will work on numeric data ####
 df_for_ohe[] <- lapply(df_for_ohe, as.factor)
 
-# 51 Make the ohe columns ####
+# 48 Make the ohe columns ####
 library(caret)
 df_for_ohe %<>%
-  caret::dummyVars(" ~ .", data = ., sep = "_") %>%
-    predict(newdata = df_for_ohe) %>%
-    data.frame
+  dummyVars(" ~ .", data = ., sep = "_") %>%
+  predict(newdata = df_for_ohe) %>%
+  data.frame()
 
-# 52 add prefix for easier sorting later ####
+# 49 add prefix for easier sorting later ####
 names(df_for_ohe) %<>% paste0("ohe_", .)
 
-# 53 Add columns back to compiled_data ####
+# 50 Add columns back to compiled_data ####
 compiled_data %<>%
   cbind(df_for_ohe)
 
-# 54 Converting what could be numerical or character into factor data ####
+# 51 Converting what could be numerical or character into factor data ####
 column_identifiers <- c("dayof", "weekof", "monthof", "quarterof", "ohe_")
 
 for (id in column_identifiers) {
@@ -568,7 +519,7 @@ for (id in column_identifiers) {
   }
 }
 
-# 55 Reordering some factors for display purposes ####
+# 52 Reordering some factors for display purposes ####
 compiled_data[["dayofweek_sold"]] %<>%
   factor(x = ., levels = c("mon", "tue", "wed", "thu", "fri", "sat", "sun"))
 
@@ -610,13 +561,26 @@ compiled_data[["month_sold_english"]] %<>%
     )
   )
 
+#53 Converting date_sold into a number ####
+compiled_data$date_sold %<>%
+  as.numeric
 
-# 56 Identifying processed data variables ####
+#54 Converting swedish days off columns into factors ####
+compiled_data$swedish_red_or_pink_day %<>%
+  as.factor
+
+compiled_data$swedish_pinch_day %<>%
+  as.factor
+
+compiled_data$swedish_day_off %<>%
+  as.factor
+
+# 55 Identifying processed data variables ####
 psddata_variables <-
   colnames(compiled_data)[colnames(compiled_data) %not_in% rawdata_variables]
 
 # 56 Adding "rawdata_" suffix to all original variables ####
-rawdata_variable_names <- paste0("rawdata_", rawdata_variables)
+rawdata_variable_names <- paste0(rawdata_variables, "_rawdata")
 
 old_colnames_to_replace <-
   match(colnames(compiled_data), rawdata_variables, nomatch = 0)
@@ -625,7 +589,7 @@ colnames(compiled_data)[colnames(compiled_data) %in% rawdata_variables] <-
   rawdata_variable_names[old_colnames_to_replace]
 
 # 57 Adding "psddata_" suffix to all new variables ####
-psddata_variable_names <- paste0("psddata_", psddata_variables)
+psddata_variable_names <- paste0(psddata_variables, "_psddata")
 
 new_colnames_to_replace <-
   match(colnames(compiled_data), psddata_variables, nomatch = 0)
@@ -633,7 +597,12 @@ new_colnames_to_replace <-
 colnames(compiled_data)[colnames(compiled_data) %in% psddata_variables] <-
   psddata_variable_names[new_colnames_to_replace]
 
-# 58 save the object ####
+# 58 Renaming dayofmonth_sold column so it will be handled like psddata ####
+
+compiled_data %<>%
+  rename(dayofmonth_sold_psddata = dayofmonth_sold_rawdata)
+
+# 59 save the object ####
 name_of_results_df <-
     paste0(
         "date_"

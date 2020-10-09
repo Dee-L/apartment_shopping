@@ -44,7 +44,7 @@
 # rm(iterator)
 
 
-# get_day_of_month_sold("https://www.hemnet.se/salda/lagenhet-4rum-kungsangen-uppsala-kommun-muningatan-4-1250838")
+# get_dayofmonth_sold("https://www.hemnet.se/salda/lagenhet-4rum-kungsangen-uppsala-kommun-muningatan-4-1250838")
 
 
 

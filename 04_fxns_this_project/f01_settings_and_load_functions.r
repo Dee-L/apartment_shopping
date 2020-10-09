@@ -86,7 +86,7 @@ if (!dir.exists(output_folder_compiled)) {
 out_folder_preprocessed_data <-
     paste0(
         output_folder,
-        "04_data_with_engineered_features/"
+        "04_preprocessed_data/"
     )
 
 if (!dir.exists(out_folder_preprocessed_data)) {
@@ -97,3 +97,33 @@ if (!dir.exists(out_folder_preprocessed_data)) {
 
 mappings_xlsx <-
     paste0(input_folder, "i01_mappings.xlsx")
+
+# 06 Features for one-hot encoding - used in at least two scripts ####
+features_for_ohe <-
+    c(
+        "city",
+        "area_consolidated_low_freq_generalized",
+        "street_low_freq_generalized",
+        "agent_name_low_freq_generalized",
+        "agency_low_freq_generalized",
+        "quarterofyear_sold",
+        "monthofyear_sold",
+        "monthofquarter_sold",
+        "weekofyear_sold",
+        "weekofquarter_sold",
+        "weekofmonth_sold",
+        "dayofyear_sold",
+        "dayofquarter_sold",
+        "dayofmonth_sold",
+        "dayofweek_sold"
+    )
+
+# 07 Cat variables for time series analysis - used in at least 2 scripts ####
+categorical_variables_for_tsa <-
+    c(
+        "city",
+        "area_consolidated_low_freq_generalized",
+        "street_low_freq_generalized",
+        "agent_name_low_freq_generalized",
+        "agency_low_freq_generalized"
+    )

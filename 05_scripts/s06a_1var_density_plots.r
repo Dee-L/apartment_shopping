@@ -53,9 +53,7 @@ server <- function(input, output) {
                     inputId = "continuous_variable",
                     label = "Select a continuous variable to plot",
                     h3("Select box"),
-                    choices =
-                        c(original_numeric_vars, engineered_numeric_vars) %>%
-                            sort
+                    choices = numeric_vars_for_density_plots
                     )
                 )
             })

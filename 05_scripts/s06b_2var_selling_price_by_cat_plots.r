@@ -1,4 +1,4 @@
-# Purpose: Plots for selling_price by category
+# Purpose: Plots for selling_price_rawdata by category
 # Author: David Gray Lassiter, PhD
 # Date: 2020-oct-04
 # Version:
@@ -35,7 +35,7 @@ library(shiny)
 ui <-
     fluidPage(
         titlePanel(
-            "Selling_price by category"
+            "Selling price by category"
             )
         , sidebarLayout(
             uiOutput("sidebarOutput")
@@ -64,9 +64,7 @@ server <- function(input, output) {
                     inputId = "categorical_variable",
                     label = "Select a categorical variable to plot",
                     h3("Select box"),
-                    choices =
-                        c("city", engnrd_fctr_vars_seeded_nmrc) %>%
-                            sort
+                    choices = sort(cat_vars_for_plots)
                     )
                 )
             })
@@ -77,7 +75,8 @@ server <- function(input, output) {
     })
 
     targeted_df <- reactive({
-        targeted_df <- preprocessed_data[, c("selling_price", cat_var())]
+        targeted_df <- preprocessed_data[, c("selling_price_rawdata",
+            cat_var())]
         top_31_in_var <-
             sqldf::sqldf(
                 paste0(
@@ -90,7 +89,7 @@ server <- function(input, output) {
             )
         targeted_df <- sqldf::sqldf(
             paste0(
-                "select a.selling_price, a.", eval(cat_var()),
+                "select a.selling_price_rawdata, a.", eval(cat_var()),
                 " from targeted_df as a
               join top_31_in_var as t
                 on a.", eval(cat_var()), " = t.", eval(cat_var())
@@ -104,8 +103,9 @@ server <- function(input, output) {
             my_violin_plot(
                 df = targeted_df() %>% .[!is.na(.[[cat_var()]]), ],
                 x = cat_var(),
-                y = "selling_price",
-                title = paste0("Violin plot for selling_price by ", cat_var())
+                y = "selling_price_rawdata",
+                title = paste0("Violin plot for selling_price_rawdata by ",
+                    cat_var())
             )
             })
 
@@ -115,8 +115,9 @@ server <- function(input, output) {
             my_stripchart_plot(
                 df = targeted_df() %>% .[!is.na(.[[cat_var()]]), ],
                 x = cat_var(),
-                y = "selling_price",
-                title = paste0("Stripchart for selling_price by ", cat_var())
+                y = "selling_price_rawdata",
+                title = paste0("Stripchart for selling_price_rawdata by ",
+                    cat_var())
             )
         })
 
@@ -125,10 +126,10 @@ server <- function(input, output) {
         renderPlotly({
             my_conditional_density_plot(
                 df = targeted_df() %>% .[!is.na(.[[cat_var()]]), ],
-                x = "selling_price",
+                x = "selling_price_rawdata",
                 layers = cat_var(),
                 title = paste0(
-                    "Conditional density plot for selling_price by "
+                    "Conditional density plot for selling_price_rawdata by "
                     , cat_var()
                     )
             )

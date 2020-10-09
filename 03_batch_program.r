@@ -32,11 +32,15 @@ source_script_from_folder("s04_summaries.r")
 # 07 Preprocess data and engineer features ####
 source_script_from_folder("s05_preprocessing_and_feature_engineering.r")
 
+# 15 Put machine to sleep ####
+shell(cmd = "rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
+
+
+
 # 08 QA plots ####
 source_script_from_folder("s06_qa_plots.r")
 
-# 15 Put machine to sleep ####
-# shell(cmd = "rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
+
 
 # Data splits - selling_price vs increase in price and train/test for both
 
