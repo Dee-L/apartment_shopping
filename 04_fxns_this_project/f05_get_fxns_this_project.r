@@ -207,7 +207,7 @@ get_city <- function(html) {
 
     cities_swedish <-
         c(
-        "stockholm", "solna", "uppsala"
+        "stockholm", "solna"
         )
 
     if (

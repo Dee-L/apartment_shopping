@@ -1,4 +1,4 @@
-# Purpose: Plots for selling_price_rawdata by category
+# Purpose: Plots for various cont_vars by category
 # Author: David Gray Lassiter, PhD
 # Date: 2020-oct-04
 # Version:
@@ -22,7 +22,8 @@ install_my_pkgs(pkgs)
 
 if (any(
     !exists("preprocessed_data")
-    , !exists("engnrd_fctr_vars_seeded_nmrc")
+    , !exists("cat_vars_for_plots")
+    , !exists("cont_vars_for_aggs")
     )) {
         source("05_scripts/s06_qa_plots_prep.R")
     }
@@ -35,7 +36,7 @@ library(shiny)
 ui <-
     fluidPage(
         titlePanel(
-            "Selling price by category"
+            "Various continuous variables by category"
             )
         , sidebarLayout(
             uiOutput("sidebarOutput")
@@ -55,8 +56,8 @@ ui <-
             )
         )
 
-# 04 Define server ####
-server <- function(input, output) {
+# 05 Define server ####
+server <- function(input, output, session) {
     output[["sidebarOutput"]] <-
         renderUI({
             sidebarPanel(
@@ -66,16 +67,46 @@ server <- function(input, output) {
                     h3("Select box"),
                     choices = sort(cat_vars_for_plots)
                     )
+                , selectInput(
+                    inputId = "continuous_variable",
+                    label = "Select a categorical variable to plot",
+                    h3("Select box"),
+                    choices = sort(cont_vars_for_aggs)
+                    )
                 )
             })
 
-    # 05 Save inputs from user in reactive objects ####
+    # 06 Updates the second drop-down list based on first selection ####
+    observe({
+        updateSelectInput(
+            session
+            , "continuous_variable"
+            , label = "Select a categorical variable to plot"
+            , h3("Select box"),
+            choices =
+                sort({
+                    # 07 Process first choice for filtering second choice ####
+                    group_factor_for_aggs <-
+                        cat_var() %>%
+                        left(., nchar(.) - 8)
+                    # 08 filter second choice - gets presented to user ####
+                        cont_vars_for_aggs %>%
+                        stringr::str_subset(group_factor_for_aggs)
+                    }))
+    })
+
+    # 09 Save inputs from user in reactive objects ####
     cat_var <- reactive({
         input[["categorical_variable"]]
     })
 
+    con_var <- reactive({
+        input[["continuous_variable"]]
+    })
+
+    # 10 Reduce to 31 categories ####
     targeted_df <- reactive({
-        targeted_df <- preprocessed_data[, c("selling_price_rawdata",
+        targeted_df <- preprocessed_data[, c(con_var(),
             cat_var())]
         top_31_in_var <-
             sqldf::sqldf(
@@ -89,7 +120,7 @@ server <- function(input, output) {
             )
         targeted_df <- sqldf::sqldf(
             paste0(
-                "select a.selling_price_rawdata, a.", eval(cat_var()),
+                "select a.", eval(con_var()), ", a.", eval(cat_var()),
                 " from targeted_df as a
               join top_31_in_var as t
                 on a.", eval(cat_var()), " = t.", eval(cat_var())
@@ -97,45 +128,45 @@ server <- function(input, output) {
         )
     })
 
-    # 06 Create violin plot ####
+    # 11 Create violin plot ####
     output[["violin_plot"]] <-
         renderPlotly({
             my_violin_plot(
                 df = targeted_df() %>% .[!is.na(.[[cat_var()]]), ],
                 x = cat_var(),
-                y = "selling_price_rawdata",
-                title = paste0("Violin plot for selling_price_rawdata by ",
+                y = con_var(),
+                title = paste0("Violin plot for ", con_var(), " by ",
                     cat_var())
             )
             })
 
-    # 07 Create stripchart plot ####
+    # 12 Create stripchart plot ####
     output[["stripchart"]] <-
         renderPlotly({
             my_stripchart_plot(
                 df = targeted_df() %>% .[!is.na(.[[cat_var()]]), ],
                 x = cat_var(),
-                y = "selling_price_rawdata",
-                title = paste0("Stripchart for selling_price_rawdata by ",
+                y = con_var(),
+                title = paste0("Stripchart for ", con_var(), " by ",
                     cat_var())
             )
         })
 
-    # 08 Create conditional_density plot ####
+    # 13 Create conditional_density plot ####
     output[["conditional_density"]] <-
         renderPlotly({
             my_conditional_density_plot(
                 df = targeted_df() %>% .[!is.na(.[[cat_var()]]), ],
-                x = "selling_price_rawdata",
+                x = con_var(),
                 layers = cat_var(),
                 title = paste0(
-                    "Conditional density plot for selling_price_rawdata by "
+                    "Conditional density plot for ", con_var(), "  by "
                     , cat_var()
                     )
             )
         })
 
-    # 09 Render plots ####
+    # 14 Render plots ####
     output[["violin_panel"]] <-
         renderUI({
             plotlyOutput(outputId = "violin_plot")
