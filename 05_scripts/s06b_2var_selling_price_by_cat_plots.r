@@ -24,7 +24,7 @@ if (any(
     !exists("preprocessed_data")
     , !exists("engnrd_fctr_vars_seeded_nmrc")
     )) {
-        source("05_scripts/s06_qa_plots.R")
+        source("05_scripts/s06_qa_plots_prep.R")
     }
 
 

@@ -27,7 +27,7 @@ if (any(
     , !exists("original_numeric_vars")
     , !exists("engineered_numeric_vars")
     )) {
-        source("05_scripts/s06_qa_plots.R")
+        source("05_scripts/s06_qa_plots_prep.R")
     }
 
 

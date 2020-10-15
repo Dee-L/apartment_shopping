@@ -93,6 +93,17 @@ if (!dir.exists(out_folder_preprocessed_data)) {
     dir.create(out_folder_preprocessed_data)
 }
 
+# Preprocessed data
+out_folder_orange_explorations <-
+    paste0(
+        output_folder,
+        "05_orange_explorations/"
+    )
+
+if (!dir.exists(out_folder_orange_explorations)) {
+    dir.create(out_folder_orange_explorations)
+}
+
 # 05 Source inputs ####
 
 mappings_xlsx <-

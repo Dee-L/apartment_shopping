@@ -24,7 +24,7 @@ if (any(
     !exists("preprocessed_data")
     , !exists("cont_vars_for_scatter_plots")
     )) {
-        source("05_scripts/s06_qa_plots.R")
+        source("05_scripts/s06_qa_plots_prep.R")
     }
 
 # 03 load shiny ####

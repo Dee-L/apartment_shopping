@@ -20,7 +20,7 @@ pkgs <-
 
 install_my_pkgs(pkgs)
 
-# 02a load latest compiled data ####
+# 02 load latest compiled data ####
 
 compiled_data <-
   paste0(
@@ -602,7 +602,7 @@ colnames(compiled_data)[colnames(compiled_data) %in% psddata_variables] <-
 compiled_data %<>%
   rename(dayofmonth_sold_psddata = dayofmonth_sold_rawdata)
 
-# 59 save the object ####
+# 60 save the object ####
 name_of_results_df <-
     paste0(
         "date_"
@@ -616,3 +616,14 @@ saveRDS(
     , eval(name_of_results_df)
     )
   )
+
+# 61 save as CSV for examining with Orange ####
+
+write.csv(
+  compiled_data,
+  paste0(
+    out_folder_orange_explorations,
+    eval(name_of_results_df),
+    ".csv"
+  )
+)
