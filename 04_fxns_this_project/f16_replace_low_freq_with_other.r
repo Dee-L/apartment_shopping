@@ -41,12 +41,12 @@ replace_low_freq_with_other <-
         .[frequency_cutoff : nrow(.), column] %>%
         .[complete.cases(.)]
 
-    # 04 Make a new column name ####    
+    # 04 Make a new column name ####
     new_column_name <- paste0(column, "_low_freq_generalized")
 
     # 05 Copy the results into the new column ####
     data_frame_modified <- data_frame
-    
+
     data_frame_modified[[eval(new_column_name)]] <-
         ifelse(data_frame_modified[[column]] %in% low_freq_hits,
             "other",

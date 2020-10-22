@@ -22,7 +22,7 @@ save_hemnet_object <- function() {
         , asking_price = na_if_empty(asking_price)
         , rooms = na_if_empty(rooms)
         , kvm = na_if_empty(kvm)
-        , floor_in_building = na_if_empty(floor_in_building)
+        , floor = na_if_empty(floor)
         , avgift = na_if_empty(avgift)
         , running_costs = na_if_empty(running_costs)
         , city = na_if_empty(city)

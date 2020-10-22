@@ -18,7 +18,6 @@ pkgs <-
 install_my_pkgs(pkgs)
 
 # 02 load latest preprocessed data ####
-
 preprocessed_data <-
   paste0(
     out_folder_preprocessed_data,
@@ -27,21 +26,10 @@ preprocessed_data <-
   ) %>%
   readRDS()
 
-# 03 Saving preprocessed data as csv for Orange ####
-
-
-# 04 Creating subsets of output variables for shiny apps ####
-all_vars <-
-  names(preprocessed_data)
-
+# 03 Testing data classes ####
 all_numeric_vars <-
   preprocessed_data %>%
     dplyr::select_if(is.numeric) %>%
-    names
-
-all_factor_vars <-
-  preprocessed_data %>%
-    dplyr::select_if(is.factor) %>%
     names
 
 all_other_vars <-
@@ -51,134 +39,167 @@ all_other_vars <-
 
 if (length(all_other_vars) > 0) message("Some variables are misclassified")
 
+# I don't think I'm using this one
+# original_factor_vars <-
+#   intersect(original_vars, all_factor_vars)
+
+# 05 specifying engrd variable subsets for plotting ####
+
+
+# 06 Variables for density plots ####
+all_vars <-
+  names(preprocessed_data)
+
 original_vars <-
   stringr::str_subset(all_vars, "_rawdata")
 
 original_numeric_vars <-
   intersect(original_vars, all_numeric_vars)
 
-original_factor_vars <-
-  intersect(original_vars, all_factor_vars)
+numeric_vars_for_density_plots <-
+   sort(c(original_numeric_vars, engrd_numeric_not_agg_by_cat))
 
-# 05 specifying engineered variable subsets for plotting ####
-engineered_vars <-
+# 07 Cat variables for violin, strip, and conditional density plots ####
+engrd_vars <-
   stringr::str_subset(all_vars, "_psddata")
 
-engineered_numeric_vars <-
-  intersect(engineered_vars, all_numeric_vars)
+all_factor_vars <-
+  preprocessed_data %>%
+  dplyr::select_if(is.factor) %>%
+  names()
 
-engineered_factor_vars <-
-  intersect(engineered_vars, all_factor_vars)
-
-engineered_numeric_agg_by_cat <-
-  stringr::str_subset(engineered_numeric_vars, "_mean_|_median_|_sum_")
-
-engineered_numeric_not_agg_by_cat <-
-  setdiff(engineered_numeric_vars, engineered_numeric_agg_by_cat)
-
-numeric_vars_for_density_plots <-
-  sort(c(original_numeric_vars, engineered_numeric_not_agg_by_cat))
+engrd_factor_vars <-
+  intersect(engrd_vars, all_factor_vars)
 
 cat_vars_for_plots <-
-  engineered_factor_vars %>%
+  engrd_factor_vars %>%
   stringr::str_subset("ohe_", negate = T) %>%
   stringr::str_subset("month_sold_english", negate = T) %>%
   stringr::str_subset("generalized|sold") %>%
   c("city_rawdata", .)
 
-cont_vars_for_scatter_plots <-
-  stringr::str_subset(engineered_numeric_not_agg_by_cat, "imputed|date_sold") %>% head(100)
+# 08 Con variables for violin, strip, and conditional density plots ####
+engrd_numeric_vars <-
+  intersect(engrd_vars, all_numeric_vars)
 
-cont_vars_for_aggs <-
-  engineered_numeric_vars %>%
+engrd_numeric_agg_by_cat <-
+  stringr::str_subset(engrd_numeric_vars, "_mean_|_median_|_sum_")
+
+engrd_numeric_not_agg_by_cat <-
+  setdiff(engrd_numeric_vars, engrd_numeric_agg_by_cat)
+
+# Paused here, need to make sure capturing nonhalf floor dropped only in
+# all relevant var sets that are being plotted later. I started
+# working on removing the floors that don't have nonhalf floors dropped
+# below but didn't finish making it or incorporating it into
+# con_vars_for_plots
+
+engnrd_nonhalf_not_dropped <-
+  engrd_numeric_not_agg_by_cat %>%
+    stringr::str_subset("floor_") %>%
+    stringr::str_subset("nonhalf", negate = T)
+
+con_vars_for_plots <-
+  stringr::str_subset(engrd_numeric_not_agg_by_cat, "imputed") %>%
+  setdiff(engnrd_nonhalf_not_dropped) %>%
+  sort %>%
+  c("selling_price_rawdata", .)
+
+
+# 08 Variables for heatmaps ####
+discrete_vars_for_heatmaps <-
+  stringr::str_subset(con_vars_for_plots, "kvm|rooms|floor") %>%
+  c(cat_vars_for_plots)
+
+
+
+con_vars_for_aggs <-
+  engrd_numeric_vars %>%
   stringr::str_subset("mean|median|sum") %>%
   stringr::str_subset("ago_psddata|days_psddata", negate = T)
 
-# Paused here
+cat_vars_for_agg_plots <-
+  cat_vars_for_plots %>%
+  stringr::str_subset(categorical_variables_for_tsa)
+
+# Paused here - want to generalize the heatmap function to a shiny app
+
+x_var <- discrete_vars_for_heatmaps[1]
+y_var <- discrete_vars_for_heatmaps[2]
+color_var <- con_vars_for_plots[1]
+
+my_heatmap(
+  df = preprocessed_data,
+  x = cat_vars_for_plots,
+  y = y_var,
+  color = color_var,
+  aggfxn = "median",
+  title = "Heatmap: Price by day of week and week of month"
+)
+
 
 #Heatmap - not working - too many SQL variables
-dayofweek_sold_by_weekofmonth_sold_median_heatmap <- my_heatmap(
-  df = preprocessed_data,
-  x = "dayofweek_sold_psddata",
-  y = "weekofmonth_sold_psddata",
-  z = "selling_price_rawdata",
-  aggfxn = "median",
-  title = "Median price is lowest Week 5 Saturday or Monday.
-  Prices tend to be lowest in Week 5 and highest in week 2.")
-
-dayofweek_sold_by_weekofmonth_sold_median_heatmap
+  my_heatmap(
+    df = preprocessed_data,
+    x = "dayofweek_sold_psddata",
+    y = "weekofmonth_sold_psddata",
+    color = "selling_price_rawdata",
+    aggfxn = "median",
+    title = "Heatmap: Price by day of week and week of month")
 
 
-
-##price by weekofmonth_sold and monthofquarter_sold
 
 
 #Heatmap
-# weekofmonth_sold_by_monthofquarter_sold_median_heatmap <- my_heatmap(
-  # df = preprocessed_data,
-  # x = "weekofmonth_sold",
-  # y = "monthofquarter_sold",
-  # z = "selling_price",
-  # aggfxn = "median",
-  # title = "Median price is lowest in Week 5, beginning of quarter. Prices tend
-  # to be higher week 2, lower week 1.")
-# 
-# weekofmonth_sold_by_monthofquarter_sold_median_heatmap
-# 
-# save_plot_as_html(weekofmonth_sold_by_monthofquarter_sold_median_heatmap)
-
-
-##price by monthofquarter_sold and quarterofyear_sold
-
+  my_heatmap(
+    df = preprocessed_data,
+    x = "weekofmonth_sold_psddata",
+    y = "monthofquarter_sold_psddata",
+    color = "selling_price_rawdata",
+    aggfxn = "median",
+    title = "Heatmap: Price by week of month and month of quarter")
 
 #Heatmap
-# monthofquarter_sold_by_quarterofyear_sold_median_heatmap <- my_heatmap(
-  # df = preprocessed_data,
-  # x = "monthofquarter_sold",
-  # y = "quarterofyear_sold",
-  # z = "selling_price",
-  # aggfxn = "median",
-  # title = "Median price is highest third quarter, lowest in the first quarter.")
-# 
-# monthofquarter_sold_by_quarterofyear_sold_median_heatmap
-# 
-# save_plot_as_html(monthofquarter_sold_by_quarterofyear_sold_median_heatmap)
+  my_heatmap(
+    df = preprocessed_data,
+    x = "monthofquarter_sold_psddata",
+    y = "quarterofyear_sold_psddata",
+    color = "selling_price_rawdata",
+    aggfxn = "median",
+    title = "Heatmap: Price by month of quarter and quarter of year")
+
 
 
 ##price by dayofweek_sold, weekofmonth_sold, monthofyear_sold and year_sold
 
 
 #Calendar heatmap
-# calendar_heatmap <- my_calendar_heatmap(
-  # df = preprocessed_data,
-  # day_col = "dayofweek_sold",
-  # week_col = "weekofmonth_sold",
-  # month_col = "monthofyear_sold",
-  # year_col = "year_sold",
-  # z = "selling_price",
-  # title = "No very obvious trends.")
-# 
-# calendar_heatmap
-# 
-# save_plot_as_html(calendar_heatmap)
-
-
-##price by rooms and floor
-
+my_calendar_heatmap(
+  df = preprocessed_data,
+  day_col = "dayofweek_sold_psddata",
+  week_col = "weekofmonth_sold_psddata",
+  month_col = "monthofyear_sold_psddata",
+  year_col = "year_sold_rawdata",
+  color = "selling_price_rawdata",
+  title = "Heatmap: Price over the years")
 
 #Heatmap
-# rooms_by_floor_median_heatmap <- my_heatmap(
-  # df = preprocessed_data,
-  # x = "rooms",
-  # y = "floor",
-  # z = "selling_price",
-  # aggfxn = "median",
-  # title = "Median price is lowest for 1.5 rooms on the 22 floor. Prices tend to
-  # be lowest for 1-room apartments, although there are some inexpensive at 3 rooms.")
-# 
-# rooms_by_floor_median_heatmap
-# 
-# save_plot_as_html(rooms_by_floor_median_heatmap)
+my_heatmap(
+  df = preprocessed_data,
+  x = "rooms_imputed_from_random_sample_psddata",
+  y = "floor_in_building_imputed_from_random_sample_psddata",
+  color = "selling_price_rawdata",
+  aggfxn = "median",
+  title = "Heatmap: Price by rooms and floor")
+
+my_heatmap(
+  df = preprocessed_data,
+  x = "rooms_imputed_from_random_sample_psddata",
+  y = "nonhalf_floors_dropped_imputed_from_random_sample_psddata",
+  color = "selling_price_rawdata",
+  aggfxn = "median",
+  title = "Heatmap: Price by rooms and floor"
+)
 
 
 

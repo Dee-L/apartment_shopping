@@ -171,54 +171,52 @@ compiled_data <- replace_low_freq_with_other(compiled_data, "agent_name", 50)
 
 compiled_data <- replace_low_freq_with_other(compiled_data, "agency", 50)
 
+# 19 Removing nonsensical floor data due to imperfect scraping ####
+
+compiled_data$floor_nonhalf_dropped <-
+  compiled_data$floor %>%
+  ifelse(. %% 0.5 == 0, ., NA)
+
 # 20 Adding features that are calculations of known features ####
 
-compiled_data[["age_when_sold"]] <-
-  compiled_data[["year_sold"]] - compiled_data[["year_built"]]
-
-compiled_data[["kvm_per_room"]] <-
-  compiled_data[["kvm"]] / compiled_data[["rooms"]]
-
-compiled_data[["avgift_per_kvm"]] <-
-  compiled_data[["avgift"]] / compiled_data[["kvm"]]
-
-compiled_data[["avgift_per_room"]] <-
-  compiled_data[["avgift"]] / compiled_data[["rooms"]]
-
-compiled_data[["avgift_per_asking_price"]] <-
-  compiled_data[["avgift"]] / compiled_data[["asking_price"]]
-
-compiled_data[["running_costs_per_kvm"]] <-
-  compiled_data[["running_costs"]] / compiled_data[["kvm"]]
-
-compiled_data[["running_costs_per_room"]] <-
-  compiled_data[["running_costs"]] / compiled_data[["rooms"]]
-
-compiled_data[["running_costs_per_asking_price"]] <-
-  compiled_data[["running_costs"]] / compiled_data[["asking_price"]]
+compiled_data %<>%
+  mutate(
+    age_when_sold = year_sold - year_built
+    , rooms_per_floor = rooms / floor_nonhalf_dropped
+    , kvm_per_room = kvm / rooms
+    , kvm_per_floor = kvm / floor_nonhalf_dropped
+    , avgift_per_kvm = avgift / kvm
+    , avgift_per_room = avgift / rooms
+    , avgift_per_floor = avgift / floor_nonhalf_dropped
+    , avgift_per_asking_price = avgift / asking_price
+    , running_costs_per_kvm = running_costs / kvm
+    , running_costs_per_room = running_costs / rooms
+    , running_costs_per_floor = running_costs / floor_nonhalf_dropped
+    , running_costs_per_asking_price = running_costs / asking_price
+    )
 
 # 21 Imputing where have NAs for numerical variables ####
-set.seed(412)
+rawdata_numerical_variables <-
+  compiled_data %>%
+  head %>%
+  select(asking_price : running_costs) %>%
+  names
+
+few_engnrd_numerical_variables <-
+  compiled_data %>%
+  head %>%
+  select(floor_nonhalf_dropped : running_costs_per_asking_price) %>%
+  names
 
 numerical_variables <-
   c(
-    "asking_price"
-    , "rooms"
-    , "kvm"
-    , "floor_in_building"
-    , "avgift"
-    , "running_costs"
-    , "age_when_sold"
-    , "kvm_per_room"
-    , "avgift_per_kvm"
-    , "avgift_per_room"
-    , "avgift_per_asking_price"
-    , "running_costs_per_kvm"
-    , "running_costs_per_room"
-    , "running_costs_per_asking_price"
+    rawdata_numerical_variables,
+    few_engnrd_numerical_variables
   )
 
 # 22 Replace NAs with a random sample from the real values in new variable ####
+set.seed(412)
+
 for (variable in numerical_variables) {
 
   new_variable_name <-
@@ -234,7 +232,7 @@ for (variable in numerical_variables) {
   compiled_data[[eval(new_variable_name)]] <-
   ifelse(
     is.na(compiled_data[[variable]])
-    , sample(non_missing, length_missing)
+    , sample(non_missing, length_missing, replace = T)
     , compiled_data[[variable]]
   )
 
@@ -275,10 +273,11 @@ compiled_data %<>% add_date_data_for_tsa("date_sold")
 # 27 Adding Swedish holiday date information ####
 compiled_data %<>% add_swedish_days_off_data("date_sold")
 
-# 28 Engineering time-series analysis features ####
+# 28 Note to self - should reduce complexity of loop in 29 ####
 
-# 29 Aggregating by each categorical variable ####
-for (variable in categorical_variables_for_tsa) {
+# 29 Engineering time-series analysis features ####
+
+for (variable in categorical_variables) {
 
   # 30 Aggregating by unique level within the categorical variables ####
   unique_levels <- unique(compiled_data[[variable]])

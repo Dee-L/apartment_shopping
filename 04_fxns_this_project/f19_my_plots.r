@@ -15,6 +15,7 @@ pkgs <-
     , "plotly"
     , "htmlwidgets"
     , "sqldf"
+    , "forcats"
   )
 
 install_my_pkgs(pkgs)
@@ -253,7 +254,9 @@ my_scatter_plot <- function(df, x, y, title = "") {
 
 # 08 Heatmap ####
 
-my_heatmap <- function(df, x, y, z, aggfxn = "median", title = "") {
+my_heatmap <- function(df, x, y, color, aggfxn = "median", title = "") {
+
+  df %<>% select(x, y, color)
 
   df[[x]] %<>% as.factor
   df[[y]] %<>% as.factor
@@ -261,7 +264,7 @@ my_heatmap <- function(df, x, y, z, aggfxn = "median", title = "") {
   df <-
     sqldf::sqldf(
       paste0(
-        "select ", x, ", ", y, ", ", aggfxn, "(", z, ")
+        "select ", x, ", ", y, ", ", aggfxn, "(", color, ")
         from df
         group by 1, 2"))
 
@@ -271,27 +274,27 @@ my_heatmap <- function(df, x, y, z, aggfxn = "median", title = "") {
         aes(
           x = df[[x]],
           y = df[[y]],
-          fill = df[[paste0(aggfxn, "(", z, ")")]],
+          fill = df[[paste0(aggfxn, "(", color, ")")]],
           text =
             paste0(
                 "\nas.factor(df[[x]]) is "
                 , x
                 , ".\ndf[[y]]) is "
                 , y
-                , "\ndf[[z]] is "
+                , "\ndf[[color]] is "
                 , aggfxn
                 , " "
-                , z
+                , color
                 , "."
                 )
         )
       ) +
-      scale_fill_gradient2(midpoint = median(df[[paste0(aggfxn, "(", z, ")")]]),
+      scale_fill_gradient2(midpoint = median(df[[paste0(aggfxn, "(", color, ")")]]),
                            low = "blue", mid = "white",
                            high = "red", space = "Lab") +
       xlab(x) +
       ylab(y) +
-      labs(fill = paste0(aggfxn, "(", z, ")")) +
+      labs(fill = paste0(aggfxn, "(", color, ")")) +
       plot_theme +
       ggtitle(title),
     tooltip = c("x", "y", "fill", "text")
@@ -307,13 +310,15 @@ my_calendar_heatmap <-
         , week_col
         , month_col
         , year_col
-        , z
+        , color
         , aggfxn = "median"
         , title = ""
         ) {
 
+    df %<>% select(day_col, week_col, month_col, year_col, color)
+
     df[[day_col]] %<>% as.factor
-    df[[week_col]] %<>% as.factor %>% fct_rev
+    df[[week_col]] %<>% as.factor %>% forcats::fct_rev(.)
     df[[month_col]] %<>% as.factor
     df[[year_col]] %<>% as.factor
 
@@ -331,7 +336,7 @@ my_calendar_heatmap <-
             , ", "
             , aggfxn
             , "("
-            , z
+            , color
             , ")
             from df
             group by 1, 2, 3, 4"))
@@ -342,7 +347,7 @@ my_calendar_heatmap <-
             aes(
             x = df[[day_col]],
             y = df[[week_col]],
-            fill = df[[paste0(aggfxn, "(", z, ")")]],
+            fill = df[[paste0(aggfxn, "(", color, ")")]],
             text =
                 paste0(
                     "\nas.factor(df[[day_col]]) is "
@@ -353,22 +358,22 @@ my_calendar_heatmap <-
                     , month_col
                     , ".\ndf[[year_col]]) is "
                     , year_col
-                    , "\ndf[[z]] is "
+                    , "\ndf[[color]] is "
                     , aggfxn
                     , " "
-                    , z
+                    , color
                     , "."
                     )
             )
         ) +
         facet_grid(df[[year_col]] ~ df[[month_col]]) +
         scale_fill_gradient2(
-            midpoint = median(df[[paste0(aggfxn, "(", z, ")")]]),
+            midpoint = median(df[[paste0(aggfxn, "(", color, ")")]]),
                             low = "blue", mid = "white",
                             high = "red", space = "Lab") +
         xlab(day_col) +
         ylab(week_col) +
-        labs(fill = paste0(aggfxn, "(", z, ")")) +
+        labs(fill = paste0(aggfxn, "(", color, ")")) +
         plot_theme +
         ggtitle(title),
         tooltip = c("x", "y", "fill", "text")

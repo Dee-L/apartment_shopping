@@ -66,7 +66,7 @@ add_date_data_for_tsa <- function(data_frame, column_with_date_as_ymd) {
             lubridate::wday(data_frame[[column_with_date_as_ymd]]) == 7 ~ "sat",
         )
 
-    new_cols <- 
+    new_cols <-
         c(
             "quarterofyear_sold",
             "monthofyear_sold",

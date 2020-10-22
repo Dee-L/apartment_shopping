@@ -68,7 +68,7 @@ get_street <- function(html) {
         na_if_empty
 }
 
-get_floor_in_building <- function(html) {
+get_floor <- function(html) {
     address <- get_address(html)
 
     street_number <- get_street_number(html)
@@ -104,7 +104,7 @@ get_floor_in_building <- function(html) {
         substr(., 1, gregexpr("av", .)[[1]][1] - 1)
     }
 
-    floor_in_building <-
+    floor <-
         # See if text indicates it's a floor number
         if (
             any(
@@ -146,7 +146,7 @@ get_floor_in_building <- function(html) {
                 }
             }
 
-    floor_in_building %>%
+    floor %>%
         na_if_empty
 
 }
@@ -207,7 +207,7 @@ get_city <- function(html) {
 
     cities_swedish <-
         c(
-        "stockholm", "solna"
+        "stockholm", "solna", "uppsala"
         )
 
     if (
@@ -455,8 +455,8 @@ get_all_variables <- function(html) {
         , get_street(html)
         , envir = .GlobalEnv)
     assign(
-        "floor_in_building"
-        , get_floor_in_building(html)
+        "floor"
+        , get_floor(html)
         , envir = .GlobalEnv)
     assign(
         "type"

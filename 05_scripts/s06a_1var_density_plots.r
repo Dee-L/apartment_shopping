@@ -24,8 +24,7 @@ install_my_pkgs(pkgs)
 
 if (any(
     !exists("preprocessed_data")
-    , !exists("original_numeric_vars")
-    , !exists("engineered_numeric_vars")
+    , !exists("numeric_vars_for_density_plots")
     )) {
         source("05_scripts/s06_qa_plots_prep.R")
     }

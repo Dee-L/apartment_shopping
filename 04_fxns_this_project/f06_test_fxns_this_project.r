@@ -43,7 +43,7 @@ test_street <- function(s = street) {
     }
 }
 
-test_floor_in_building <- function(f_i_b = floor_in_building) {
+test_floor <- function(f_i_b = floor) {
     if (!is.na(f_i_b)) {
       if (
         any(
@@ -52,7 +52,7 @@ test_floor_in_building <- function(f_i_b = floor_in_building) {
           , (f_i_b > 40)
           )
         ) {
-          stop("Impossible floor_in_building")
+          stop("Impossible floor")
         }
       }
 }
@@ -236,7 +236,7 @@ test_year_built <-
 test_all <- function() {
     test_street_number()
     test_street()
-    test_floor_in_building()
+    test_floor()
     test_type()
     test_city()
     test_dayofmonth_sold()

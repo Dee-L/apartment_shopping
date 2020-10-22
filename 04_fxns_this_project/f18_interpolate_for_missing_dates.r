@@ -17,45 +17,46 @@ pkgs <-
 
 install_my_pkgs(pkgs)
 
-interpolate_for_missing_dates <- function(data_frame, column_name, date_column) {
-    # Sorting the data_frame
-    data_frame %<>% .[order(.[[date_column]], decreasing = T), ]
-    
-    # Getting column name to populate
-    new_column_name <- paste0(column_name, "_interpolated")
+interpolate_for_missing_dates <-
+    function(data_frame, column_name, date_column) {
+        # Sorting the data_frame
+        data_frame %<>% .[order(.[[date_column]], decreasing = T), ]
 
-    data_frame[[new_column_name]] <- data_frame[[column_name]]
+        # Getting column name to populate
+        new_column_name <- paste0(column_name, "_interpolated")
 
-    # Find min and max in range
-    min_column <- min(data_frame[[column_name]], na.rm = T)
-    max_column <- max(data_frame[[column_name]], na.rm = T)
+        data_frame[[new_column_name]] <- data_frame[[column_name]]
 
-    # Find min and max date
-    first_date <- min(data_frame[[date_column]], na.rm = T)
-    last_date <- min(data_frame[[date_column]], na.rm = T)
+        # Find min and max in range
+        min_column <- min(data_frame[[column_name]], na.rm = T)
+        max_column <- max(data_frame[[column_name]], na.rm = T)
 
-    # If first or last is NA, replace with min or max
-    first_in_column <-
-        data_frame[[column_name]][data_frame[[date_column]] == min_date]
+        # Find min and max date
+        first_date <- min(data_frame[[date_column]], na.rm = T)
+        last_date <- min(data_frame[[date_column]], na.rm = T)
 
-    last_in_column <-
-        data_frame[[column_name]][data_frame[[date_column]] == max_date]
+        # If first or last is NA, replace with min or max
+        first_in_column <-
+            data_frame[[column_name]][data_frame[[date_column]] == min_date]
 
-    if (is.na(first_in_column)) {
-        data_frame[[new_column_name]][
-            data_frame[[date_column]] == min_date
-        ] <- min_column
-    }
+        last_in_column <-
+            data_frame[[column_name]][data_frame[[date_column]] == max_date]
 
-    if (is.na(last_in_column)) {
-        data_frame[[new_column_name]][
-            data_frame[[date_column]] == max_date
-        ] <- max_column
-    }
+        if (is.na(first_in_column)) {
+            data_frame[[new_column_name]][
+                data_frame[[date_column]] == min_date
+            ] <- min_column
+        }
 
-    # Do linear interpolation for the rest of the NAs now that have endpoints
-    data_frame[[new_column_name]] %<>%
-        imputeTS::na_interpolation(option = "linear")
+        if (is.na(last_in_column)) {
+            data_frame[[new_column_name]][
+                data_frame[[date_column]] == max_date
+            ] <- max_column
+        }
 
-    data_frame
+        # Do linear interpolation for the rest of the NAs now that have endpoints
+        data_frame[[new_column_name]] %<>%
+            imputeTS::na_interpolation(option = "linear")
+
+        data_frame
 }
