@@ -16,10 +16,11 @@
 
 install_my_pkgs <- function(pkgs) {
     for (pkg in seq_along(pkgs)) {
+        cat("Checking package ", pkgs[pkg], ".\n\n")
         if (pkgs[pkg] %in% installed.packages()) {
-            break
+            next
         } else {
-            install.packages(pkg)
+            install.packages(pkgs[pkg])
         }
     }
 }
@@ -41,9 +42,7 @@ for (r_file in list.files("04_fxns_this_project/")) {
 
     if (
         # Skip self so as to avoid endless recursion
-        all(
             r_file != "f01_settings_and_load_functions.r"
-            )
         ) {
         source(paste0("04_fxns_this_project/", r_file))
     }
