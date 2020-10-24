@@ -1,0 +1,1060 @@
+
+
+COLUMN SUMMARIZED:
+
+selling_price
+
+
+Default summary:
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+ 1000000  3100000  4000000  4615707  5600000 15500000 
+Number of unique levels in this factor:
+[1] 1675
+
+Sorted by value ascending:
+     value count
+1  1000000     1
+2  1095000     1
+3  1150000     2
+4  1170000     1
+5  1180000     1
+6  1200000     2
+7  1225000     1
+8  1235000     1
+9  1295000     2
+10 1300000     1
+
+Sorted by value descending:
+      value count
+1  15500000     6
+2  15400000     2
+3  15375000     1
+4  15260000     1
+5  15250000     2
+6  15200000     2
+7  15100000     5
+8  15000000     4
+9  14950000     2
+10 14900000     4
+
+Sorted by count ascending:
+     value count
+1  1000000     1
+2  1095000     1
+3  1170000     1
+4  1180000     1
+5  1225000     1
+6  1235000     1
+7  1300000     1
+8  1305000     1
+9  1310000     1
+10 1325000     1
+
+Sorted by count descending:
+     value count
+1  3500000   373
+2  3000000   365
+3  3200000   360
+4  3300000   347
+5  3100000   343
+6  4000000   328
+7  3400000   321
+8  2900000   304
+9  3600000   293
+10 2800000   284
+
+
+COLUMN SUMMARIZED:
+
+asking_price
+
+
+Default summary:
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+  875979  2795000  3650000  4229011  5195000 16500000      110 
+Number of unique levels in this factor:
+[1] 949
+
+Sorted by value ascending:
+     value count
+1       NA   110
+2   875979     1
+3   990000     1
+4   995000     6
+5  1000000     1
+6  1095000     6
+7  1100000     1
+8  1150000     1
+9  1195000     8
+10 1200000     1
+
+Sorted by value descending:
+      value count
+1  16500000     4
+2  15950000     1
+3  15850000     1
+4  15800000     1
+5  15750000     1
+6  15500000     3
+7  15495000     1
+8  15375000     1
+9  15000000     2
+10 14995000     2
+
+Sorted by count ascending:
+     value count
+1   875979     1
+2   990000     1
+3  1000000     1
+4  1100000     1
+5  1150000     1
+6  1200000     1
+7  1305000     1
+8  1345000     1
+9  1385000     1
+10 1390000     1
+
+Sorted by count descending:
+     value count
+1  2995000  1431
+2  2495000  1065
+3  3495000   810
+4  3995000   755
+5  1995000   722
+6  4995000   587
+7  2795000   527
+8  2695000   508
+9  4495000   447
+10 2895000   414
+
+
+COLUMN SUMMARIZED:
+
+rooms
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   2.000   2.000   2.248   3.000   7.000 
+Number of unique levels in this factor:
+[1] 13
+
+Sorted by value ascending:
+   value count
+1    1.0  5939
+2    1.5  1578
+3    2.0 12968
+4    2.5   892
+5    3.0  6640
+6    3.5   449
+7    4.0  2330
+8    4.5   127
+9    5.0   483
+10   5.5    18
+
+Sorted by value descending:
+   value count
+1    7.0     2
+2    6.5     1
+3    6.0    68
+4    5.5    18
+5    5.0   483
+6    4.5   127
+7    4.0  2330
+8    3.5   449
+9    3.0  6640
+10   2.5   892
+
+Sorted by count ascending:
+   value count
+1    6.5     1
+2    7.0     2
+3    5.5    18
+4    6.0    68
+5    4.5   127
+6    3.5   449
+7    5.0   483
+8    2.5   892
+9    1.5  1578
+10   4.0  2330
+
+Sorted by count descending:
+   value count
+1    2.0 12968
+2    3.0  6640
+3    1.0  5939
+4    4.0  2330
+5    1.5  1578
+6    2.5   892
+7    5.0   483
+8    3.5   449
+9    4.5   127
+10   6.0    68
+
+
+COLUMN SUMMARIZED:
+
+kvm
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  10.00   39.00   55.00   58.73   75.00  267.00     122 
+Number of unique levels in this factor:
+[1] 649
+
+Sorted by value ascending:
+   value count
+1     NA   122
+2   10.0     2
+3   12.0     6
+4   13.0     2
+5   14.0     4
+6   15.0     5
+7   16.0    26
+8   17.0    40
+9   17.2     1
+10  18.0    47
+
+Sorted by value descending:
+   value count
+1  267.0     1
+2  211.0     1
+3  202.0     1
+4  199.2     1
+5  197.0     1
+6  196.0     1
+7  195.0     1
+8  190.0     2
+9  189.0     2
+10 188.0     1
+
+Sorted by count ascending:
+   value count
+1   17.2     1
+2   18.4     1
+3   18.8     1
+4   19.7     1
+5   19.9     1
+6   21.1     1
+7   22.2     1
+8   22.3     1
+9   23.2     1
+10  23.8     1
+
+Sorted by count descending:
+   value count
+1     34   718
+2     38   620
+3     40   555
+4     36   550
+5     43   549
+6     39   545
+7     35   527
+8     42   522
+9     41   517
+10    37   481
+
+
+COLUMN SUMMARIZED:
+
+floor
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  0.100   2.000   3.000   3.514   4.000  36.000   11563 
+Number of unique levels in this factor:
+[1] 49
+
+Sorted by value ascending:
+   value count
+1     NA 11563
+2   0.10     4
+3   0.20     5
+4   0.30     2
+5   0.40     4
+6   0.50   160
+7   1.00  2639
+8   1.50   463
+9   1.52     2
+10  2.00  4024
+
+Sorted by value descending:
+   value count
+1     36     2
+2     35     2
+3     34     3
+4     33     1
+5     32     3
+6     31     1
+7     28     1
+8     27     1
+9     25     5
+10    24     3
+
+Sorted by count ascending:
+   value count
+1   6.45     1
+2   7.50     1
+3  17.00     1
+4  27.00     1
+5  28.00     1
+6  31.00     1
+7  33.00     1
+8   0.30     2
+9   1.52     2
+10 20.00     2
+
+Sorted by count descending:
+   value count
+1     NA 11563
+2    3.0  4105
+3    2.0  4024
+4    4.0  3395
+5    1.0  2639
+6    5.0  2167
+7    6.0  1058
+8    7.0   632
+9    1.5   463
+10   8.0   310
+
+
+COLUMN SUMMARIZED:
+
+avgift
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+      0    1885    2552    2753    3475    9836      18 
+Number of unique levels in this factor:
+[1] 4978
+
+Sorted by value ascending:
+   value count
+1     NA    18
+2      0    72
+3      1     4
+4     61     1
+5     64     1
+6    116     1
+7    133     1
+8    165     1
+9    169     1
+10   230     2
+
+Sorted by value descending:
+   value count
+1   9836     1
+2   9650     1
+3   9612     1
+4   8851     1
+5   8709     1
+6   8502     1
+7   8459     1
+8   8410     1
+9   8331     1
+10  8260     1
+
+Sorted by count ascending:
+   value count
+1     61     1
+2     64     1
+3    116     1
+4    133     1
+5    165     1
+6    169     1
+7    232     1
+8    240     1
+9    249     1
+10   250     1
+
+Sorted by count descending:
+   value count
+1   2150   133
+2      0    72
+3   1307    65
+4   3473    54
+5   2091    52
+6   2800    51
+7   2372    51
+8   2337    51
+9   4981    50
+10  1934    47
+
+
+COLUMN SUMMARIZED:
+
+running_costs
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     12    3840    5000    5475    6600   38400   10850 
+Number of unique levels in this factor:
+[1] 3163
+
+Sorted by value ascending:
+   value count
+1     NA 10850
+2     12     2
+3     79     1
+4     87     1
+5    150     1
+6    179     1
+7    200     3
+8    213     2
+9    230     1
+10   240     1
+
+Sorted by value descending:
+   value count
+1  38400     1
+2  36420     1
+3  32504     1
+4  30600     1
+5  28200     1
+6  26304     1
+7  25600     1
+8  25135     1
+9  24600     1
+10 24444     1
+
+Sorted by count ascending:
+   value count
+1     79     1
+2     87     1
+3    150     1
+4    179     1
+5    230     1
+6    240     1
+7    243     1
+8    250     1
+9    252     1
+10   264     1
+
+Sorted by count descending:
+   value count
+1     NA 10850
+2   4200   978
+3   4800   939
+4   6000   721
+5   3600   688
+6   5400   685
+7   3000   476
+8   4000   444
+9   6600   357
+10  2400   343
+
+
+COLUMN SUMMARIZED:
+
+city
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 3
+
+Sorted by value ascending:
+        value count
+1       solna  5053
+2  stockholms 26401
+3 sundbybergs    41
+
+Sorted by value descending:
+        value count
+1 sundbybergs    41
+2  stockholms 26401
+3       solna  5053
+
+Sorted by count ascending:
+        value count
+1 sundbybergs    41
+2       solna  5053
+3  stockholms 26401
+
+Sorted by count descending:
+        value count
+1  stockholms 26401
+2       solna  5053
+3 sundbybergs    41
+
+
+COLUMN SUMMARIZED:
+
+area
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 583
+
+Sorted by value ascending:
+                  value count
+1                         445
+2                 atlas    11
+3      atlas / vasastan     1
+4        atlas vasastan    33
+5        atlas/vasastan     2
+6          atlasområdet    16
+7         atlasvasastan     1
+8           birkastaden     1
+9             birkastan   256
+10 birkastan / vasastan    38
+
+Sorted by value descending:
+                         value count
+1            östermalmvasastan     6
+2           östermalm/vasastan    14
+3  östermalm/norrmalm/vasastan     1
+4               östermalm/city     3
+5          östermalm/ vasastan     1
+6         östermalm / vasastan    15
+7        östermalm / stureplan     1
+8         östermalm / norrmalm     6
+9             östermalm / city    18
+10                   östermalm    11
+
+Sorted by count ascending:
+                         value count
+1             atlas / vasastan     1
+2                atlasvasastan     1
+3                  birkastaden     1
+4        birkastan/röda bergen     1
+5    birkastan/sankt eriksplan     1
+6   city / vasastan / norrmalm     1
+7             city / östermalm     1
+8        city/norrmalmvasastan     1
+9  citynorrmalminvid stureplan     1
+10               cityöstermalm     1
+
+Sorted by count descending:
+                          value count
+1                   kungsholmen  7033
+2                      vasastan  6024
+3                      huvudsta  1459
+4             vasastanbirkastan   828
+5                      frösunda   615
+6           kungsholmenfredhäll   594
+7              vasastanodenplan   580
+8  kungsholmenhornsbergs strand   541
+9                 västra skogen   518
+10                                445
+
+
+COLUMN SUMMARIZED:
+
+street
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 364
+
+Sorted by value ascending:
+                    value count
+1        adlerberthsgatan     1
+2         adlerbethsgatan    47
+3  adolffredrikskyrkogata    26
+4          alströmergatan   464
+5          amarantergränd     5
+6    anderslundströmsgata   113
+7             andersvägen    36
+8              ankargränd     2
+9          apelbergsgatan     9
+10           arbetargatan   140
+
+Sorted by value descending:
+              value count
+1    österlånggatan     5
+2    ångströmsgatan    10
+3     ängkärrsgatan    37
+4      yxsmedsgränd    10
+5     ynglingagatan    74
+6    wivalliusgatan    44
+7         wibomsväg   140
+8  wennerbergsgatan   111
+9   wargentinsgatan   150
+10    warfvingesväg   162
+
+Sorted by count ascending:
+                  value count
+1      adlerberthsgatan     1
+2             armegatan     1
+3         armégatan,vån     1
+4       arvidtydensalle     1
+5       arvidtydénsalle     1
+6      arvidtydénsallé,     1
+7          bedoirsgränd     1
+8          bigarråvägen     1
+9    didrikficksgrändnr     1
+10 drottningsholmsvägen     1
+
+Sorted by count descending:
+             value count
+1  sankteriksgatan   717
+2     roslagsgatan   606
+3     tomtebogatan   579
+4   karlbergsvägen   537
+5     fleminggatan   488
+6        torsgatan   482
+7   västmannagatan   479
+8   alströmergatan   464
+9    fridhemsgatan   456
+10   upplandsgatan   449
+
+
+COLUMN SUMMARIZED:
+
+dayofmonth_sold
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1.00    9.00   16.00   15.89   23.00   31.00 
+Number of unique levels in this factor:
+[1] 31
+
+Sorted by value ascending:
+   value count
+1      1   860
+2      2   861
+3      3   960
+4      4   956
+5      5   943
+6      6   916
+7      7   959
+8      8   997
+9      9  1049
+10    10  1125
+
+Sorted by value descending:
+   value count
+1     31   569
+2     30   873
+3     29   918
+4     28  1023
+5     27  1051
+6     26   989
+7     25  1016
+8     24   940
+9     23   958
+10    22  1091
+
+Sorted by count ascending:
+   value count
+1     31   569
+2      1   860
+3      2   861
+4     30   873
+5      6   916
+6     29   918
+7     24   940
+8      5   943
+9      4   956
+10    23   958
+
+Sorted by count descending:
+   value count
+1     13  1207
+2     11  1158
+3     14  1149
+4     17  1147
+5     16  1144
+6     20  1136
+7     18  1128
+8     10  1125
+9     15  1120
+10    12  1103
+
+
+COLUMN SUMMARIZED:
+
+month_sold_swedish
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 12
+
+Sorted by value ascending:
+      value count
+1     april  2871
+2   augusti  2970
+3  december  1202
+4  februari  2760
+5   januari  2374
+6      juli  1323
+7      juni  2488
+8       maj  3144
+9      mars  2898
+10 november  2490
+
+Sorted by value descending:
+       value count
+1  september  3524
+2    oktober  3451
+3   november  2490
+4       mars  2898
+5        maj  3144
+6       juni  2488
+7       juli  1323
+8    januari  2374
+9   februari  2760
+10  december  1202
+
+Sorted by count ascending:
+      value count
+1  december  1202
+2      juli  1323
+3   januari  2374
+4      juni  2488
+5  november  2490
+6  februari  2760
+7     april  2871
+8      mars  2898
+9   augusti  2970
+10      maj  3144
+
+Sorted by count descending:
+       value count
+1  september  3524
+2    oktober  3451
+3        maj  3144
+4    augusti  2970
+5       mars  2898
+6      april  2871
+7   februari  2760
+8   november  2490
+9       juni  2488
+10   januari  2374
+
+
+COLUMN SUMMARIZED:
+
+year_sold
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2011    2015    2017    2017    2019    2020 
+Number of unique levels in this factor:
+[1] 10
+
+Sorted by value ascending:
+   value count
+1   2011     2
+2   2012    46
+3   2013  2126
+4   2014  3777
+5   2015  4116
+6   2016  3985
+7   2017  4131
+8   2018  4177
+9   2019  4637
+10  2020  4498
+
+Sorted by value descending:
+   value count
+1   2020  4498
+2   2019  4637
+3   2018  4177
+4   2017  4131
+5   2016  3985
+6   2015  4116
+7   2014  3777
+8   2013  2126
+9   2012    46
+10  2011     2
+
+Sorted by count ascending:
+   value count
+1   2011     2
+2   2012    46
+3   2013  2126
+4   2014  3777
+5   2016  3985
+6   2015  4116
+7   2017  4131
+8   2018  4177
+9   2020  4498
+10  2019  4637
+
+Sorted by count descending:
+   value count
+1   2019  4637
+2   2020  4498
+3   2018  4177
+4   2017  4131
+5   2015  4116
+6   2016  3985
+7   2014  3777
+8   2013  2126
+9   2012    46
+10  2011     2
+
+
+COLUMN SUMMARIZED:
+
+year_built
+
+
+Default summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+      0    1912    1931    1928    1967    2020    3264 
+Number of unique levels in this factor:
+[1] 211
+
+Sorted by value ascending:
+   value count
+1     NA  3264
+2      0   149
+3    189     1
+4   1300     1
+5   1336     1
+6   1400     1
+7   1453     3
+8   1500     2
+9   1520     1
+10  1528     1
+
+Sorted by value descending:
+   value count
+1   2020     3
+2   2019    43
+3   2018   131
+4   2017   138
+5   2016   208
+6   2015   370
+7   2014    73
+8   2013   259
+9   2012   392
+10  2011   181
+
+Sorted by count ascending:
+   value count
+1    189     1
+2   1300     1
+3   1336     1
+4   1400     1
+5   1520     1
+6   1528     1
+7   1558     1
+8   1613     1
+9   1618     1
+10  1623     1
+
+Sorted by count descending:
+   value count
+1     NA  3264
+2   1929  1309
+3   1926  1045
+4   1931  1026
+5   1928   849
+6   1927   785
+7   1932   715
+8   1930   669
+9   1938   636
+10  1906   539
+
+
+COLUMN SUMMARIZED:
+
+agent_name
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 1218
+
+Sorted by value ascending:
+              value count
+1        adambehrer    11
+2     adambäckström    70
+3    adamfarhoumand   104
+4         adamgöthe     4
+5  adamkeivandarian    19
+6          adampalm     2
+7         adamsmith     2
+8        adamulfung    67
+9         adanlaleh     8
+10        adistukan     2
+
+Sorted by value descending:
+             value count
+1     åsaösterlund     5
+2      åsagrönwall   136
+3      zollebaleng    74
+4     zeynepanadol     9
+5    youssefbakali    99
+6  yolandafransson    19
+7      ylvagauffin     3
+8      ylvaekelund    40
+9       ylvabarrné     4
+10    yassinmermer    87
+
+Sorted by count ascending:
+               value count
+1      agnetajansson     1
+2  agnethapettersson     1
+3    alexandernelson     1
+4  alexandraeriksson     1
+5    alexandrawalker     1
+6      aliceeriksson     1
+7       andersolsson     1
+8        anderssolna     1
+9         anderstamm     1
+10  anderswesterlind     1
+
+Sorted by count descending:
+                value count
+1    robertljungström   505
+2       carinalarsson   468
+3      jakobjakobsson   397
+4           pialasses   375
+5       nataliestrand   374
+6      kajsaallermalm   341
+7      emailprotected   317
+8       magnuslarsson   310
+9  angelicahermansson   309
+10    emmahjalmarsson   299
+
+
+COLUMN SUMMARIZED:
+
+agency
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 248
+
+Sorted by value ascending:
+                                 value count
+1                 afifastighetsmäklare     1
+2                              ahome4u    11
+3                       alexanderwhite   162
+4       aliciaedelmanfastighetsmäkleri   209
+5        ambassadörfastighetsmäkleriab     5
+6                  amäklarnaisverigeab     1
+7           anderssonasplundmäklarbyrå     4
+8  anderssonasplundmäklarbyråstockholm     5
+9                       annaskimäkleri     1
+10          ansvarfastighetsförmedling     5
+
+Sorted by value descending:
+                            value count
+1          wredefastighetsmäkleri    29
+2                  wittproperties     1
+3               widerlövstockholm   237
+4                        westeast    28
+5           wendellmäkleristyling     2
+6                      wallincoab     5
+7  wallenbergfastighetsförmedling    66
+8         våningenvillanstockholm    29
+9                 visionmäkleriab   344
+10      visionfastighetsmäkleriab    53
+
+Sorted by count ascending:
+                           value count
+1           afifastighetsmäklare     1
+2            amäklarnaisverigeab     1
+3                 annaskimäkleri     1
+4  berggrencofastighetsmäkleriab     1
+5                    bestofhomes     1
+6           bjurforstäbydanderyd     1
+7                           blok     1
+8     bosattfastighetsförmedling     1
+9                        bostada     1
+10                  bosthlmårsta     1
+
+Sorted by count descending:
+                                 value count
+1                                notar  2768
+2       erikolssonfastighetsförmedling  2627
+3     fastighetsbyrånstockholmvasastan  2559
+4  fastighetsbyrånstockholmkungsholmen  2223
+5        mäklarhusetstockholminnerstan  1548
+6                     karlssonuddareab  1377
+7                husmanhagbergvasastan  1136
+8  skandiamäklarnastockholmkungsholmen  1044
+9           svenskfastighetsförmedling  1032
+10                fastighetsbyrånsolna   935
+
+
+COLUMN SUMMARIZED:
+
+url
+
+
+Default summary:
+   Length     Class      Mode 
+    31495 character character 
+Number of unique levels in this factor:
+[1] 31495
+
+Sorted by value ascending:
+                                                                                                         value count
+1               https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-stockholms-kommun-atlasgatan-11,-3-tr-375148     1
+2               https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-stockholms-kommun-volundsgatan-9,-2tr-387193     1
+3              https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-stockholms-kommun-volundsgatan-9,-3-tr-518875     1
+4    https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-volundsgatan-9,-2-tr-1108560     1
+5     https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-volundsgatan-9,-4-tr-472951     1
+6           https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-volundsgatan-9-428687     1
+7  https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-vulcanusgatan-4,-2,5-tr-771499     1
+8          https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-vulcanusgatan-4-413785     1
+9               https://www.hemnet.se/salda/lagenhet-1,5rum-atlasomradet-stockholms-kommun-atlasgatan-1-538677     1
+10       https://www.hemnet.se/salda/lagenhet-1,5rum-atlasomradet-stockholms-kommun-volundsgatan-9,-5tr-721392     1
+
+Sorted by value descending:
+                                                                                                                       value count
+1                    https://www.hemnet.se/salda/lagenhet-7rum-vasastan-odenplan-stockholms-kommun-odengatan-45,-4-tr-258527     1
+2  https://www.hemnet.se/salda/lagenhet-7rum-kungsholmen-hornsbergs-strand-stockholms-kommun-lustgardsgatan-14,-van-9-966531     1
+3                        https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-vastmannagatan-74,-2-tr-921440     1
+4                             https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-vanadisplan-2,-3tr-973687     1
+5                             https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-tre-liljor-3,-2-tr-296947     1
+6                        https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-sankt-eriksplan-4,-3-tr-571662     1
+7                              https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-odengatan-45,-4tr-219016     1
+8                     https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-observatoriegatan-21,-4-tr-869271     1
+9                           https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-observatoriegatan-14-208529     1
+10                          https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-ingemarsgatan-5,-2tr-685473     1
+
+Sorted by count ascending:
+                                                                                                         value count
+1               https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-stockholms-kommun-atlasgatan-11,-3-tr-375148     1
+2               https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-stockholms-kommun-volundsgatan-9,-2tr-387193     1
+3              https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-stockholms-kommun-volundsgatan-9,-3-tr-518875     1
+4    https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-volundsgatan-9,-2-tr-1108560     1
+5     https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-volundsgatan-9,-4-tr-472951     1
+6           https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-volundsgatan-9-428687     1
+7  https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-vulcanusgatan-4,-2,5-tr-771499     1
+8          https://www.hemnet.se/salda/lagenhet-1,5rum-atlas-vasastan-stockholms-kommun-vulcanusgatan-4-413785     1
+9               https://www.hemnet.se/salda/lagenhet-1,5rum-atlasomradet-stockholms-kommun-atlasgatan-1-538677     1
+10       https://www.hemnet.se/salda/lagenhet-1,5rum-atlasomradet-stockholms-kommun-volundsgatan-9,-5tr-721392     1
+
+Sorted by count descending:
+                                                                                                                       value count
+1                    https://www.hemnet.se/salda/lagenhet-7rum-vasastan-odenplan-stockholms-kommun-odengatan-45,-4-tr-258527     1
+2  https://www.hemnet.se/salda/lagenhet-7rum-kungsholmen-hornsbergs-strand-stockholms-kommun-lustgardsgatan-14,-van-9-966531     1
+3                        https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-vastmannagatan-74,-2-tr-921440     1
+4                             https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-vanadisplan-2,-3tr-973687     1
+5                             https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-tre-liljor-3,-2-tr-296947     1
+6                        https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-sankt-eriksplan-4,-3-tr-571662     1
+7                              https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-odengatan-45,-4tr-219016     1
+8                     https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-observatoriegatan-21,-4-tr-869271     1
+9                           https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-observatoriegatan-14-208529     1
+10                          https://www.hemnet.se/salda/lagenhet-6rum-vasastan-stockholms-kommun-ingemarsgatan-5,-2tr-685473     1

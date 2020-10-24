@@ -16,6 +16,7 @@ pkgs <-
       , "lubridate"
       , "RcppRoll"
       , "caret"
+      , "stringr"
       )
 
 install_my_pkgs(pkgs)
@@ -149,10 +150,14 @@ repeat {
     }
 
   }
-  # 17 Break loop if you have reached the end of the list ####
+  # 17 Break loop if you have reached the end of the list and update vars ####
   if (area == replacement_areas[[1]][nrow(replacement_areas)]) {
     message("Reached the end of the list. No more areas to consolidate.")
     areas_consolidated <<- NULL
+
+    categorical_variables %<>%
+      dplyr::recode(area_missing_replaced = "area_consolidated")
+
     break
   }
 }
@@ -165,7 +170,17 @@ compiled_data <-
     , 50
     )
 
+# Paused here, trying to make fxn to do replace and cat_var update in one step
+low_frq_and_update_cat_vars <- function(column) {
+  # compiled_data <- replace_low_freq_with_other(compiled_data, column, 50)
+  categorical_variables %>%
+    recode(sym(column) = paste0(column, "_low_freq_generalized"))
+}
+
 compiled_data <- replace_low_freq_with_other(compiled_data, "street", 50)
+
+categorical_variables %>%
+  dplyr::recode(street = paste0("street", "_low_freq_generalized"))
 
 compiled_data <- replace_low_freq_with_other(compiled_data, "agent_name", 50)
 
@@ -274,6 +289,9 @@ compiled_data %<>% add_date_data_for_tsa("date_sold")
 compiled_data %<>% add_swedish_days_off_data("date_sold")
 
 # 28 Note to self - should reduce complexity of loop in 29 ####
+
+# PAUSED HERE - loop below is taking cat variables I don't want to take
+# - it should only take those with low_freq_generalized
 
 # 29 Engineering time-series analysis features ####
 
