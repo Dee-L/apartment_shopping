@@ -239,10 +239,10 @@ is_swedish_day_off <- function(date_as_yyyy_mm_dd) {
     FALSE)
 }
 
+# Note, this function is incredibly slow
+
 add_swedish_days_off_data <- function(data_frame, column_with_date_as_ymd) {
   data_frame[["swedish_red_or_pink_day"]] <- NA
-
-  # message("Adding red/pink days")
 
   for (d in seq_len(nrow(data_frame))) {
     cat("\nRow", d, "of", nrow(data_frame), "\n")
@@ -270,27 +270,6 @@ add_swedish_days_off_data <- function(data_frame, column_with_date_as_ymd) {
           )
 
   }
-
-  # data_frame[["swedish_pinch_day"]] <- NA
-
-  # message("Adding pinch days")
-
-  # for (d in 1 : nrow(data_frame)) {
-  #   cat("\nRow", d, "of", nrow(data_frame), "\n")
-  #   data_frame[["swedish_pinch_day"]][d] <-
-  #     ifelse(is_swedish_pinch_day(data_frame[[column_with_date_as_ymd]][d]),
-  #           1,
-  #           0)
-  # }
-
-  # message("Adding days off")
-
-  # data_frame[["swedish_day_off"]] <-
-  #   ifelse(
-  #     (data_frame[["swedish_red_or_pink_day"]] == 1) |
-  #       (data_frame[["swedish_pinch_day"]] == 1),
-  #     1,
-  #     0)
 
   data_frame
 }

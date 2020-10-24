@@ -16,7 +16,6 @@
 
 install_my_pkgs <- function(pkgs) {
     for (pkg in seq_along(pkgs)) {
-        cat("Checking package ", pkgs[pkg], ".\n\n")
         if (pkgs[pkg] %in% installed.packages()) {
             next
         } else {

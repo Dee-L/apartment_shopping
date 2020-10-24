@@ -21,6 +21,8 @@ pkgs <-
 
 install_my_pkgs(pkgs)
 
+library(caret)
+
 # 02 load latest compiled data ####
 
 compiled_data <-
@@ -164,27 +166,25 @@ repeat {
 
 # 18 Making generalized columns for some variables ####
 compiled_data <-
-  replace_low_freq_with_other(
-    compiled_data
-    , "area_consolidated"
-    , 50
-    )
+  replace_low_freq_with_other(compiled_data, "area_consolidated", 31)
 
-# Paused here, trying to make fxn to do replace and cat_var update in one step
-low_frq_and_update_cat_vars <- function(column) {
-  # compiled_data <- replace_low_freq_with_other(compiled_data, column, 50)
-  categorical_variables %>%
-    recode(sym(column) = paste0(column, "_low_freq_generalized"))
-}
+categorical_variables %<>%
+  dplyr::recode(area_consolidated = "area_consolidated_low_freq_generalized")
 
-compiled_data <- replace_low_freq_with_other(compiled_data, "street", 50)
+compiled_data <- replace_low_freq_with_other(compiled_data, "street", 31)
 
-categorical_variables %>%
-  dplyr::recode(street = paste0("street", "_low_freq_generalized"))
+categorical_variables %<>%
+  dplyr::recode(street = "street_low_freq_generalized")
 
-compiled_data <- replace_low_freq_with_other(compiled_data, "agent_name", 50)
+compiled_data <- replace_low_freq_with_other(compiled_data, "agent_name", 31)
 
-compiled_data <- replace_low_freq_with_other(compiled_data, "agency", 50)
+categorical_variables %<>%
+  dplyr::recode(agent_name = "agent_name_low_freq_generalized")
+
+compiled_data <- replace_low_freq_with_other(compiled_data, "agency", 31)
+
+categorical_variables %<>%
+  dplyr::recode(agency = "agency_low_freq_generalized")
 
 # 19 Removing nonsensical floor data due to imperfect scraping ####
 
@@ -290,12 +290,9 @@ compiled_data %<>% add_swedish_days_off_data("date_sold")
 
 # 28 Note to self - should reduce complexity of loop in 29 ####
 
-# PAUSED HERE - loop below is taking cat variables I don't want to take
-# - it should only take those with low_freq_generalized
-
 # 29 Engineering time-series analysis features ####
 
-for (variable in categorical_variables) {
+for (variable in categorical_variables_for_tsa) {
 
   # 30 Aggregating by unique level within the categorical variables ####
   unique_levels <- unique(compiled_data[[variable]])
@@ -512,7 +509,7 @@ df_for_ohe <- compiled_data[, features_for_ohe]
 df_for_ohe[] <- lapply(df_for_ohe, as.factor)
 
 # 48 Make the ohe columns ####
-library(caret)
+
 df_for_ohe %<>%
   dummyVars(" ~ .", data = ., sep = "_") %>%
   predict(newdata = df_for_ohe) %>%

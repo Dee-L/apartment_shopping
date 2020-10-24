@@ -1,4 +1,4 @@
-# Purpose: Plots for various cont_vars by two discrete variables
+# Purpose: Plots for various cont_vars by 2 discrete variables
 # Author: David Gray Lassiter, PhD
 # Date: 2020-Oct-22
 # Version:
@@ -52,30 +52,39 @@ server <- function(input, output, session) {
                     inputId = "color_var",
                     label = "Select a continuous variable to plot as color",
                     h3("Select box"),
-                    choices = sort(con_vars_for_aggs)
+                    choices = con_vars_for_plots
                     )
                 , selectInput(
                     inputId = "x_var",
-                    label = "Select a variable for the x-axis",
+                    label = "",
                     h3("Select box"),
-                    choices = sort(con_vars_for_aggs)
+                    choices = sort(discrete_vars_for_heatmaps)[7]
                     )
                 , selectInput(
                     inputId = "y_var",
                     label = "",
-                    choices = sort(con_vars_for_aggs)[2]
+                    choices = sort(discrete_vars_for_heatmaps)[17]
                     )
             )
         })
 
-    # 06 Updates the second drop-down list based on first selection ####
+    # 06 Updates the second drop-down lists based on the other selections ####
+    observe({
+        updateSelectInput(
+            session,
+            "x_var",
+            label = "Select a variable for the x-axis",
+            h3("Select box"),
+            choices = setdiff(sort(discrete_vars_for_heatmaps), y_var())
+        )
+    })
     observe({
         updateSelectInput(
             session,
             "y_var",
             label = "Select a variable for the y-axis",
             h3("Select box"),
-            choices = setdiff(sort(con_vars_for_aggs), x_var())
+            choices = setdiff(sort(discrete_vars_for_heatmaps), x_var())
         )
     })
 
@@ -93,8 +102,8 @@ server <- function(input, output, session) {
     })
 
     targeted_df <- reactive({
-        targeted_df <-
-            preprocessed_data[, c(x_var(), y_var(), color_var())]
+        preprocessed_data[, c(x_var(), y_var(),color_var())]
+    })
 
     # 11 Create heatmap ####
     output[["heatmap"]] <-
@@ -109,7 +118,6 @@ server <- function(input, output, session) {
                     paste0("Heatmap: ", color_var(), " by ",
                     x_var(), " and ", y_var())
                 )
-        })
         })
 
     # 14 Render plots ####

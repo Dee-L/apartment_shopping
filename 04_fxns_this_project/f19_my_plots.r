@@ -303,40 +303,40 @@ my_heatmap <- function(df, x, y, color, aggfxn = "median", title = "") {
 
 # 09 Calendar heatmap ####
 
-my_calendar_heatmap <-
+my_fourvar_heatmap <-
     function(
         df
-        , day_col
-        , week_col
-        , month_col
-        , year_col
-        , color
+        , x_var
+        , y_var
+        , x_facet_var
+        , y_facet_var
+        , color_var
         , aggfxn = "median"
         , title = ""
         ) {
 
-    df %<>% select(day_col, week_col, month_col, year_col, color)
+    df %<>% select(x_var, y_var, x_facet_var, y_facet_var, color_var)
 
-    df[[day_col]] %<>% as.factor
-    df[[week_col]] %<>% as.factor %>% forcats::fct_rev(.)
-    df[[month_col]] %<>% as.factor
-    df[[year_col]] %<>% as.factor
+    df[[x_var]] %<>% as.factor
+    df[[y_var]] %<>% as.factor %>% forcats::fct_rev(.)
+    df[[x_facet_var]] %<>% as.factor
+    df[[y_facet_var]] %<>% as.factor
 
     df <-
         sqldf::sqldf(
         paste0(
             "select "
-            , day_col
+            , x_var
             , ", "
-            , week_col
+            , y_var
             , ", "
-            , month_col
+            , x_facet_var
             , ", "
-            , year_col
+            , y_facet_var
             , ", "
             , aggfxn
             , "("
-            , color
+            , color_var
             , ")
             from df
             group by 1, 2, 3, 4"))
@@ -345,35 +345,35 @@ my_calendar_heatmap <-
         ggplot(df) +
         geom_tile(
             aes(
-            x = df[[day_col]],
-            y = df[[week_col]],
-            fill = df[[paste0(aggfxn, "(", color, ")")]],
+            x = df[[x_var]],
+            y = df[[y_var]],
+            fill = df[[paste0(aggfxn, "(", color_var, ")")]],
             text =
                 paste0(
-                    "\nas.factor(df[[day_col]]) is "
-                    , day_col
-                    , ".\ndf[[week_col]]) is "
-                    , week_col
-                    , ".\ndf[[month_col]]) is "
-                    , month_col
-                    , ".\ndf[[year_col]]) is "
-                    , year_col
-                    , "\ndf[[color]] is "
+                    "\nas.factor(df[[x_var]]) is "
+                    , x_var
+                    , ".\ndf[[y_var]]) is "
+                    , y_var
+                    , ".\ndf[[x_facet_var]]) is "
+                    , x_facet_var
+                    , ".\ndf[[y_facet_var]]) is "
+                    , y_facet_var
+                    , "\ndf[[color_var]] is "
                     , aggfxn
                     , " "
-                    , color
+                    , color_var
                     , "."
                     )
             )
         ) +
-        facet_grid(df[[year_col]] ~ df[[month_col]]) +
+        facet_grid(df[[y_facet_var]] ~ df[[x_facet_var]]) +
         scale_fill_gradient2(
-            midpoint = median(df[[paste0(aggfxn, "(", color, ")")]]),
+            midpoint = median(df[[paste0(aggfxn, "(", color_var, ")")]]),
                             low = "blue", mid = "white",
                             high = "red", space = "Lab") +
-        xlab(day_col) +
-        ylab(week_col) +
-        labs(fill = paste0(aggfxn, "(", color, ")")) +
+        xlab(x_var) +
+        ylab(y_var) +
+        labs(fill = paste0(aggfxn, "(", color_var, ")")) +
         plot_theme +
         ggtitle(title),
         tooltip = c("x", "y", "fill", "text")
@@ -409,8 +409,8 @@ fx.parallel.plots <- function(finding.to.plot,
     aes(x = get(independent.variable.to.be.plotted),
         y = get(readout),
         group = get(id),
-        color = get(id))) +
-    geom_path() + labs(title = readout, x = "", y = units.measured, color = "")
+        color_var = get(id))) +
+    geom_path() + labs(title = readout, x = "", y = units.measured, color_var = "")
   
   plot(my.plot)
   
