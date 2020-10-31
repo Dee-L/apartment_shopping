@@ -66,18 +66,18 @@ server <- function(input, output, session) {
                 selectInput(
                     inputId = "yVar",
                     label = "",
-                    choices = sort(discreteVarsForHeatmaps)[17]
+                    choices = sort(discreteVarsForHeatmaps)[19]
                 ),
                 selectInput(
                     inputId = "xFacetVar",
                     label = "",
                     h3("Select box"),
-                    choices = sort(discreteVarsForHeatmaps)[13]
+                    choices = sort(discreteVarsForHeatmaps)[14]
                 ),
                 selectInput(
                     inputId = "yFacetVar",
                     label = "",
-                    choices = sort(discreteVarsForHeatmaps)[20]
+                    choices = sort(discreteVarsForHeatmaps)[22]
                 )
             )
         })

@@ -15,7 +15,7 @@ pkgs <-
 installMyPkgs(pkgs)
 
 # 02 Source scripts function ####
-source_script_from_folder <- function(script) {
+sourceScriptFromFolder <- function(script) {
     cat("Sourcing: ", script, "\n\n")
-    source(paste0(scripts_folder, script))
+    source(paste0(scriptsFolder, script))
 }

@@ -42,7 +42,7 @@ replaceLowFreqWithOther <-
         .[complete.cases(.)]
 
     # 04 Make a new column name ####
-    newColumnName <- paste0(column, "_low_freq_generalized")
+    newColumnName <- paste0(column, "LowFreqGeneralized")
 
     # 05 Copy the results into the new column ####
     dataframeModified <- dataframe
@@ -55,4 +55,4 @@ replaceLowFreqWithOther <-
 
     # 06 Return a modified version of the original dataframe ####
     dataframeModified
-}
+    }

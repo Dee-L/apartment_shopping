@@ -77,18 +77,10 @@ catVarsForPlots <-
   engnrdFactorVars %>%
   stringr::str_subset("Ohe", negate = T) %>%
   stringr::str_subset("monthSoldEnglish", negate = T) %>%
-  stringr::str_subset("generalized|sold") %>%
+  stringr::str_subset("Generalized|Sold") %>%
   c("cityRawData", .)
 
 # 08 Con variables for violin, strip, and conditional density plots ####
-
-
-# Paused here, need to make sure capturing Nonhalf floor dropped only in
-# all relevant var sets that are being plotted later. I started
-# working on removing the floors that don't have Nonhalf floors dropped
-# below but didn't finish making it or incorporating it into
-# conVarsForPlots
-
 engnrdNonhalfNotDropped <-
   engnrdNumericNotAggByCat %>%
     stringr::str_subset("floor") %>%
@@ -100,7 +92,7 @@ conVarsForPlots <-
   sort %>%
   c("sellingPriceRawData", .)
 
-# 08 Variables for heatmaps ####
+# 09 Variables for heatmaps ####
 discreteVarsForHeatmaps <-
   stringr::str_subset(conVarsForPlots, "kvm|room|floor") %>%
   stringr::str_subset("avgift|runningCosts", negate = T) %>%

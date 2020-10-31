@@ -22,6 +22,8 @@ pkgs <-
 installMyPkgs(pkgs)
 
 library(caret)
+library(dplyr)
+library(stringr)
 
 # 02 load latest compiled data ####
 
@@ -46,13 +48,21 @@ categoricalVariables <-
 
 for (variable in categoricalVariables) {
 
+  # 03 drop blanks ####
+  cleanStringVarName <- paste0(variable, "CleanedString")
+
+  compiledData[[cleanStringVarName]] <-
+    compiledData[[variable]] %>%
+      str_replace_all(" |/", "")
+
   # 04 Specify new variable name and count missing ####
-  newVarName <- paste0(variable, "MissingReplaced")
+  newVarName <- paste0(cleanStringVarName, "MissingReplaced")
 
   nMissing <-
-    sum((compiledData[[variable]] == "") | (is.na(compiledData[[variable]])))
+    sum((compiledData[[cleanStringVarName]] == "") |
+          (is.na(compiledData[[cleanStringVarName]])))
 
-  cat("\nVariable is:", variable, "and nMissing is:", nMissing, "\n")
+  cat("\nVariable is:", cleanStringVarName, "and nMissing is:", nMissing, "\n")
 
   # 05 If any missing, replace with "missing" ####
   if (nMissing > 0) {
@@ -60,11 +70,11 @@ for (variable in categoricalVariables) {
     compiledData[[newVarName]] <-
       ifelse(
         (
-          (compiledData[[variable]] == "")
-          | is.na(compiledData[[variable]])
+          (compiledData[[cleanStringVarName]] == "")
+          | is.na(compiledData[[cleanStringVarName]])
           )
         , "missing"
-        , compiledData[[variable]]
+        , compiledData[[cleanStringVarName]]
       )
 
     nMissingNewVariable <-
@@ -75,14 +85,27 @@ for (variable in categoricalVariables) {
     , "and nMissing is:", nMissingNewVariable, "\n")
 
     # 06 Update categorical variables list ####
-    categoricalVariables[which(categoricalVariables %in% variable)] <-
+    categoricalVariables[which(categoricalVariables %in% cleanStringVarName)] <-
       newVarName
   }
 }
 
 # 07 Initializing column to populate in the loop ####
-compiledData[["areaConsolidated"]] <-
-  compiledData[["areaMissingReplaced"]]
+
+if ("areaCleanedStringMissingReplaced" %in% names(compiledData)) {
+
+  areaColumnForProcessing <- "areaCleanedStringMissingReplaced"
+
+  compiledData %<>%
+    mutate(areaConsolidated = areaCleanedStringMissingReplaced)
+
+} else {
+
+  areaColumnForProcessing <- "areaCleanedString"
+
+  compiledData %<>%
+    mutate(areaConsolidated = areaCleanedString)
+}
 
 # 08 Repeat loop to consolidate areas ####
 repeat {
@@ -131,9 +154,9 @@ repeat {
       compiledData[["areaConsolidated"]] <-
         ifelse(
           (
-            grepl(area, compiledData[["areaMissingReplaced"]]) &
+            grepl(area, compiledData[[areaColumnForProcessing]]) &
             (compiledData[["areaConsolidated"]] ==
-              compiledData[["areaMissingReplaced"]])
+              compiledData[[areaColumnForProcessing]])
           )
           ,
           area,
@@ -508,14 +531,13 @@ dfForOhe <- compiledData[, featuresForOhe]
 dfForOhe[] <- lapply(dfForOhe, as.factor)
 
 # 48 Make the ohe columns ####
-
 dfForOhe %<>%
-  dummyVars(" ~ .", data = .) %>%
+  dummyVars(" ~ .", data = ., sep = "") %>%
   predict(newdata = dfForOhe) %>%
   data.frame()
 
-# 49 add prefix for easier sorting later ####
-names(dfForOhe) %<>% paste0("Ohe", .)
+# 49 add suffix for easier sorting later ####
+names(dfForOhe) %<>% paste0("Ohe")
 
 # 50 Add columns back to compiledData ####
 compiledData %<>%

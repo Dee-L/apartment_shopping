@@ -63,7 +63,7 @@ server <- function(input, output, session) {
                 , selectInput(
                     inputId = "yVar",
                     label = "",
-                    choices = sort(discreteVarsForHeatmaps)[17]
+                    choices = sort(discreteVarsForHeatmaps)[19]
                     )
             )
         })
@@ -114,7 +114,7 @@ server <- function(input, output, session) {
                 y = yVar(),
                 color = colorVar(),
                 aggfxn = "median",
-                title = 
+                title =
                     paste0("Heatmap: ", colorVar(), " by ",
                     xVar(), " and ", yVar())
                 )

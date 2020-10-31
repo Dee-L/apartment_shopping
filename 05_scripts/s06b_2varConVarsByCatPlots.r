@@ -71,7 +71,7 @@ server <- function(input, output) {
                     inputId = "continuousVariable",
                     label = "Select a continuous variable to plot",
                     h3("Select box"),
-                    choices = sort(conVarsForPlots)
+                    choices = conVarsForPlots
                     )
                 )
             })

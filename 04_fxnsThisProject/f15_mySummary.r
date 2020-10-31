@@ -29,7 +29,7 @@ mySummary <- function(df, columnToSummarize, limit = 3) {
     cat("
 Sorted by value ascending:
 ")
-    print(sqldf::sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count
                      from tempDf
                      group by value
                      order by value asc
@@ -38,7 +38,7 @@ Sorted by value ascending:
     cat("
 Sorted by value descending:
 ")
-    print(sqldf::sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count
                      from tempDf
                      group by value
                      order by value desc
@@ -47,7 +47,7 @@ Sorted by value descending:
     cat("
 Sorted by count ascending:
 ")
-    print(sqldf::sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count
                      from tempDf
                      group by value
                      order by count asc
@@ -56,7 +56,7 @@ Sorted by count ascending:
     cat("
 Sorted by count descending:
 ")
-    print(sqldf::sqldf(paste0("select value, count(*) as count 
+    print(sqldf::sqldf(paste0("select value, count(*) as count
                      from tempDf
                      group by value
                      order by count desc

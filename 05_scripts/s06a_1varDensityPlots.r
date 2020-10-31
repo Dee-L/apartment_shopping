@@ -18,6 +18,7 @@ pkgs <-
         "shiny"
     )
 
+install.packages("shiny")
 installMyPkgs(pkgs)
 
 # 02 Load data for this app if it isn't already loaded ####
@@ -52,7 +53,11 @@ server <- function(input, output) {
                     inputId = "continuousVariable",
                     label = "Select a continuous variable to plot",
                     h3("Select box"),
-                    choices = numericVarsForDensityPlots
+                    choices =
+                        c("sellingPriceRawData",
+                               numericVarsForDensityPlots %>%
+                                 .[. != "sellingPriceRawData"]
+                          )
                     )
                 )
             })

@@ -224,7 +224,7 @@ isSwedishPinchDay <- function(dateAsYYYYMMDD) {
   nextDay <- dateAsYYYYMMDD %>% as.Date + 1
 
   ifelse((isSwedishRedOrPinkDay(previousDay) &
-            lubridate::wday(dateAsYYYYMMDD) == 6) | 
+            lubridate::wday(dateAsYYYYMMDD) == 6) |
            (isSwedishRedOrPinkDay(nextDay) &
               lubridate::wday(dateAsYYYYMMDD) == 2),
          TRUE,

@@ -23,9 +23,7 @@ outputFolderScrapedGparent <<-
     "01_scraped"
   )
 
-if (!dir.exists(outputFolderScrapedGparent)) {
-  dir.create(outputFolderScrapedGparent)
-}
+makeDirIfDoesNotExist(outputFolderScrapedGparent)
 
 # 03 Choose days to look back based on previous scrapes ####
 lastDayScraped <-
@@ -60,9 +58,7 @@ if (maxDaysBackToLook >= 7) {
       "/"
     )
 
-  if (!dir.exists(outputFolderScrapedParent)) {
-    dir.create(outputFolderScrapedParent)
-  }
+  makeDirIfDoesNotExist(outputFolderScrapedParent)
 
   # 07 pull in key:value data from Hemnet manually gathered in an excel ####
 
@@ -112,3 +108,4 @@ if (maxDaysBackToLook >= 7) {
     }
   }
 }
+

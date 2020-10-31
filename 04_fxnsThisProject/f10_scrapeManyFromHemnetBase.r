@@ -36,9 +36,8 @@ scrapeManyFromHemnetBase <- function() {
             , "/"
         )
 
-    if (!dir.exists(outputFolderScraped)) {
-     dir.create(outputFolderScraped)
-    }
+    makeDirIfDoesNotExist(outputFolderScraped)
+
 
     # 05 Loop to scrape the pages ####
 

@@ -394,13 +394,13 @@ myFiveVarHeatmap <-
 
 myParallelPlot <- function(yVar,
                               xVar) {
-  
+
   emf(paste(yVar[1],
             yVar[2],
             " vs ",
             yVar[3],
             ".emf"))
-  
+
   myPlot <- ggplot(subset(get(
     as.character(yVar[1])),
     get(xVar) %in%
@@ -411,9 +411,9 @@ myParallelPlot <- function(yVar,
         group = get(id),
         colorVar = get(id))) +
     geom_path() + labs(title = readout, x = "", y = units.measured, colorVar = "")
-  
+
   plot(myPlot)
-  
+
   dev.off()
 }
 
@@ -427,13 +427,13 @@ myParallelPlot <- function(yVar,
 
 myPointPlot <- function(yVar,
                            xVar) {
-  
+
   emf(paste(yVar[1],
             yVar[2],
             " vs ",
             yVar[3],
             ".emf"))
-  
+
   myPlot <- ggplot(subset(get(
     as.character(yVar[1])),
     get(xVar) %in%
@@ -444,9 +444,9 @@ myPointPlot <- function(yVar,
         group = get(id),
         color = get(id))) +
     geom_point() + labs(title = readout, x = "", y = units.measured, color = "")
-  
+
   plot(myPlot)
-  
+
   dev.off()
 }
 
