@@ -14,67 +14,67 @@ pkgs <-
       "sqldf"
       )
 
-install_my_pkgs(pkgs)
+installMyPkgs(pkgs)
 
 # 02 load latest compiled data ####
 
-compiled_data <-
+compiledData <-
   paste0(
-    output_folder_compiled
-    , list.files(output_folder_compiled) %>%
+    outputFolderCompiled
+    , list.files(outputFolderCompiled) %>%
       .[length(.)]) %>%
     readRDS
 
 # 03 specify where to save capture of summaries log ####
-output_folder_summaries <<-
+outputFolderSummaries <<-
 paste0(
-    output_folder,
+    outputFolder,
     "03_summaries/"
 )
 
-if (!dir.exists(output_folder_summaries)) {
-dir.create(output_folder_summaries)
+if (!dir.exists(outputFolderSummaries)) {
+  dir.create(outputFolderSummaries)
 }
 
 # 03 Check if need to make new summaries ####
 
-latest_compiled_results <-
-    output_folder_compiled %>%
+latestCompiledResults <-
+    outputFolderCompiled %>%
     list.files %>%
     .[length(.)] %>%
     gsub(".rds", "", .) %>%
     right(8) %>%
     as.numeric
     
-latest_summaries <-
-    output_folder_summaries %>%
+latestSummaries <-
+    outputFolderSummaries %>%
     list.files %>%
     .[length(.)] %>%
     gsub(".txt", "", .) %>%
     right(8) %>%
     as.numeric
 
-if (length(latest_summaries) == 0) {
-    latest_summaries <- latest_compiled_results - 1
+if (length(latestSummaries) == 0) {
+    latestSummaries <- latestCompiledResults - 1
 }
 
 # 04 Only proceed if compiled results are older than scraped results ####
-if (latest_summaries < latest_compiled_results) {
+if (latestSummaries < latestCompiledResults) {
 
   # 05 Start logging ####
-  log_name <-
+  logName <-
     paste0(
-      output_folder_summaries
+      outputFolderSummaries
       , "date_"
-      , today_8digit()
+      , today8Digit()
       , ".txt"
     )
 
-  sink(log_name)
+  sink(logName)
 
   # 06 Generate summaries ####
-  for (column_name in names(compiled_data)) {
-  my_summary(compiled_data, column_name, 10)
+  for (columnName in names(compiledData)) {
+    mySummary(compiledData, columnName, 10)
   }
 
   # 07 Stop logging
