@@ -3,10 +3,6 @@
 # Date: 2020-sep-22
 # Version:
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
 
 # May want to change this to offer two plots or (better) two traces on same plot
 
@@ -19,7 +15,7 @@ pkgs <-
     )
 
 install.packages("shiny")
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 Load data for this app if it isn't already loaded ####
 
@@ -27,7 +23,7 @@ if (any(
     !exists("preprocessedData")
     , !exists("numericVarsForDensityPlots")
     )) {
-        source("05_scripts/s06_qaPlotsPrep.R")
+        source("05_scripts/s07_defineVariableGroups.R")
     }
 
 

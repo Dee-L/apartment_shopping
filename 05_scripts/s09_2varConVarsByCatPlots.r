@@ -3,10 +3,6 @@
 # Date: 2020-oct-04
 # Version:
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
 
 # 01 Ensure all pkgs in this script are installed ####
 pkgs <-
@@ -16,7 +12,7 @@ pkgs <-
         "shiny"
     )
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 Load data for this app if it isn't already loaded ####
 
@@ -25,7 +21,7 @@ if (any(
     , !exists("catVarsForPlots")
     , !exists("conVarsForPlots")
     )) {
-        source("05_scripts/s06_qaPlotsPrep.R")
+        source("05_scripts/s07_defineVariableGroups.R")
     }
 
 

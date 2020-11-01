@@ -3,10 +3,6 @@
 # Date: 2020-Jul-30
 # Version: 1.0
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
 
 # 01 Ensure all pkgs in this script are installed ####
 pkgs <-
@@ -48,6 +44,9 @@ if (length(lastDayScraped) == 0) {
 # 05 Only execute the rest if there is at least a week of new data ####
 
 if (maxDaysBackToLook >= 7) {
+
+  mappingsXlsx <-
+    paste0(inputFolder, "i01_mappings.xlsx")
 
   # 06 create directory for scraping data today ####
   outputFolderScrapedParent <<-

@@ -3,19 +3,14 @@
 # Date: YYYY-MMM-DD
 # Version:
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
-
 # 01 Source all my functions ####
-source("04_fxnsThisProject/f01_settingsAndLoadFunctions.r")
+source("04_fxnsThisProject/f01_sourceAllFxns.r")
 
 # 02 Ensure all pkgs in this script are installed ####
 pkgs <-
     c()
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 03 Scrape Hemnet ####
 sourceScriptFromFolder("s01_scrapingHemnet.R")
@@ -30,10 +25,10 @@ sourceScriptFromFolder("s03_compilingDataframeFromRdaFiles.r")
 sourceScriptFromFolder("s04_summaries.r")
 
 # 07 Preprocess data and engineer features ####
-sourceScriptFromFolder("s05_preprocessingAndFeatureEngineeringAllData.r")
+sourceScriptFromFolder("s05_mainFeatureEngineering.r")
 
 # 08 QA plots ####
-sourceScriptFromFolder("s06_qaPlotsPrep.R")
+sourceScriptFromFolder("s07_defineVariableGroups.R")
 
 # Data splits - sellingPrice vs increase in price and train/test for both
 

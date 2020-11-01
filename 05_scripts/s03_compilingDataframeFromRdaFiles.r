@@ -3,10 +3,6 @@
 # Date: 2020-sep-18
 # Version: 1.0
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
 
 
 # 01 Ensure all pkgs in this script are installed ####

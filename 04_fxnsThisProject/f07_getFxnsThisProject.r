@@ -15,7 +15,7 @@ pkgs <-
         , "xml2"
     )
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 Get html ####
 

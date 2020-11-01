@@ -1,4 +1,4 @@
-# Purpose: Swedish holidays functions
+# Purpose: Adds engineered date data for time-series analysis
 # Author: David Gray Lassiter, PhD
 # Date: 2020-Sep-17
 # Version: 1.0
@@ -12,9 +12,169 @@
 pkgs <-
     c(
         "lubridate"
+        , "dplyr"
+        , "sqldf"
+        , "imputeTS"
     )
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
+
+# 02 Define the function ####
+addDateDataForTsa <- function(dataframe, columnWithDateAsYMD) {
+
+    oldCols <- names(dataframe)
+
+    dataframe[["quarterOfYearSold"]] <-
+        lubridate::quarter(dataframe[[columnWithDateAsYMD]])
+
+    dataframe[["monthOfYearSold"]] <-
+        lubridate::month(dataframe[[columnWithDateAsYMD]])
+
+    dataframe[["monthOfQuarterSold"]] <-
+        (floor((lubridate::month(
+            dataframe[[columnWithDateAsYMD]]
+            ) - 1) / 4) + 1)
+
+    dataframe[["weekOfYearSold"]] <-
+        lubridate::week(dataframe[[columnWithDateAsYMD]])
+
+    dataframe[["weekOfQuarterSold"]] <-
+        (floor((lubridate::week(
+            dataframe[[columnWithDateAsYMD]]
+            ) - 1) / 4) + 1)
+
+    dataframe[["weekOfMonthSold"]] <-
+        (floor((lubridate::mday(
+            dataframe[[columnWithDateAsYMD]]
+            ) - 1) / 7) + 1)
+
+    dataframe[["dayOfYearSold"]] <-
+        lubridate::yday(dataframe[[columnWithDateAsYMD]])
+
+    dataframe[["dayOfQuarterSold"]] <-
+        lubridate::qday(dataframe[[columnWithDateAsYMD]])
+
+    dataframe[["dayOfMonthSold"]] <-
+        lubridate::mday(dataframe[[columnWithDateAsYMD]])
+
+    dataframe[["dayOfWeekSold"]] <-
+        dplyr::case_when(
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 1 ~ "sun",
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 2 ~ "mon",
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 3 ~ "tue",
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 4 ~ "wed",
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 5 ~ "thu",
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 6 ~ "fri",
+            lubridate::wday(dataframe[[columnWithDateAsYMD]]) == 7 ~ "sat",
+        )
+
+    newCols <-
+        c(
+            "quarterOfYearSold",
+            "monthOfYearSold",
+            "monthOfQuarterSold",
+            "weekOfYearSold",
+            "weekOfQuarterSold",
+            "weekOfMonthSold",
+            "dayOfYearSold",
+            "dayOfQuarterSold",
+            "dayOfMonthSold",
+            "dayOfWeekSold"
+            )
+
+    newColOrder <- unique(c(oldCols, newCols), fromLast = T)
+
+    dataframe %<>% .[, newColOrder]
+}
+
+
+# 02 Define the function ####
+
+replaceLowFreqWithOther <-
+    function(dataframe, column, FrequencyCutoff = 50) {
+
+    dataframeAsString <- deparse(substitute(dataframe))
+
+    # 03 Find the low frequency hits ####
+    lowFreqHits <-
+        sqldf::sqldf(
+            paste0(
+                "select "
+                , column
+                , ", count(*) as count
+                    from "
+                , dataframeAsString
+                , " where "
+                , column
+                , " != '<NA>'
+                    group by "
+                , column
+                , " order by count desc"
+                )
+            ) %>%
+        .[FrequencyCutoff : nrow(.), column] %>%
+        .[complete.cases(.)]
+
+    # 04 Make a new column name ####
+    newColumnName <- paste0(column, "LowFreqGeneralized")
+
+    # 05 Copy the results into the new column ####
+    dataframeModified <- dataframe
+
+    dataframeModified[[eval(newColumnName)]] <-
+        ifelse(dataframeModified[[column]] %in% lowFreqHits,
+            "other",
+            dataframeModified[[column]]
+        )
+
+    # 06 Return a modified version of the original dataframe ####
+    dataframeModified
+    }
+
+
+interpolateForMissingDates <-
+    function(dataframe, columnName, dateColumn) {
+        # Sorting the dataframe
+        dataframe %<>% .[order(.[[dateColumn]], decreasing = T), ]
+
+        # Getting column name to populate
+        newColumnName <- paste0(columnName, "Interpolated")
+
+        dataframe[[newColumnName]] <- dataframe[[columnName]]
+
+        # Find min and max in range
+        minColumn <- min(dataframe[[columnName]], na.rm = T)
+        maxColumn <- max(dataframe[[columnName]], na.rm = T)
+
+        # Find min and max date
+        firstDate <- min(dataframe[[dateColumn]], na.rm = T)
+        lastDate <- min(dataframe[[dateColumn]], na.rm = T)
+
+        # If first or last is NA, replace with min or max
+        firstInColumn <-
+            dataframe[[columnName]][dataframe[[dateColumn]] == minDate]
+
+        lastInColumn <-
+            dataframe[[columnName]][dataframe[[dateColumn]] == maxDate]
+
+        if (is.na(firstInColumn)) {
+            dataframe[[newColumnName]][
+                dataframe[[dateColumn]] == minDate
+            ] <- minColumn
+        }
+
+        if (is.na(lastInColumn)) {
+            dataframe[[newColumnName]][
+                dataframe[[dateColumn]] == maxDate
+            ] <- maxColumn
+        }
+
+        # Do linear interpolation for the rest of the NAs now that have endpoints
+        dataframe[[newColumnName]] %<>%
+            imputeTS::na_interpolation(option = "linear")
+
+        dataframe
+}
 
 ###Swedish holidays and pinch days
 isNewYearsDay <- function(dateAsYYYYMMDD) {

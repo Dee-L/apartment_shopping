@@ -3,11 +3,6 @@
 # Date: 2020-Sep-17
 # Version: 1.0
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
-
 # 01 Try wait retry, good for web scraping to avoid getting blocked ####
 
 tryWaitRetry <-

@@ -3,27 +3,16 @@
 # Date: 2020-sep-22
 # Version:
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
-
 # 01 Ensure all pkgs in this script are installed ####
 pkgs <-
     c(
       "sqldf"
-      , "dplyr"
       , "lubridate"
       , "RcppRoll"
       , "caret"
-      , "stringr"
       )
 
-installMyPkgs(pkgs)
-
-library(caret)
-library(dplyr)
-library(stringr)
+activatePkgs(pkgs)
 
 # 02 load latest compiled data ####
 
@@ -392,11 +381,11 @@ for (variable in catVarsForTimeSeriesAnalysis) {
             paste0("SellingPrice", daysBack, "DaysAgo")
 
           if (grepl("Median", aggColumn)) {
-            fxn <- "median"
+            fxn <- "Median"
           } else if (grepl("Mean", aggColumn)) {
-            fxn <- "mean"
+            fxn <- "Mean"
           } else if (grepl("Sum", aggColumn)) {
-            fxn <- "sum"
+            fxn <- "Sum"
           }
 
           columnNameForRollingData <-
@@ -405,7 +394,7 @@ for (variable in catVarsForTimeSeriesAnalysis) {
             paste0(columnPrefix, fxn, colNameSufForLagData)
 
           # 37 Rolling aggregation data ####
-          fxnTextForRollingData <- paste0("RcppRoll::roll_", fxn, "l")
+          fxnTextForRollingData <- paste0("RcppRoll::roll_", tolower(fxn), "l")
 
           tempDf[[columnNameForRollingData]] <-
             eval(parse(text = fxnTextForRollingData))(
@@ -525,6 +514,25 @@ for (variable in catVarsForTimeSeriesAnalysis) {
 }
 
 # 46 Create df for making the ohe features ####
+featuresForOhe <-
+  c(
+    "city",
+    "areaConsolidatedLowFreqGeneralized",
+    "streetLowFreqGeneralized",
+    "agentNameLowFreqGeneralized",
+    "agencyLowFreqGeneralized",
+    "quarterOfYearSold",
+    "monthOfYearSold",
+    "monthOfQuarterSold",
+    "weekOfYearSold",
+    "weekOfQuarterSold",
+    "weekOfMonthSold",
+    "dayOfYearSold",
+    "dayOfQuarterSold",
+    "dayOfMonthSold",
+    "dayOfWeekSold"
+  )
+
 dfForOhe <- compiledData[, featuresForOhe]
 
 # 47 Convert all to factor so one-hot encoding will work on numeric data ####
@@ -657,7 +665,7 @@ saveRDS(
 write.csv(
   compiledData,
   paste0(
-    outFolderOrangeExplorations,
+    outFolderOrangeAllData,
     eval(nameOfResultsDf),
     ".csv"
   )

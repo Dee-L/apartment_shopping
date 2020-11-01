@@ -12,7 +12,7 @@
 pkgs <-
     c()
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 01 Save as r object with its name ####
 
@@ -20,4 +20,11 @@ saveAsRObjectWithItsName <- function(object, folderToSaveIn) {
     fileName <-
         paste0(folderToSaveIn, deparse(substitute(object)), ".rds")
     saveRDS(object, file = fileName)
+}
+
+
+# 02 Return contents of RData file, allowing reassignment to a new name ####
+reassignRda <- function(fileName) {
+    load(fileName)
+    get(ls()[ls() != "fileName"])
 }

@@ -3,11 +3,6 @@
 # Date: 2020-sep-22
 # Version:
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
-
 # 01 Ensure all pkgs in this script are installed ####
 pkgs <-
   c(
@@ -15,7 +10,7 @@ pkgs <-
     , "sqldf"
   )
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 load latest preprocessed data ####
 preprocessedData <-
@@ -29,12 +24,12 @@ preprocessedData <-
 # 03 Testing data classes ####
 allNumericVars <-
   preprocessedData %>%
-    dplyr::select_if(is.numeric) %>%
+    select_if(is.numeric) %>%
     names
 
 allFactorVars <-
   preprocessedData %>%
-  dplyr::select_if(is.factor) %>%
+  select_if(is.factor) %>%
   names()
 
 allOtherVars <-
@@ -49,19 +44,19 @@ allVars <-
   names(preprocessedData)
 
 originalVars <-
-  stringr::str_subset(allVars, "RawData")
+  str_subset(allVars, "RawData")
 
 originalNumericVars <-
   intersect(originalVars, allNumericVars)
 
 engnrdVars <-
-  stringr::str_subset(allVars, "PsdData")
+  str_subset(allVars, "PsdData")
 
 engnrdNumericVars <-
   intersect(engnrdVars, allNumericVars)
 
 engnrdNumericAggByCat <-
-  stringr::str_subset(engnrdNumericVars, "Mean|Median|Sum")
+  str_subset(engnrdNumericVars, "Mean|Median|Sum")
 
 engnrdNumericNotAggByCat <-
   setdiff(engnrdNumericVars, engnrdNumericAggByCat)
@@ -75,34 +70,44 @@ engnrdFactorVars <-
 
 catVarsForPlots <-
   engnrdFactorVars %>%
-  stringr::str_subset("Ohe", negate = T) %>%
-  stringr::str_subset("monthSoldEnglish", negate = T) %>%
-  stringr::str_subset("Generalized|Sold") %>%
+  str_subset("Ohe", negate = T) %>%
+  str_subset("monthSoldEnglish", negate = T) %>%
+  str_subset("Generalized|Sold") %>%
   c("cityRawData", .)
 
 # 08 Con variables for violin, strip, and conditional density plots ####
 engnrdNonhalfNotDropped <-
   engnrdNumericNotAggByCat %>%
-    stringr::str_subset("floor") %>%
-    stringr::str_subset("Nonhalf", negate = T)
+    str_subset("floor") %>%
+    str_subset("Nonhalf", negate = T)
 
 conVarsForPlots <-
-  stringr::str_subset(engnrdNumericNotAggByCat, "Imputed") %>%
+  str_subset(engnrdNumericNotAggByCat, "Imputed") %>%
   setdiff(engnrdNonhalfNotDropped) %>%
   sort %>%
   c("sellingPriceRawData", .)
 
 # 09 Variables for heatmaps ####
 discreteVarsForHeatmaps <-
-  stringr::str_subset(conVarsForPlots, "kvm|room|floor") %>%
-  stringr::str_subset("avgift|runningCosts", negate = T) %>%
+  str_subset(conVarsForPlots, "kvm|room|floor") %>%
+  str_subset("avgift|runningCosts", negate = T) %>%
   c(catVarsForPlots, "yearSoldRawData")
 
 conVarsForAggs <-
   engnrdNumericVars %>%
-  stringr::str_subset("mean|median|sum") %>%
-  stringr::str_subset("agoPsdData|daysPsdData", negate = T)
+  str_subset("Mean|Median|Sum") %>%
+  str_subset("agoPsdData|daysPsdData", negate = T)
 
 catVarsForAggPlots <-
   catVarsForPlots %>%
-  stringr::str_subset(catVarsForTimeSeriesAnalysis)
+  str_subset(catVarsForTimeSeriesAnalysis)
+
+# 10 Variables for building predictive models ####
+varToPredictModel1 <- "valueIncreaseAfter1YearMinusCost"
+
+varToPredictModel2 <- "sellingPriceRawData"
+
+predictorVars <-
+  union_all(catVarsForPlots, conVarsForPlots, catVarsForAggPlots, conVarsForAggs, discreteVarsForHeatmaps) %>%
+  unique %>%
+  str_subset("sellingPriceRawData", negate = T)

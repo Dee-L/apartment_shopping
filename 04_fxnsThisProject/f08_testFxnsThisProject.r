@@ -13,7 +13,7 @@
 pkgs <-
   c()
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 Testing data that was scraped and throwing error if problem ####
 

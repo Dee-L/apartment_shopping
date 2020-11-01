@@ -3,10 +3,6 @@
 # Date: 2020-sep-22
 # Version:
 
-# Revisions:
-# Author:
-# Date: YYYY-MMM-DD
-# Revised Version:
 
 # 01 Ensure all pkgs in this script are installed ####
 pkgs <-
@@ -14,7 +10,7 @@ pkgs <-
       "sqldf"
       )
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 load latest compiled data ####
 
