@@ -8,9 +8,10 @@
 pkgs <-
   c(
     "openxlsx"
+    , "doParallel"
   )
 
-installMyPkgs(pkgs)
+activatePkgs(pkgs)
 
 # 02 create directory for catching all scraped data ####
 outputFolderScrapedGparent <<-
@@ -20,6 +21,10 @@ outputFolderScrapedGparent <<-
   )
 
 makeDirIfDoesNotExist(outputFolderScrapedGparent)
+
+# 03 Activate parallel processing on your cores ####
+cl <- makeCluster(6)
+registerDoParallel(cl)
 
 # 03 Choose days to look back based on previous scrapes ####
 lastDayScraped <-

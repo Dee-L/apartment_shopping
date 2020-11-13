@@ -129,7 +129,21 @@ replaceLowFreqWithOther <-
 
     # 06 Return a modified version of the original dataframe ####
     dataframeModified
-    }
+}
+
+
+replaceLowFreqWithOther2 <- function(dataframe, column, FrequencyCutoff = 50) {
+  startVector <- dataframe[[column]]
+
+  endVector <- fct_lump_min(startVector, FrequencyCutoff, other_level = 'other')
+
+  # 04 Make a new column name ####
+  newColumnName <- paste0(column, "LowFreqGeneralized")
+
+  dataframe[[newColumnName]] <- endVector
+
+  dataframe
+}
 
 
 interpolateForMissingDates <-
@@ -175,6 +189,51 @@ interpolateForMissingDates <-
 
         dataframe
 }
+
+interpolateForMissingDates2 <-
+  function(dataframe, columnName, dateColumn) {
+    # Sorting the dataframe
+    dataframe %<>% .[order(.[[dateColumn]], decreasing = T), ]
+
+    # Getting column name to populate
+    newColumnName <- paste0(columnName, "Interpolated")
+
+    dataframe[[newColumnName]] <- dataframe[[columnName]]
+
+    # Find min and max in range
+    minColumn <- min(dataframe[[columnName]], na.rm = T)
+    maxColumn <- max(dataframe[[columnName]], na.rm = T)
+
+    # Find min and max date
+    firstDate <- min(dataframe[[dateColumn]], na.rm = T)
+    lastDate <- max(dataframe[[dateColumn]], na.rm = T)
+
+    # If first or last is NA, replace with min or max
+    firstInColumn <-
+      dataframe[[columnName]][dataframe[[dateColumn]] == firstDate]
+
+    lastInColumn <-
+      dataframe[[columnName]][dataframe[[dateColumn]] == lastDate]
+
+    if (is.na(firstInColumn)) {
+      dataframe[[newColumnName]][
+        dataframe[[dateColumn]] == firstDate
+      ] <- minColumn
+    }
+
+    if (is.na(lastInColumn)) {
+      dataframe[[newColumnName]][
+        dataframe[[dateColumn]] == lastDate
+      ] <- maxColumn
+    }
+
+    # Do linear interpolation for the rest of the NAs now that have endpoints
+    dataframe[[newColumnName]] %<>%
+      imputeTS::na_interpolation(option = "linear")
+
+    dataframe
+  }
+
 
 ###Swedish holidays and pinch days
 isNewYearsDay <- function(dateAsYYYYMMDD) {

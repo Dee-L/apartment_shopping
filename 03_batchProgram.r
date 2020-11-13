@@ -27,20 +27,26 @@ sourceScriptFromFolder("s04_summaries.r")
 # 07 Preprocess data and engineer features ####
 sourceScriptFromFolder("s05_mainFeatureEngineering.r")
 
-# 08 QA plots ####
-sourceScriptFromFolder("s07_defineVariableGroups.R")
+# 08 Define variable groups ####
+sourceScriptFromFolder("s06_defineVariableGroups.R")
 
-# Data splits - sellingPrice vs increase in price and train/test for both
+# 09 Prep data for Model 1: Predicting Selling Price ####
+sourceScriptFromFolder("s07_prepDataModel1.R")
 
-# 11 Train/test/cross-validation split ####
+# 10 Prep data for Model 2: Predicting Selling Price without Asking Price ####
+sourceScriptFromFolder("s07_prepDataModel1.R")
+
+# 11 Prep data for Model 3: Predicting ROI ####
+sourceScriptFromFolder("s08_prepDataModel2.R")
+
+# 12 Build Model 1: Predicting Selling Price ####
+sourceScriptFromFolder("s15_model1PredictSellingPrice.R")
+
+# 13 Build Model 2: Predicting ROI ####
+sourceScriptFromFolder("s16_model2PredictSellingRoi.R")
+
+# 14 Predict with Models ####
+sourceScriptFromFolder("s17_predictWithModels.R")
 
 # 15 Put machine to sleep ####
 shell(cmd = "rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
-
-# 12 EN model ####
-
-# 13 RF model ####
-
-# 14 NN model ####
-
-# 15 Test models ####

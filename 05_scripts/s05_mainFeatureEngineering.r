@@ -15,7 +15,6 @@ pkgs <-
 activatePkgs(pkgs)
 
 # 02 load latest compiled data ####
-
 compiledData <-
   paste0(
     outputFolderCompiled
@@ -181,7 +180,7 @@ compiledData <-
   replaceLowFreqWithOther(compiledData, "areaConsolidated", 31)
 
 categoricalVariables %<>%
-  dplyr::recode(areaConsolidated = "areaConsolidatedLowFreqGeneralized")
+  dplyr::recode(area = "areaConsolidatedLowFreqGeneralized")
 
 compiledData <- replaceLowFreqWithOther(compiledData, "street", 31)
 

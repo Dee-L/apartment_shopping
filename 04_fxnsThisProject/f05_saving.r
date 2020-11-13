@@ -28,3 +28,14 @@ reassignRda <- function(fileName) {
     load(fileName)
     get(ls()[ls() != "fileName"])
 }
+
+# 03 Saving variable groups ####
+
+mySaveVarGroups <- function(exportPath, object) {
+    objectName <- deparse(substitute(object))
+
+    saveRDS(
+        object,
+        paste0(exportPath, objectName)
+    )
+}

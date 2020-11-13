@@ -14,9 +14,9 @@ catVarsForTimeSeriesAnalysis <-
     )
 
 # 02 Variables for building predictive models ####
-varToPredictModel1 <- "valueIncreaseAfter1YearMinusCost"
+varToPredictModel1 <- "sellingPriceRawData"
 
-varToPredictModel2 <- "sellingPriceRawData"
+varToPredictModel2 <- "annualGrowthRate"
 
 # 03 Identifiers for unique properties ####
 

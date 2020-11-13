@@ -50,26 +50,36 @@ outFolderOrangeAllData <-
 
 makeDirIfDoesNotExist(outFolderOrangeAllData, recursive = T)
 
-# 06 Preprocessed data for resold properties ####
-outFolderPreprocessedResoldProps <-
+# 06 Data for Models 1 and 2####
+outFolderDataForModel1and2 <-
     paste0(
         outputFolder,
-        "06_preprocessedResoldProps/"
+        "06_dataForModel1and2/"
     )
 
-makeDirIfDoesNotExist(outFolderPreprocessedResoldProps)
+makeDirIfDoesNotExist(outFolderDataForModel1and2)
 
-outFolderOrangeResoldProps <-
+outFolderOrangeDataForModel1and2 <-
     paste0(
         outFolderOrange,
-        "o02_resoldProps/"
+        "o02_dataForModel1and2/"
     )
 
-makeDirIfDoesNotExist(outFolderOrangeResoldProps, recursive = T)
+makeDirIfDoesNotExist(outFolderOrangeDataForModel1and2, recursive = T)
 
-# 07 train/test split data ####
-outputFolderDataSplits <-
+# 07 Data for Model 3 ####
+outFolderDataForModel3and4 <-
     paste0(
         outputFolder,
-        "07_dataSplits/"
+        "08_dataForModel3and4/"
     )
+
+makeDirIfDoesNotExist(outFolderDataForModel3and4)
+
+outFolderOrangeDataForModel3and4 <-
+    paste0(
+        outFolderOrange,
+        "o03_dataForModel3and4/"
+    )
+
+makeDirIfDoesNotExist(outFolderOrangeDataForModel3and4, recursive = T)
