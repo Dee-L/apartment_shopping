@@ -12,7 +12,6 @@ pkgs <-
 activatePkgs(pkgs)
 
 # 02 Check if need to compile new data ####
-
 latestScrapedResults <-
     outputFolderScrapedGparent %>%
     list.dirs(recursive = F) %>%

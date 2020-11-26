@@ -8,7 +8,6 @@
 pkgs <-
   c(
     "openxlsx"
-    , "doParallel"
   )
 
 activatePkgs(pkgs)
@@ -21,10 +20,6 @@ outputFolderScrapedGparent <<-
   )
 
 makeDirIfDoesNotExist(outputFolderScrapedGparent)
-
-# 03 Activate parallel processing on your cores ####
-cl <- makeCluster(6)
-registerDoParallel(cl)
 
 # 03 Choose days to look back based on previous scrapes ####
 lastDayScraped <-
@@ -112,4 +107,3 @@ if (maxDaysBackToLook >= 7) {
     }
   }
 }
-

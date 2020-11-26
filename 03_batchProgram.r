@@ -13,7 +13,9 @@ pkgs <-
 activatePkgs(pkgs)
 
 # 03 Scrape Hemnet ####
-sourceScriptFromFolder("s01_scrapingHemnet.R")
+# They apparently changed the layout so scraping agency fails. This script
+# Needs to be modified.
+# sourceScriptFromFolder("s01_scrapingHemnet.R")
 
 # 04 Re-scrape failed pages ####
 # sourceScriptFromFolder("s02_rescrapeFailedPages.r")

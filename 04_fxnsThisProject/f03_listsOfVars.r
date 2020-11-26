@@ -12,21 +12,3 @@ catVarsForTimeSeriesAnalysis <-
         "agentNameLowFreqGeneralized",
         "agencyLowFreqGeneralized"
     )
-
-# 02 Variables for building predictive models ####
-varToPredictModel1 <- "sellingPriceRawData"
-
-varToPredictModel2 <- "annualGrowthRate"
-
-# 03 Identifiers for unique properties ####
-
-identifiersForUniqueProp <-
-    c(
-        "yearBuiltRawData",
-        "cityCleanedStringPsdData",
-        "areaConsolidatedPsdData",
-        "streetCleanedStringPsdData",
-        "floorNonhalfDroppedPsdData",
-        "roomsRawData",
-        "kvmRawData"
-    )

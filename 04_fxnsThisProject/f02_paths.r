@@ -30,16 +30,100 @@ makeDirIfDoesNotExist(outputFolderCompiled)
 outFolderPreprocessedAllData <-
     paste0(
         outputFolder,
-        "04_preprocessedAllData/"
+        "10_preprocessedForModel1/"
     )
 
 makeDirIfDoesNotExist(outFolderPreprocessedAllData)
 
-# 05 Orange explorations ####
+# 05 Data for Model 1 ####
+outFolderDataForModel1 <-
+    paste0(
+        outputFolder,
+        "11_dataForModel1/"
+    )
+
+makeDirIfDoesNotExist(outFolderDataForModel1)
+
+# 06 Building Model 1 ####
+outFolderBuildingModel1 <-
+    paste0(
+        outputFolder,
+        '12_buildingModel1'
+    )
+
+makeDirIfDoesNotExist(outFolderBuildingModel1, recursive = T)
+
+# 07 Data to predict with Model 1 ####
+outFolderDataForPredictingWithModel1 <-
+    paste0(
+        outputFolder,
+        "13_dataForPredictingWithModel1/"
+    )
+
+makeDirIfDoesNotExist(outFolderDataForPredictingWithModel1)
+
+# 08 Predictions from Model 1 ####
+predictionsFromModel1 <-
+    paste0(
+        outputFolder,
+        "14_predictionsFromModel1/"
+    )
+
+makeDirIfDoesNotExist(predictionsFromModel1)
+
+
+# 09 Preprocessed data for Model 2 ####
+outFolderPreprocessedDataModel2 <-
+    paste0(
+        outputFolder,
+        "20_preprocessedForModel2/"
+    )
+
+makeDirIfDoesNotExist(outFolderPreprocessedDataModel2)
+
+# 10 Data for Model 2 ####
+outFolderDataForModel2 <-
+    paste0(
+        outputFolder,
+        "21_dataForModel2/"
+    )
+
+makeDirIfDoesNotExist(outFolderDataForModel2)
+
+# 11 Building Model 2 ####
+outFolderBuildingModel2 <-
+    paste0(
+        outputFolder,
+        "22_buildingModel2"
+    )
+
+makeDirIfDoesNotExist(outFolderBuildingModel2, recursive = T)
+
+# 12 Data to predict with Model 2 ####
+outFolderDataForPredictingWithModel2 <-
+    paste0(
+        outputFolder,
+        "23_dataForPredictingWithModel2/"
+    )
+
+makeDirIfDoesNotExist(outFolderDataForPredictingWithModel2)
+
+# 13 Predictions from Model 2 ####
+
+predictionsFromModel2 <-
+    paste0(
+        outputFolder,
+        "24_predictionsFromModel2/"
+    )
+
+makeDirIfDoesNotExist(predictionsFromModel2)
+
+
+# 14 Orange explorations ####
 outFolderOrange <-
     paste0(
         outputFolder,
-        "05_orange/"
+        "30_orange/"
     )
 
 outFolderOrangeAllData <-
@@ -50,36 +134,19 @@ outFolderOrangeAllData <-
 
 makeDirIfDoesNotExist(outFolderOrangeAllData, recursive = T)
 
-# 06 Data for Models 1 and 2####
-outFolderDataForModel1and2 <-
-    paste0(
-        outputFolder,
-        "06_dataForModel1and2/"
-    )
-
-makeDirIfDoesNotExist(outFolderDataForModel1and2)
-
-outFolderOrangeDataForModel1and2 <-
+outFolderOrangeDataForModel1 <-
     paste0(
         outFolderOrange,
-        "o02_dataForModel1and2/"
+        "o10_dataForModel1/"
     )
 
-makeDirIfDoesNotExist(outFolderOrangeDataForModel1and2, recursive = T)
+makeDirIfDoesNotExist(outFolderOrangeDataForModel1, recursive = T)
 
-# 07 Data for Model 3 ####
-outFolderDataForModel3and4 <-
-    paste0(
-        outputFolder,
-        "08_dataForModel3and4/"
-    )
 
-makeDirIfDoesNotExist(outFolderDataForModel3and4)
-
-outFolderOrangeDataForModel3and4 <-
+outFolderOrangeDataForModel2 <-
     paste0(
         outFolderOrange,
-        "o03_dataForModel3and4/"
+        "o20_dataForModel2/"
     )
 
-makeDirIfDoesNotExist(outFolderOrangeDataForModel3and4, recursive = T)
+makeDirIfDoesNotExist(outFolderOrangeDataForModel2, recursive = T)
